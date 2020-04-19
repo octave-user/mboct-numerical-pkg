@@ -864,7 +864,6 @@ DEFINE_GLOBAL_CONSTANT(API_BIND_AUTO, -2)
 
 /*
 %!test
-%! pkg load ngaa-numerical-pkg;
 %! if 3 == exist("pastix", "file")
 %! for i=1:2
 %! A = [1 0 0 0 0
@@ -899,7 +898,6 @@ DEFINE_GLOBAL_CONSTANT(API_BIND_AUTO, -2)
 %! endif
 
 %!test
-%! pkg load ngaa-numerical-pkg;
 %! if 3 == exist("pastix", "file")
 %! tol = eps^0.35;
 %! rand("seed", 0);
@@ -930,7 +928,6 @@ DEFINE_GLOBAL_CONSTANT(API_BIND_AUTO, -2)
 %! endif
 
 %!test
-%! pkg load ngaa-numerical-pkg;
 %! if 3 == exist("pastix", "file")
 %! tol = eps^0.35;
 %! rand("seed", 0);
@@ -961,7 +958,6 @@ DEFINE_GLOBAL_CONSTANT(API_BIND_AUTO, -2)
 %! endif
 
 %!test
-%! pkg load ngaa-numerical-pkg;
 %! if 3 == exist("pastix", "file")
 %! tol = eps^0.3;
 %! rand("seed", 0);
@@ -1012,7 +1008,6 @@ DEFINE_GLOBAL_CONSTANT(API_BIND_AUTO, -2)
 %! endif
 
 %!test
-%! pkg load ngaa-numerical-pkg;
 %! if 3 == exist("pastix", "file")
 %! tol = sqrt(eps);
 %! A = [ 1, -1,  0, 0,  1;
@@ -1049,7 +1044,6 @@ DEFINE_GLOBAL_CONSTANT(API_BIND_AUTO, -2)
 
 /*
 %!test
-%! pkg load ngaa-numerical-pkg;
 %! if 3 == exist("pastix", "file")
 %! A = [1 0 0 0 0
 %! 0 3 0 0 0
@@ -1075,7 +1069,6 @@ DEFINE_GLOBAL_CONSTANT(API_BIND_AUTO, -2)
 %! endif
 
 %!test
-%! pkg load ngaa-numerical-pkg;
 %! if 3 == exist("pastix", "file")
 %! tol = eps^0.35;
 %! rand("seed", 0);
@@ -1106,7 +1099,6 @@ DEFINE_GLOBAL_CONSTANT(API_BIND_AUTO, -2)
 %! endif
 
 %!test
-%! pkg load ngaa-numerical-pkg;
 %! test_idx = int32(0);
 %! if 3 == exist("pastix", "file")
 %! rand("seed", 0);
@@ -1191,7 +1183,6 @@ DEFINE_GLOBAL_CONSTANT(API_BIND_AUTO, -2)
 %! endif
 
 %!test
-%! pkg load ngaa-numerical-pkg;
 %! if 3 == exist("pastix", "file")
 %! rand("seed", 0);
 %! for mt=[PASTIX_API_SYM_YES]
