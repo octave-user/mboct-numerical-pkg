@@ -1,0 +1,222 @@
+/* config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* Define to 1 if you have the <algorithm> header file. */
+#undef HAVE_ALGORITHM
+
+/* Define to 1 if you have the <array> header file. */
+#undef HAVE_ARRAY
+
+/* Define to 1 if you have the <cmath> header file. */
+#undef HAVE_CMATH
+
+/* Define to 1 if you have the <cstdint> header file. */
+#undef HAVE_CSTDINT
+
+/* Define to 1 if you have the <cstring> header file. */
+#undef HAVE_CSTRING
+
+/* Define to 1 if you have the `DLAMCH' function. */
+#undef HAVE_DLAMCH
+
+/* Define to 1 if you have the `DLAMCH_' function. */
+#undef HAVE_DLAMCH_
+
+/* Define to 1 if you have the `dmumps_c' function. */
+#undef HAVE_DMUMPS_C
+
+/* Define to 1 if you have the <dmumps_c.h> header file. */
+#undef HAVE_DMUMPS_C_H
+
+/* Define to 1 if you have the `DSBGVX' function. */
+#undef HAVE_DSBGVX
+
+/* Define to 1 if you have the `DSBGVX_' function. */
+#undef HAVE_DSBGVX_
+
+/* Define to 1 if you have the `DSPEV' function. */
+#undef HAVE_DSPEV
+
+/* Define to 1 if you have the `DSPEV_' function. */
+#undef HAVE_DSPEV_
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the <iostream> header file. */
+#undef HAVE_IOSTREAM
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the `METIS_Free' function. */
+#undef HAVE_METIS_FREE
+
+/* Define to 1 if you have the <metis.h> header file. */
+#undef HAVE_METIS_H
+
+/* Define to 1 if you have the `METIS_MeshToNodal' function. */
+#undef HAVE_METIS_MESHTONODAL
+
+/* Define to 1 if you have the `METIS_NodeND' function. */
+#undef HAVE_METIS_NODEND
+
+/* Define to 1 if you have the `METIS_SetDefaultOptions' function. */
+#undef HAVE_METIS_SETDEFAULTOPTIONS
+
+/* Define to 1 if you have the `MPI_Comm_rank' function. */
+#undef HAVE_MPI_COMM_RANK
+
+/* Define to 1 if you have the `MPI_Finalize' function. */
+#undef HAVE_MPI_FINALIZE
+
+/* Define to 1 if you have the `MPI_Init' function. */
+#undef HAVE_MPI_INIT
+
+/* Define to 1 if you have the <mumps_seq/mpi.h> header file. */
+#undef HAVE_MUMPS_SEQ_MPI_H
+
+/* Define to 1 if you have the <octave/interpreter.h> header file. */
+#undef HAVE_OCTAVE_INTERPRETER_H
+
+/* Define to 1 if you have the <octave/lo-arpack-proto.h> header file. */
+#undef HAVE_OCTAVE_LO_ARPACK_PROTO_H
+
+/* Define to 1 if you have the <octave/oct.h> header file. */
+#undef HAVE_OCTAVE_OCT_H
+
+/* Define to 1 if you have the <octave/parse.h> header file. */
+#undef HAVE_OCTAVE_PARSE_H
+
+/* Define to 1 if you have the `pastix' function. */
+#undef HAVE_PASTIX
+
+/* Define to 1 if you have the `pastixFinalize' function. */
+#undef HAVE_PASTIXFINALIZE
+
+/* Define to 1 if you have the `pastixInit' function. */
+#undef HAVE_PASTIXINIT
+
+/* Define to 1 if you have the `pastixInitParam' function. */
+#undef HAVE_PASTIXINITPARAM
+
+/* Define to 1 if you have the `pastix_checkMatrix' function. */
+#undef HAVE_PASTIX_CHECKMATRIX
+
+/* Define to 1 if you have the `pastix_task_analyze' function. */
+#undef HAVE_PASTIX_TASK_ANALYZE
+
+/* Define to 1 if you have the `pastix_task_numfact' function. */
+#undef HAVE_PASTIX_TASK_NUMFACT
+
+/* Define to 1 if you have the `pastix_task_refine' function. */
+#undef HAVE_PASTIX_TASK_REFINE
+
+/* Define to 1 if you have the `pastix_task_solve' function. */
+#undef HAVE_PASTIX_TASK_SOLVE
+
+/* Define to 1 if you have the `spmCheckAxb' function. */
+#undef HAVE_SPMCHECKAXB
+
+/* Define to 1 if you have the `spmExit' function. */
+#undef HAVE_SPMEXIT
+
+/* Define to 1 if you have the `spmNorm' function. */
+#undef HAVE_SPMNORM
+
+/* Define to 1 if you have the `spmScalMatrix' function. */
+#undef HAVE_SPMSCALMATRIX
+
+/* Define to 1 if you have the `spmScalVector' function. */
+#undef HAVE_SPMSCALVECTOR
+
+/* Define to 1 if you have the <stdexcept> header file. */
+#undef HAVE_STDEXCEPT
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if you have the <suitesparse/umfpack.h> header file. */
+#undef HAVE_SUITESPARSE_UMFPACK_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the `umfpack_dl_defaults' function. */
+#undef HAVE_UMFPACK_DL_DEFAULTS
+
+/* Define to 1 if you have the `umfpack_dl_free_numeric' function. */
+#undef HAVE_UMFPACK_DL_FREE_NUMERIC
+
+/* Define to 1 if you have the `umfpack_dl_free_symbolic' function. */
+#undef HAVE_UMFPACK_DL_FREE_SYMBOLIC
+
+/* Define to 1 if you have the `umfpack_dl_numeric' function. */
+#undef HAVE_UMFPACK_DL_NUMERIC
+
+/* Define to 1 if you have the `umfpack_dl_report_info' function. */
+#undef HAVE_UMFPACK_DL_REPORT_INFO
+
+/* Define to 1 if you have the `umfpack_dl_report_status' function. */
+#undef HAVE_UMFPACK_DL_REPORT_STATUS
+
+/* Define to 1 if you have the `umfpack_dl_solve' function. */
+#undef HAVE_UMFPACK_DL_SOLVE
+
+/* Define to 1 if you have the `umfpack_dl_symbolic' function. */
+#undef HAVE_UMFPACK_DL_SYMBOLIC
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* macro for alternative Octave symbols */
+#undef OCTAVE__FEVAL
+
+/* macro for alternative Octave symbols */
+#undef OV_ISSYMMETRIC
+
+/* Name of package */
+#undef PACKAGE
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* Define if the PaStiX interface up to version 5.3 can be used */
+#undef USE_PASTIX_5
+
+/* Define if the PaStiX interface from version 6.0 or later can be used */
+#undef USE_PASTIX_6
+
+/* Version number of package */
+#undef VERSION
+
+#include "oct-alt-includes.h"

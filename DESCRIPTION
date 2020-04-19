@@ -1,0 +1,10 @@
+Name: mboct-numerical-pkg
+Version: 0.1.0
+Date: 2020-03-07
+Author: Reinhard <octave-user@a1.net>
+Maintainer: Reinhard <octave-user@a1.net>
+Title: numerical solvers
+Description: Interfaces to several well known numerical solvers
+License: GPLv3
+Categories: Linear solvers, Eigenvalue solvers, Sparse matrix ordering, Special matrices
+Depends: octave (>= 4.0.0)
