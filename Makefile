@@ -53,7 +53,7 @@ ifeq ($(vcs),hg)
 release_dir_dep := .hg/dirstate
 endif
 ifeq ($(vcs),git)
-release_dir_dep := $(shell "if test -d .git; then echo .git/index; else if test -f .git; then echo $(awk -F ':' '{print $2}' .git)/index; fi; fi")
+release_dir_dep := .git/index
 endif
 
 
@@ -243,12 +243,14 @@ octave_test_commands = \
 check: $(install_stamp)
 	$(run_in_place) --eval $(octave_test_commands)
 
-
+check_installed:
+	$(OCTAVE) --eval ' pkg ("load", "$(package)"); ' \
+		  --eval $(octave_test_commands)
 ##
 ## CLEAN
 ##
 
-.PHONY: clean
+.PHONY: clean check_installed
 
 clean: clean-tarballs clean-unpacked-release clean-install
 	@echo "## Removing target directory (if empty)..."
