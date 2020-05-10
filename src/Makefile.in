@@ -286,9 +286,9 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-oct_OBJ := $(am__append_3) $(am__append_6) $(am__append_8) \
-	$(am__append_11) $(am__append_14) $(am__append_16) \
-	$(am__append_18)
+oct_OBJ := sp_sym_mtimes.@OBJEXT@ $(am__append_3) $(am__append_6) \
+	$(am__append_8) $(am__append_11) $(am__append_14) \
+	$(am__append_16) $(am__append_18)
 oct_FILE := __mboct_numerical__.oct
 bin_FILES := $(oct_FILE)
 all: config.h

@@ -30,3 +30,6 @@ Sparse matrix ordering
        
 Special matrices
         skew
+
+Symmetric sparse matrix product
+        sp_sym_mtimes

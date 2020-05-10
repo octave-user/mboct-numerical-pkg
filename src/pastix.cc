@@ -52,6 +52,7 @@ public:
         PastixObject();
         explicit PastixObject(const SparseMatrix& A, const Options& options);
         virtual ~PastixObject(void);
+        virtual size_t byte_size() const;
         bool solve(Matrix& b, Matrix& x) const;
         static bool get_options(const octave_value& ovOptions, PastixObject::Options& options);
         virtual bool is_constant(void) const{ return true; }
@@ -343,6 +344,29 @@ PastixObject::PastixObject(const SparseMatrix& A, const Options& options)
 #endif
 }
 
+size_t PastixObject::byte_size() const
+{
+        size_t cb = sizeof(*this);
+
+        pastix_int_t nnz = 0;
+
+        if (colptr) {
+                nnz = colptr[ncols] - colptr[0];
+        }
+
+        cb += sizeof(*rows) * nnz;
+        cb += sizeof(*colptr) * (ncols + 1);
+        cb += sizeof(*avals) * nnz;
+
+#if USE_PASTIX_5
+        cb += sizeof(*perm) * ncols;
+        cb += sizeof(*invp) * ncols;
+#else        
+        cb += sizeof(*avals) * iparm[IPARM_NNZEROS];
+#endif
+        return cb;
+}
+
 PastixObject::~PastixObject()
 {
         cleanup();
@@ -527,7 +551,7 @@ bool PastixObject::solve(Matrix& b, Matrix& x) const {
         if (options.refine_max_iter) {
                 for (octave_idx_type j = 0; j < x.columns(); ++j) {
                         bool bZeroVec = true;
-                        
+
                         for (octave_idx_type k = 0; k < x.rows(); ++k) {
                                 if (x(k, j)) {
                                         bZeroVec = false;
@@ -550,7 +574,7 @@ bool PastixObject::solve(Matrix& b, Matrix& x) const {
                                         return false;
                                 }
                         }
-                        
+
                         OCTAVE_QUIT;
                 }
 

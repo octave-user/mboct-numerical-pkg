@@ -13,7 +13,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program; If not, see <http://www.gnu.org/licenses/>.
 
-oct_OBJ:=
+oct_OBJ:=sp_sym_mtimes.@OBJEXT@
 
 if USE_PASTIX
   CXXFLAGS+=$(PASTIX_INC)
