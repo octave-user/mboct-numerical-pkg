@@ -39,15 +39,23 @@ public:
                 int refine_max_iter = 3;
         };
 #else
+        typedef double pastix_float_t;
+        
         struct Options {
                 spm_mtxtype_t matrix_type = SpmGeneral;
                 pastix_factotype_t factorization = PastixFactLU;
                 pastix_int_t number_of_threads = 1;
                 pastix_verbose_t verbose = PastixVerboseNo;
+                pastix_compress_when_t compress_when = PastixCompressNever;
+                pastix_compress_method_t compress_method = PastixCompressMethodPQRCP;
+                pastix_compress_ortho_t compress_ortho = PastixCompressOrthoCGS;
+                pastix_int_t compress_min_width = 120;
+                pastix_int_t compress_min_height = 20;
+                double compress_tolerance = 0.01;
+                double compress_min_ratio = 1.;
                 int refine_max_iter = 3;
                 bool check_solution = false;
         };
-        typedef double pastix_float_t;
 #endif
         PastixObject();
         explicit PastixObject(const SparseMatrix& A, const Options& options);
@@ -321,7 +329,14 @@ PastixObject::PastixObject(const SparseMatrix& A, const Options& options)
         iparm[IPARM_FACTORIZATION] = options.factorization;
         iparm[IPARM_THREAD_NBR] = options.number_of_threads;
         iparm[IPARM_ITERMAX] = options.refine_max_iter;
-
+        iparm[IPARM_COMPRESS_WHEN] = options.compress_when;
+        iparm[IPARM_COMPRESS_METHOD] = options.compress_method;
+        iparm[IPARM_COMPRESS_ORTHO] = options.compress_ortho;
+        iparm[IPARM_COMPRESS_MIN_WIDTH] = options.compress_min_width;
+        iparm[IPARM_COMPRESS_MIN_HEIGHT] = options.compress_min_height;
+        dparm[DPARM_COMPRESS_TOLERANCE] = options.compress_tolerance;
+        dparm[DPARM_COMPRESS_MIN_RATIO] = options.compress_min_ratio;
+        
         pastixInit(&pastix_data, MPI_COMM_WORLD, iparm, dparm);
 
         rc = pastix_task_analyze(pastix_data, &spm);
@@ -713,6 +728,87 @@ bool PastixObject::get_options(const octave_value& ovOptions, PastixObject::Opti
         }
 #endif
 
+#if USE_PASTIX_6
+        {
+                const auto icompress_when = om_options.seek("compress_when");
+
+                if (icompress_when != om_options.end()) {
+                        options.compress_when = static_cast<pastix_compress_when_t>(om_options.contents(icompress_when).int_value());
+
+                        if (error_state) {
+                                return false;
+                        }
+                }
+        }
+        {
+                const auto icompress_method = om_options.seek("compress_method");
+
+                if (icompress_method != om_options.end()) {
+                        options.compress_method = static_cast<pastix_compress_method_t>(om_options.contents(icompress_method).int_value());
+
+                        if (error_state) {
+                                return false;
+                        }
+                }
+        }
+        {
+                const auto icompress_ortho = om_options.seek("compress_ortho");
+
+                if (icompress_ortho != om_options.end()) {
+                        options.compress_ortho = static_cast<pastix_compress_ortho_t>(om_options.contents(icompress_ortho).int_value());
+
+                        if (error_state) {
+                                return false;
+                        }
+                }
+        }
+
+        {
+                const auto icompress_min_width = om_options.seek("compress_min_width");
+
+                if (icompress_min_width != om_options.end()) {
+                        options.compress_min_width = om_options.contents(icompress_min_width).int_value();
+
+                        if (error_state) {
+                                return false;
+                        }
+                }
+        }
+        {
+                const auto icompress_min_height = om_options.seek("compress_min_height");
+
+                if (icompress_min_height != om_options.end()) {
+                        options.compress_min_height = om_options.contents(icompress_min_height).int_value();
+
+                        if (error_state) {
+                                return false;
+                        }
+                }
+        }
+        {
+                const auto icompress_tolerance = om_options.seek("compress_tolerance");
+
+                if (icompress_tolerance != om_options.end()) {
+                        options.compress_tolerance = om_options.contents(icompress_tolerance).scalar_value();
+
+                        if (error_state) {
+                                return false;
+                        }
+                }
+        }
+        {
+                const auto icompress_min_ratio = om_options.seek("compress_min_ratio");
+
+                if (icompress_min_ratio != om_options.end()) {
+                        options.compress_min_ratio = om_options.contents(icompress_min_ratio).scalar_value();
+
+                        if (error_state) {
+                                return false;
+                        }
+                }
+        }
+#endif
+        
         return true;
 }
 
