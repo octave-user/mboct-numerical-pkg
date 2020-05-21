@@ -1,3 +1,6 @@
+## -*- texinfo -*-
+## This package contains interfaces to several well known numerical solvers like pastix, mumps, umfpack and arpack and metis.
+
 %!test
 %! if (numel(which("pastix")))
 %! for i=1:2

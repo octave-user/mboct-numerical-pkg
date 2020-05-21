@@ -64,10 +64,10 @@ DEFUN_DLD (sp_sym_mtimes, args, nargout,
 
                                 const double Aij = Adata[k];
 
-                                b(i, l) += Aij * x(j, l);
+                                b.xelem(i, l) += Aij * x.xelem(j, l);
 
                                 if (i != j) {
-                                        b(j, l) += Aij * x(i, l);
+                                        b.xelem(j, l) += Aij * x.xelem(i, l);
                                 }
 
                         }
