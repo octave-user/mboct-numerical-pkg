@@ -466,7 +466,7 @@ DEFUN_DLD (mumps, args, nargout,
             pMumps = nullptr;
         }
 
-        error(err.what());
+        error_with_id("mumps:solver", "%s", err.what());
     }
 
     return retval;

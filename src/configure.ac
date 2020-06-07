@@ -61,7 +61,7 @@ if test -z "${PASTIX_LIBS}"; then
   fi
 fi
 
-MUMPS_LIBS="${MUMPS_LIBS:--ldmumps_seq -lmpiseq_seq-4.10.0 -lgfortran}"
+MUMPS_LIBS="${MUMPS_LIBS:--ldmumps_seq -lmpiseq_seq -lgfortran}"
 ARPACK_LIBS="${ARPACK_LIBS:--larpack}"
 UMFPACK_LIBS="${UMFPACK_LIBS:--lumfpack}"
 METIS_LIBS="${METIS_LIBS:--lmetis}"
