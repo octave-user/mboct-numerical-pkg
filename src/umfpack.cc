@@ -313,7 +313,7 @@ DEFUN_DLD (umfpack, args, nargout,
                         pUmfpack = nullptr;
                 }
 
-                error(err.what());
+                error_with_id("umfpack:exception", "%s", err.what());
         }
 
         return retval;
