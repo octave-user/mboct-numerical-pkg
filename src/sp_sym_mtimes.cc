@@ -23,7 +23,10 @@
 DEFUN_DLD (sp_sym_mtimes, args, nargout,
            "-*- texinfo -*-\n"
            "@deftypefn {} @var{b} = sp_sym_mtimes(@var{A},  @var{x})\n\n"
-           "Compute the product"
+           "Compute the product @var{b} = (@var{A} + @var{A}.' - diag(diag(@var{A})))  * @var{x}\n\n"
+	   "@var{A} @dots{} upper- or lower-triangular part of a real symmetric sparse matrix\n\n"
+	   "@var{x} @dots{} a real dense matrix\n\n"
+	   "@var{b} @dots{} the matrix - matrix product\n"
            "@end deftypefn\n")
 {
         octave_value_list retval;
