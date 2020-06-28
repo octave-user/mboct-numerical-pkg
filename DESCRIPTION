@@ -8,4 +8,4 @@ Description: This package belongs to a suite of packages which can be used for p
              It contains interfaces to several well known numerical solvers.
 License: GPLv3
 Categories: Linear solvers, Eigenvalue solvers, Sparse matrix ordering, Special matrices
-Depends: octave (>= 4.0.0)
+Depends: octave (>=5.1.0)
