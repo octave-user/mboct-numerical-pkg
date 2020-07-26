@@ -82,29 +82,22 @@ AC_LANG(C)
 AC_CHECK_HEADER([pastix.h])
 
 AC_CHECK_FUNCS([pastixInit \
-                pastixInitParam \
-                pastix_task_analyze \
-                pastix_task_numfact \
-                pastix_task_solve \
-                pastix_task_refine \
-                pastixFinalize \
-                spmNorm \
-                spmScalMatrix \
-                spmScalVector \
-                spmExit \
-                spmCheckAxb],[have_pastix_6=yes],[have_pastix_6=no])
+		pastixInitParam \
+		pastix_task_analyze \
+		pastix_task_numfact \
+		pastix_task_solve \
+		pastix_task_refine \
+		pastixFinalize \
+		spmNorm \
+		spmScalMatrix \
+		spmScalVector \
+		spmExit \
+		spmCheckAxb],[have_pastix=yes],[have_pastix=no])
 
-AC_CHECK_FUNCS([pastix \
-                pastix_checkMatrix],[have_pastix_5=yes],[have_pastix_5=no])
+AM_CONDITIONAL([USE_PASTIX],[test "${ac_cv_header_pastix_h}" = yes && test "${have_pastix}" = "yes"])
 
-AM_CONDITIONAL([USE_PASTIX],[test "${ac_cv_header_pastix_h}" = yes && ( test "${have_pastix_6}" = "yes" || test "${have_pastix_5}" = "yes" )])
-
-if test "${have_pastix_6}" = "yes"; then
-   AC_DEFINE([USE_PASTIX_6],1,[Define if the PaStiX interface from version 6.0 or later can be used])
-else
-   if test "${have_pastix_5}" = "yes"; then
-      AC_DEFINE([USE_PASTIX_5],1,[Define if the PaStiX interface up to version 5.3 can be used])
-   fi
+if test "${have_pastix}" = "yes"; then
+   AC_DEFINE([USE_PASTIX],1,[Define if the PaStiX interface from version 6.0 or later can be used])
 fi
 
 CPPFLAGS="${TCPPFLAGS}"
@@ -121,9 +114,9 @@ AC_LANG(C)
 AC_CHECK_HEADERS([dmumps_c.h mumps_seq/mpi.h],[have_dmumps_c_h=yes],[have_dmumps_c_h=no])
 
 AC_CHECK_FUNCS([dmumps_c \
-                MPI_Init \
-                MPI_Comm_rank \
-                MPI_Finalize],[have_dmumps_c_f=yes],[have_dmumps_c_f=no])
+		MPI_Init \
+		MPI_Comm_rank \
+		MPI_Finalize],[have_dmumps_c_f=yes],[have_dmumps_c_f=no])
 
 AM_CONDITIONAL([USE_MUMPS],[test "${have_dmumps_c_h}" = yes && test "${have_dmumps_c_f}" == "yes"])
 
@@ -139,13 +132,21 @@ LIBS="${UMFPACK_LIBS} ${LIBS}"
 AC_CHECK_HEADERS([suitesparse/umfpack.h])
 
 AC_CHECK_FUNCS([umfpack_dl_defaults \
-                umfpack_dl_symbolic \
-                umfpack_dl_report_info \
-                umfpack_dl_report_status \
-                umfpack_dl_numeric \
-                umfpack_dl_solve \
-                umfpack_dl_free_symbolic \
-                umfpack_dl_free_numeric],[have_umfpack=yes],[have_umfpack=no])
+		umfpack_dl_symbolic \
+		umfpack_dl_report_info \
+		umfpack_dl_report_status \
+		umfpack_dl_numeric \
+		umfpack_dl_solve \
+		umfpack_dl_free_symbolic \
+		umfpack_dl_free_numeric \
+		umfpack_zl_defaults \
+		umfpack_zl_symbolic \
+		umfpack_zl_report_info \
+		umfpack_zl_report_status \
+		umfpack_zl_numeric \
+		umfpack_zl_solve \
+		umfpack_zl_free_symbolic \
+		umfpack_zl_free_numeric],[have_umfpack=yes],[have_umfpack=no])
 
 AM_CONDITIONAL([USE_UMFPACK],[test "${ac_cv_header_suitesparse_umfpack_h}" = "yes" && test "${have_umfpack}" = "yes"])
 
@@ -158,9 +159,9 @@ LIBS="${METIS_LIBS} ${LIBS}"
 AC_CHECK_HEADERS([metis.h])
 
 AC_CHECK_FUNCS([METIS_SetDefaultOptions \
-                METIS_MeshToNodal \
-                METIS_NodeND \
-                METIS_Free],[have_metis=yes],[have_metis=no])
+		METIS_MeshToNodal \
+		METIS_NodeND \
+		METIS_Free],[have_metis=yes],[have_metis=no])
 
 AM_CONDITIONAL([USE_METIS],[test "${ac_cv_header_metis_h}" = "yes" && test "${have_metis}" = "yes"])
 
@@ -174,20 +175,20 @@ LIBS="${LAPACK_LIBS} ${LIBS}"
 AC_CHECK_FUNCS([dspev dspev_ DSPEV DSPEV_])
 
 AM_CONDITIONAL([USE_DSPEV], [test "${ac_cv_func_dspev}" = "yes" || \
-                             test "${ac_cv_func_dspev_}" = "yes" || \
-                             test "${ac_cv_func_DSPEV}" = "yes" || \
-                             test "${ac_cv_func_DSPEV_}" = "yes"])
-               
+			     test "${ac_cv_func_dspev_}" = "yes" || \
+			     test "${ac_cv_func_DSPEV}" = "yes" || \
+			     test "${ac_cv_func_DSPEV_}" = "yes"])
+
 AC_CHECK_FUNCS([dsbgvx dsbgvx_ DSBGVX DSBGVX_ dlamch dlamch_ DLAMCH DLAMCH_])
 
 AM_CONDITIONAL([USE_DSBGVX], [(test "${ac_cv_func_dsbgvx}" = "yes" || \
-                               test "${ac_cv_func_dsbgvx_}" = "yes" || \
-                               test "${ac_cv_func_DSBGVX}" = "yes" || \
-                               test "${ac_cv_func_DSBGVX_}" = "yes") &&
-                               test "${ac_cv_func_dlamch}" = "yes" ||
-                               test "${ac_cv_func_dlamch_}" = "yes" ||
-                               test "${ac_cv_func_DLAMCH}" = "yes" ||
-                               test "${ac_cv_func_DLAMCH_}" = "yes"])
+			       test "${ac_cv_func_dsbgvx_}" = "yes" || \
+			       test "${ac_cv_func_DSBGVX}" = "yes" || \
+			       test "${ac_cv_func_DSBGVX_}" = "yes") &&
+			       test "${ac_cv_func_dlamch}" = "yes" ||
+			       test "${ac_cv_func_dlamch_}" = "yes" ||
+			       test "${ac_cv_func_DLAMCH}" = "yes" ||
+			       test "${ac_cv_func_DLAMCH_}" = "yes"])
 
 LIBS="${TLIBS}"
 
@@ -236,30 +237,30 @@ AC_TRY_LINK([
 #define HAVE_ARPACK 1
 #include <octave/lo-arpack-proto.h>
 ],[
-        F77_INT ido, n, nev, ncv, *iparam, *ipntr, lwork, info;
-        F77_DBLE tol, *presid, *v, *workdp, *worklp;
-        const char bmat[] = "G", type[] = "LM";
+	F77_INT ido, n, nev, ncv, *iparam, *ipntr, lwork, info;
+	F77_DBLE tol, *presid, *v, *workdp, *worklp;
+	const char bmat[] = "G", type[] = "LM";
 
-        F77_FUNC (dsaupd, DSAUPD)
-            (ido,
-             F77_CONST_CHAR_ARG2 (bmat, 1),
-             n,
-             F77_CONST_CHAR_ARG2 (type, 2),
-             nev,
-             tol,
-             presid,
-             ncv,
-             v,
-             n,
-             iparam,
-             ipntr,
-             workdp,
-             worklp,
-             lwork,
-             info
-             F77_CHAR_ARG_LEN(1)
-             F77_CHAR_ARG_LEN(2));
-             ],[have_dsaupd=yes],[have_dsaupd=no])
+	F77_FUNC (dsaupd, DSAUPD)
+	    (ido,
+	     F77_CONST_CHAR_ARG2 (bmat, 1),
+	     n,
+	     F77_CONST_CHAR_ARG2 (type, 2),
+	     nev,
+	     tol,
+	     presid,
+	     ncv,
+	     v,
+	     n,
+	     iparam,
+	     ipntr,
+	     workdp,
+	     worklp,
+	     lwork,
+	     info
+	     F77_CHAR_ARG_LEN(1)
+	     F77_CHAR_ARG_LEN(2));
+	     ],[have_dsaupd=yes],[have_dsaupd=no])
 
 AC_MSG_RESULT([$have_dsaupd])
 
@@ -274,31 +275,31 @@ AC_TRY_LINK([
     F77_INT n, nev, ncv, *sel, *iparam, *ipntr, lwork, info;
     const char bmat[] = "G", type[] = "SM";
     F77_FUNC (dseupd, DSEUPD)
-        (rvec,
-         F77_CONST_CHAR_ARG2 ("A", 1),
-         sel,
-         d,
-         v,
-         n,
-         sigma,
-         F77_CONST_CHAR_ARG2 (bmat, 1),
-         n,
-         F77_CONST_CHAR_ARG2 (type, 2),
-         nev,
-         tol,
-         presid,
-         ncv,
-         v,
-         n,
-         iparam,
-         ipntr,
-         workdp,
-         worklp,
-         lwork,
-         info
-         F77_CHAR_ARG_LEN(1)
-         F77_CHAR_ARG_LEN(1)
-         F77_CHAR_ARG_LEN(2));
+	(rvec,
+	 F77_CONST_CHAR_ARG2 ("A", 1),
+	 sel,
+	 d,
+	 v,
+	 n,
+	 sigma,
+	 F77_CONST_CHAR_ARG2 (bmat, 1),
+	 n,
+	 F77_CONST_CHAR_ARG2 (type, 2),
+	 nev,
+	 tol,
+	 presid,
+	 ncv,
+	 v,
+	 n,
+	 iparam,
+	 ipntr,
+	 workdp,
+	 worklp,
+	 lwork,
+	 info
+	 F77_CHAR_ARG_LEN(1)
+	 F77_CHAR_ARG_LEN(1)
+	 F77_CHAR_ARG_LEN(2));
 ],[have_dseupd=yes],[have_dseupd=no])
 
 AC_MSG_RESULT([$have_dseupd])

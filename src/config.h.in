@@ -87,9 +87,6 @@
 /* Define to 1 if you have the <octave/parse.h> header file. */
 #undef HAVE_OCTAVE_PARSE_H
 
-/* Define to 1 if you have the `pastix' function. */
-#undef HAVE_PASTIX
-
 /* Define to 1 if you have the `pastixFinalize' function. */
 #undef HAVE_PASTIXFINALIZE
 
@@ -98,9 +95,6 @@
 
 /* Define to 1 if you have the `pastixInitParam' function. */
 #undef HAVE_PASTIXINITPARAM
-
-/* Define to 1 if you have the `pastix_checkMatrix' function. */
-#undef HAVE_PASTIX_CHECKMATRIX
 
 /* Define to 1 if you have the `pastix_task_analyze' function. */
 #undef HAVE_PASTIX_TASK_ANALYZE
@@ -210,11 +204,8 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
-/* Define if the PaStiX interface up to version 5.3 can be used */
-#undef USE_PASTIX_5
-
 /* Define if the PaStiX interface from version 6.0 or later can be used */
-#undef USE_PASTIX_6
+#undef USE_PASTIX
 
 /* Version number of package */
 #undef VERSION
