@@ -70,7 +70,7 @@ struct PastixTraits<std::complex<double> > {
 };
 
 template <typename T>
-class PastixObject : public octave_base_value, public PastixTraits<T> {
+class PastixObject : public octave_base_value {
      typedef typename PastixTraits<T>::SparseMatrixType SparseMatrixType;
      typedef typename PastixTraits<T>::DenseMatrixType DenseMatrixType;
      typedef typename PastixTraits<T>::PastixObjectType PastixObjectType;
@@ -486,7 +486,7 @@ bool PastixObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x) const {
 
      for (octave_idx_type j = 0; j < x.columns(); ++j) {
 	  for (octave_idx_type i = 0; i < x.rows(); ++i) {
-	       if (!this->isfinite(x(i, j))) {
+	       if (!PastixTraits<T>::isfinite(x(i, j))) {
 		    error_with_id("pastix:solve", "solution of pastix is not finite");
 		    return false;
 	       }

@@ -22,21 +22,21 @@
 #include <suitesparse/umfpack.h>
 
 template <typename T>
-struct UmfpackTraits;
+struct UmfpackMatrix;
 
 class UmfpackObjectDouble;
 
 class UmfpackObjectComplex;
 
 template <>
-struct UmfpackTraits<double> {
+struct UmfpackMatrix<double> {
      typedef UmfpackObjectDouble UmfpackObjectType;
      typedef SparseMatrix SparseMatrixType;
      typedef Matrix DenseMatrixType;
 
-     UmfpackTraits()=default;
+     UmfpackMatrix()=default;
 
-     explicit UmfpackTraits(const SparseMatrixType& A)
+     explicit UmfpackMatrix(const SparseMatrixType& A)
 	  :A(A) {
      }
 
@@ -70,14 +70,14 @@ private:
 };
 
 template <>
-struct UmfpackTraits<std::complex<double> > {
+struct UmfpackMatrix<std::complex<double> > {
      typedef UmfpackObjectComplex UmfpackObjectType;
      typedef SparseComplexMatrix SparseMatrixType;
      typedef ComplexMatrix DenseMatrixType;
 
-     UmfpackTraits()=default;
+     UmfpackMatrix()=default;
 
-     explicit UmfpackTraits(const SparseMatrixType& A)
+     explicit UmfpackMatrix(const SparseMatrixType& A)
 	  :A(A),
 	   Are(A.nnz()),
 	   Aim(A.nnz()),
@@ -136,10 +136,10 @@ private:
 };
 
 template <typename T>
-class UmfpackObject : public octave_base_value, private UmfpackTraits<T> {
-     typedef typename UmfpackTraits<T>::SparseMatrixType SparseMatrixType;
-     typedef typename UmfpackTraits<T>::DenseMatrixType DenseMatrixType;
-     typedef typename UmfpackTraits<T>::UmfpackObjectType UmfpackObjectType;
+class UmfpackObject : public octave_base_value {
+     typedef typename UmfpackMatrix<T>::SparseMatrixType SparseMatrixType;
+     typedef typename UmfpackMatrix<T>::DenseMatrixType DenseMatrixType;
+     typedef typename UmfpackMatrix<T>::UmfpackObjectType UmfpackObjectType;
      
 public:
      struct Options {
@@ -153,11 +153,11 @@ public:
      DenseMatrixType solve(const DenseMatrixType& b);
      virtual bool is_constant(void) const{ return true; }
      virtual bool is_defined(void) const{ return true; }
-     virtual dim_vector dims (void) const { return UmfpackTraits<T>::dims(); }
+     virtual dim_vector dims (void) const { return oMat.dims(); }
      virtual void print(std::ostream& os, bool pr_as_read_syntax) {
      }
-     virtual bool isreal() const { return UmfpackTraits<T>::isreal; }
-     virtual bool iscomplex() const { return UmfpackTraits<T>::iscomplex; }
+     virtual bool isreal() const { return oMat.isreal; }
+     virtual bool iscomplex() const { return oMat.iscomplex; }
      static octave_value_list eval(const octave_value_list& args, int nargout);
      
 private:
@@ -168,6 +168,7 @@ private:
      double Info[UMFPACK_INFO];
      void *Symbolic = nullptr;
      void *Numeric = nullptr;
+     UmfpackMatrix<T> oMat;
 };
 
 class UmfpackObjectDouble: public UmfpackObject<double> {
@@ -201,7 +202,7 @@ UmfpackObject<T>::UmfpackObject()
 
 template <typename T>
 UmfpackObject<T>::UmfpackObject(const SparseMatrixType& A, const Options& opt)
-     : UmfpackTraits<T>(A),
+     : oMat(A),
        options(opt)
 {
 
@@ -211,26 +212,26 @@ UmfpackObject<T>::UmfpackObject(const SparseMatrixType& A, const Options& opt)
 
      std::memset(&Info[0], 0, sizeof(Info));
 
-     this->umfpack_defaults(Control);
+     oMat.umfpack_defaults(Control);
 
      Control[UMFPACK_PRL] = opt.verbose;
      Control[UMFPACK_IRSTEP] = opt.refine_max_iter;
 
-     auto status = this->umfpack_symbolic(&Symbolic, Control, Info);
+     auto status = oMat.umfpack_symbolic(&Symbolic, Control, Info);
 
      if (status != UMFPACK_OK) {
-	  this->umfpack_report_info(Control, Info) ;
-	  this->umfpack_report_status(Control, status);
+	  oMat.umfpack_report_info(Control, Info) ;
+	  oMat.umfpack_report_status(Control, status);
 	  cleanup();
 
 	  throw std::runtime_error("symbolic factorization with umfpack_dl_symbolic failed");
      }
 
-     status = this->umfpack_numeric(Symbolic, &Numeric, Control, Info);
+     status = oMat.umfpack_numeric(Symbolic, &Numeric, Control, Info);
 
      if (status != UMFPACK_OK) {
-	  this->umfpack_report_info(Control, Info);
-	  this->umfpack_report_status(Control, status);
+	  oMat.umfpack_report_info(Control, Info);
+	  oMat.umfpack_report_status(Control, status);
 
 	  cleanup();
 
@@ -249,13 +250,13 @@ typename UmfpackObject<T>::DenseMatrixType UmfpackObject<T>::solve(const DenseMa
 {
      DenseMatrixType x(b.rows(), b.columns());
 
-     const octave_idx_type n = this->columns();
+     const octave_idx_type n = oMat.columns();
 
      T* const xp = x.fortran_vec();
      const T* const bp = b.fortran_vec();
 
      for (octave_idx_type j = 0; j < b.columns(); ++j) {
-	  auto status = this->umfpack_solve(UMFPACK_A,
+	  auto status = oMat.umfpack_solve(UMFPACK_A,
 					    xp + j * n,
 					    bp + j * n,
 					    Numeric,
@@ -263,8 +264,8 @@ typename UmfpackObject<T>::DenseMatrixType UmfpackObject<T>::solve(const DenseMa
 					    Info);
 
 	  if (status != UMFPACK_OK) {
-	       this->umfpack_report_info(Control, Info);
-	       this->umfpack_report_status(Control, status);
+	       oMat.umfpack_report_info(Control, Info);
+	       oMat.umfpack_report_status(Control, status);
 
 	       throw std::runtime_error("solution with umfpack_dl_solve failed");
 	  }
@@ -279,11 +280,11 @@ template <typename T>
 void UmfpackObject<T>::cleanup()
 {
      if (Symbolic) {
-	  this->umfpack_free_symbolic(&Symbolic);
+	  oMat.umfpack_free_symbolic(&Symbolic);
      }
 
      if (Numeric) {
-	  this->umfpack_free_numeric(&Numeric);
+	  oMat.umfpack_free_numeric(&Numeric);
      }
 }
 
@@ -301,7 +302,7 @@ octave_value_list UmfpackObject<T>::eval(const octave_value_list& args, int narg
      octave_idx_type n = 0;
 
      if (args(iarg).is_matrix_type()) {
-	  A = (args(iarg++).*UmfpackTraits<T>::sparse_matrix_value)(false);
+	  A = (args(iarg++).*UmfpackMatrix<T>::sparse_matrix_value)(false);
 
 	  if (error_state) {
 	       return retval;
@@ -345,7 +346,7 @@ octave_value_list UmfpackObject<T>::eval(const octave_value_list& args, int narg
 	       return retval;
 	  }
 
-	  b = (args(iarg++).*UmfpackTraits<T>::matrix_value)(false);
+	  b = (args(iarg++).*UmfpackMatrix<T>::matrix_value)(false);
 
 	  if (error_state) {
 	       return retval;
