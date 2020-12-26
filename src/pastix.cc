@@ -95,6 +95,7 @@ public:
      explicit PastixObject(const SparseMatrixType& A, const Options& options);
      virtual ~PastixObject(void);
      virtual size_t byte_size() const;
+     virtual dim_vector dims() const;
      bool solve(DenseMatrixType& b, DenseMatrixType& x) const;
      static bool get_options(const octave_value& ovOptions, PastixObject::Options& options);
      virtual bool is_constant(void) const{ return true; }
@@ -395,6 +396,12 @@ size_t PastixObject<T>::byte_size() const
      cb += sizeof(*avals) * iparm[IPARM_NNZEROS];
 
      return cb;
+}
+
+template <typename T>
+dim_vector PastixObject<T>::dims() const
+{
+     return dim_vector(spm.n, spm.n);
 }
 
 template <typename T>

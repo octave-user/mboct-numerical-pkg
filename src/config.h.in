@@ -171,6 +171,30 @@
 /* Define to 1 if you have the `umfpack_dl_symbolic' function. */
 #undef HAVE_UMFPACK_DL_SYMBOLIC
 
+/* Define to 1 if you have the `umfpack_zl_defaults' function. */
+#undef HAVE_UMFPACK_ZL_DEFAULTS
+
+/* Define to 1 if you have the `umfpack_zl_free_numeric' function. */
+#undef HAVE_UMFPACK_ZL_FREE_NUMERIC
+
+/* Define to 1 if you have the `umfpack_zl_free_symbolic' function. */
+#undef HAVE_UMFPACK_ZL_FREE_SYMBOLIC
+
+/* Define to 1 if you have the `umfpack_zl_numeric' function. */
+#undef HAVE_UMFPACK_ZL_NUMERIC
+
+/* Define to 1 if you have the `umfpack_zl_report_info' function. */
+#undef HAVE_UMFPACK_ZL_REPORT_INFO
+
+/* Define to 1 if you have the `umfpack_zl_report_status' function. */
+#undef HAVE_UMFPACK_ZL_REPORT_STATUS
+
+/* Define to 1 if you have the `umfpack_zl_solve' function. */
+#undef HAVE_UMFPACK_ZL_SOLVE
+
+/* Define to 1 if you have the `umfpack_zl_symbolic' function. */
+#undef HAVE_UMFPACK_ZL_SYMBOLIC
+
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
