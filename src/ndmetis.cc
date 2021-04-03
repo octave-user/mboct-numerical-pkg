@@ -65,19 +65,19 @@ DEFUN_DLD (ndmetis, args, nargout,
     } else {
         for (octave_idx_type i = 0; i < eptr.numel(); ++i) {
             if (eptr(i) < 1 || eptr(i) > eind.numel()) {
-                error("invalid element index in eptr(%d)", i);
+                 error("invalid element index in eptr(%ld)", static_cast<long>(i));
                 return retval;
             }
 
             if (i > 0 && eptr(i) <= eptr(i - 1)) {
-                error("invalid element index in eptr(%d)", i);
+                 error("invalid element index in eptr(%ld)", static_cast<long>(i));
                 return retval;
             }
         }
 
         for (octave_idx_type i = 0; i < eind.numel(); ++i) {
             if (eind(i) < 1 || eind(i) > nn) {
-                error("invalid node index in eind(%d)", i);
+                 error("invalid node index in eind(%ld)", static_cast<long>(i));
                 return retval;
             }
         }

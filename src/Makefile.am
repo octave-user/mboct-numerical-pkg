@@ -54,6 +54,12 @@ if USE_DSBGVX
   oct_OBJ+=dsbgvx.@OBJEXT@
 endif
 
+if USE_STRUMPACK
+  CXXFLAGS+=$(STRUMPACK_INC)
+  LIBS+=$(STRUMPACK_LIBS)
+  oct_OBJ+=strumpack.@OBJEXT@
+endif
+
 oct_FILE:=__mboct_numerical__.oct
 
 bin_FILES:=$(oct_FILE)

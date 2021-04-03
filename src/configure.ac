@@ -34,6 +34,8 @@ AC_ARG_VAR([UMFPACK_LIBS],[Umfpack libraries])
 AC_ARG_VAR([METIS_INC],[Metis include flags])
 AC_ARG_VAR([METIS_LIBS],[Metis libraries])
 AC_ARG_VAR([LAPACK_LIBS],[Lapack libraries])
+AC_ARG_VAR([STRUMPACK_INC],[Strumpack include files])
+AC_ARG_VAR([STRUMPACK_LIBS],[Strumpack libraries])
 
 AC_CHECK_PROG([PKG_CONFIG], [pkg-config], [pkg-config])
 AC_CHECK_PROG([MKOCTFILE], [mkoctfile], [mkoctfile])
@@ -67,6 +69,7 @@ UMFPACK_LIBS="${UMFPACK_LIBS:--lumfpack}"
 METIS_LIBS="${METIS_LIBS:--lmetis}"
 LAPACK_LIBS="${LAPACK_LIBS:-`${MKOCTFILE} -p LAPACK_LIBS`}"
 LAPACK_LIBS="${LAPACK_LIBS:--llapack}"
+STRUMPACK_LIBS="${STRUMPACK_LIBS:--lstrumpack -lscotch -lmetis -lscotcherr -lscotcherrexit -lopenblas -lgomp -lz}"
 
 AC_LANG(C++)
 
@@ -307,6 +310,29 @@ AC_MSG_RESULT([$have_dseupd])
 AM_CONDITIONAL([USE_ARPACK],[test "${have_dsaupd}" = "yes" && test "${have_dseupd}" = "yes" && test "${ac_cv_header_octave_lo_arpack_proto_h}" = "yes"])
 
 LIBS="${TLIBS}"
+
+TCPPFLAGS="${CPPFLAGS}"
+TLIBS="${LIBS}"
+
+CPPFLAGS="${STRUMPACK_INC} ${CPPFLAGS}"
+LIBS="${STRUMPACK_LIBS} ${LIBS}"
+
+AC_LANG(C++)
+
+AC_CHECK_HEADER([StrumpackSparseSolver.hpp])
+
+AC_CHECK_FUNCS([STRUMPACK_set_csr_matrix \
+                STRUMPACK_factor \
+                STRUMPACK_solve],[have_strumpack=yes],[have_strumpack=no])
+
+AM_CONDITIONAL([USE_STRUMPACK],[test "${ac_cv_header_StrumpackSparseSolver_hpp}" = "yes" && test "${have_strumpack}" = "yes"])
+
+if test "${have_strumpack}" = "yes"; then
+   AC_DEFINE([USE_STRUMPACK],1,[Define if the Strumpack can be used])
+fi
+
+CPPFLAGS=${TCPPFLAGS}
+LIBS=${TLIBS}
 
 ## Simple symbol alternatives of different Octave versions.
 OF_OCTAVE_LIST_ALT_SYMS([

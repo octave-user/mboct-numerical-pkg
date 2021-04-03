@@ -202,8 +202,7 @@ UmfpackObject<T>::UmfpackObject()
 
 template <typename T>
 UmfpackObject<T>::UmfpackObject(const SparseMatrixType& A, const Options& opt)
-     : oMat(A),
-       options(opt)
+     :options(opt), oMat(A)
 {
 
      if (A.rows() != A.columns()) {

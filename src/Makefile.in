@@ -103,6 +103,9 @@ POST_UNINSTALL = :
 @USE_DSPEV_TRUE@am__append_16 = dspev.@OBJEXT@
 @USE_DSBGVX_TRUE@am__append_17 = $(LAPACK_LIBS)
 @USE_DSBGVX_TRUE@am__append_18 = dsbgvx.@OBJEXT@
+@USE_STRUMPACK_TRUE@am__append_19 = $(STRUMPACK_INC)
+@USE_STRUMPACK_TRUE@am__append_20 = $(STRUMPACK_LIBS)
+@USE_STRUMPACK_TRUE@am__append_21 = strumpack.@OBJEXT@
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/octave-forge.m4 \
@@ -194,7 +197,7 @@ CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@ $(am__append_1) $(am__append_4) $(am__append_9) \
-	$(am__append_12)
+	$(am__append_12) $(am__append_19)
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
@@ -214,7 +217,7 @@ LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@ $(am__append_2) $(am__append_5) $(am__append_7) \
 	$(am__append_10) $(am__append_13) $(am__append_15) \
-	$(am__append_17)
+	$(am__append_17) $(am__append_20)
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
 METIS_INC = @METIS_INC@
@@ -239,6 +242,8 @@ PKG_CONFIG = @PKG_CONFIG@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+STRUMPACK_INC = @STRUMPACK_INC@
+STRUMPACK_LIBS = @STRUMPACK_LIBS@
 UMFPACK_INC = @UMFPACK_INC@
 UMFPACK_LIBS = @UMFPACK_LIBS@
 VERSION = @VERSION@
@@ -288,7 +293,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 oct_OBJ := sp_sym_mtimes.@OBJEXT@ $(am__append_3) $(am__append_6) \
 	$(am__append_8) $(am__append_11) $(am__append_14) \
-	$(am__append_16) $(am__append_18)
+	$(am__append_16) $(am__append_18) $(am__append_21)
 oct_FILE := __mboct_numerical__.oct
 bin_FILES := $(oct_FILE)
 all: config.h

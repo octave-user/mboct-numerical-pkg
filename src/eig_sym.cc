@@ -58,18 +58,18 @@ DEFUN_DLD (eig_sym, args, nargout,
         return retval;
     }
 
-    const Cell ov_op = args(0).cell_value();
+    Cell ov_op = args(0).cell_value();
 
     if (error_state) {
         return retval;
     }
 
-    std::array<octave_function*, 3> op = {nullptr, nullptr, nullptr};
-
-    for (octave_idx_type i = 0; i < ov_op.numel(); ++i) {
-        op[i] = ov_op(i).function_value();
-
-        if (error_state) {
+    for (octave_idx_type i = 0; i < ov_op.numel(); ++i) {       
+      if (!(ov_op(i).is_function() ||
+	    ov_op(i).is_function_handle() ||
+	    ov_op(i).is_anonymous_function() ||
+	    ov_op(i).is_inline_function())) {
+	    error("argument OP must be a cell array of functions");
             return retval;
         }
     }
@@ -275,7 +275,7 @@ DEFUN_DLD (eig_sym, args, nargout,
                 iop = 1; // z = (A - sigma * B)^-1 * w = (A - sigma * B)^-1 * B * x
             }
             
-            octave_value_list f = OCTAVE__FEVAL(op[iop], octave_value(w), 1);
+            octave_value_list f = OCTAVE__FEVAL(ov_op(iop), octave_value(w), 1);
 
             if (error_state) {
                 return retval;
@@ -308,7 +308,7 @@ DEFUN_DLD (eig_sym, args, nargout,
 
                 // mode == 2 : f = B^-1 * z = B^-1 * A * x
                 // mode == 3 : f = (A - sigma * B)^-1 * z = (A - sigma * B)^-1 * B * x
-                f = OCTAVE__FEVAL(op[1], octave_value(z), 1);
+                f = OCTAVE__FEVAL(ov_op(1), octave_value(z), 1);
 
                 if (error_state) {
                     return retval;
