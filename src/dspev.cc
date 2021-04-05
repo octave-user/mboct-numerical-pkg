@@ -110,7 +110,6 @@ DEFUN_DLD (dspev, args, nargout,
     if (INFO != 0)
     {
             long lINFO = INFO;
-            const char* msg;
             
             if (INFO < 0)
             {

@@ -153,12 +153,12 @@ StrumpackObject<T>::StrumpackObject(const SparseMatrixType& A, const Options& op
      oSolver.options().set_maxit(std::max(1, options.refine_max_iter));
      oSolver.options().set_verbose(options.verbose);
      oSolver.options().set_compression(options.compression);
-     oSolver.options().set_compression_rel_tol(options.compression_rel_tol);
-     oSolver.options().set_compression_abs_tol(options.compression_abs_tol);
+     oSolver.options().set_compression_rel_tol(std::max(0., options.compression_rel_tol));
+     oSolver.options().set_compression_abs_tol(std::max(0., options.compression_abs_tol));
      oSolver.options().set_reordering_method(options.ordering);
-     oSolver.options().set_rel_tol(options.relative_tol);
-     oSolver.options().set_abs_tol(options.absolute_tol);
-     oSolver.options().set_gmres_restart(options.restart);
+     oSolver.options().set_rel_tol(std::max(0., options.relative_tol));
+     oSolver.options().set_abs_tol(std::max(0., options.absolute_tol));
+     oSolver.options().set_gmres_restart(std::max(1, options.restart));
 
      ReturnCode rc = oSolver.reorder();
 

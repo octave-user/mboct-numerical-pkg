@@ -60,6 +60,12 @@ if USE_STRUMPACK
   oct_OBJ+=strumpack.@OBJEXT@
 endif
 
+if USE_PARDISO
+  CXXFLAGS+=$(PARDISO_INC)
+  LIBS+=$(PARDISO_LIBS)
+  oct_OBJ+=pardiso.@OBJEXT@
+endif
+
 oct_FILE:=__mboct_numerical__.oct
 
 bin_FILES:=$(oct_FILE)

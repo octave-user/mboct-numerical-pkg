@@ -36,7 +36,8 @@ AC_ARG_VAR([METIS_LIBS],[Metis libraries])
 AC_ARG_VAR([LAPACK_LIBS],[Lapack libraries])
 AC_ARG_VAR([STRUMPACK_INC],[Strumpack include files])
 AC_ARG_VAR([STRUMPACK_LIBS],[Strumpack libraries])
-
+AC_ARG_VAR([PARDISO_INC],[Pardiso include files])
+AC_ARG_VAR([PARDISO_LIBS],[Pardiso libraries])
 AC_CHECK_PROG([PKG_CONFIG], [pkg-config], [pkg-config])
 AC_CHECK_PROG([MKOCTFILE], [mkoctfile], [mkoctfile])
 AC_CHECK_PROG([OCTAVE_CONFIG], [octave-config], [octave-config])
@@ -70,6 +71,7 @@ METIS_LIBS="${METIS_LIBS:--lmetis}"
 LAPACK_LIBS="${LAPACK_LIBS:-`${MKOCTFILE} -p LAPACK_LIBS`}"
 LAPACK_LIBS="${LAPACK_LIBS:--llapack}"
 STRUMPACK_LIBS="${STRUMPACK_LIBS:--lstrumpack -lscotch -lmetis -lscotcherr -lscotcherrexit -lopenblas -lgomp -lz}"
+PARDISO_LIBS="${PARDISO_LIBS:--lmkl_gf_lp64 -lmkl_core -lmkl_gnu_thread -lm -lgomp}"
 
 AC_LANG(C++)
 
@@ -167,6 +169,24 @@ AC_CHECK_FUNCS([METIS_SetDefaultOptions \
 		METIS_Free],[have_metis=yes],[have_metis=no])
 
 AM_CONDITIONAL([USE_METIS],[test "${ac_cv_header_metis_h}" = "yes" && test "${have_metis}" = "yes"])
+
+CPPFLAGS="${TCPPFLAGS}"
+LIBS="${TLIBS}"
+
+CPPFLAGS="${PARDISO_INC} ${CPPFLAGS}"
+LIBS="${PARDISO_LIBS} ${LIBS}"
+
+AC_CHECK_HEADERS([mkl/mkl_pardiso.h \
+                  omp.h])
+AC_CHECK_FUNCS([pardiso_64],[have_pardiso=yes],[have_pardiso=no])
+AC_CHECK_FUNCS([omp_set_num_threads \
+                omp_get_num_threads],[have_omp_threads=yes],[have_omp_threads=no])
+
+if test "${ac_cv_header_omp_h}" = "yes" -a "${have_omp_threads}" = "yes"; then
+   AC_DEFINE([USE_OMP_THREADS],1,[Define if omp_set_num_threads and omp_get_num_threads can be used])
+fi
+
+AM_CONDITIONAL([USE_PARDISO],[test "${ac_cv_header_mkl_mkl_pardiso_h}" = "yes" && test "${have_pardiso}" = "yes"])
 
 CPPFLAGS="${TCPPFLAGS}"
 LIBS="${TLIBS}"
