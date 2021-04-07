@@ -565,7 +565,7 @@
 %!               b += 1j * rand(n(j), 3);
 %!             endswitch
 %!             xref = A \ b;
-%!             opt.verbose = 2;
+%!             opt.verbose = 0;
 %!             opt.refine_max_iter = e;
 %!             switch (k)
 %!               case 1
@@ -630,7 +630,7 @@
 %!               b += 1j * rand(n(j), 3);
 %!             endswitch
 %!             xref = A \ b;
-%!             opt.verbose = 2;
+%!             opt.verbose = 0;
 %!             opt.refine_max_iter = e;
 %!             switch (k)
 %!               case 1
@@ -911,7 +911,7 @@
 %!                             b = rand(N, 10);
 %!                             opts.symmetric = sym;
 %!                             opts.ordering = o;                            
-%!                             opts.verbose = true;
+%!                             opts.verbose = 0;
 %!                             opts.refine_max_iter = ref * 100;
 %!                             opts.number_of_threads = t;
 %!                             opts.out_of_core_mode = ooc;
