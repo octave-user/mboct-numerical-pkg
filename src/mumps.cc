@@ -1,4 +1,4 @@
-// Copyright (C) 2019(-2020) Reinhard <octave-user@a1.net>
+// Copyright (C) 2019(-2021) Reinhard <octave-user@a1.net>
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -328,9 +328,11 @@ DEFUN_DLD (mumps, args, nargout,
     if (args(iarg).is_matrix_type()) {
         A = args(iarg++).sparse_matrix_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
         if (error_state) {
             return retval;
         }
+#endif
 
         if (A.rows() != A.columns()) {
             error_with_id("mumps:input", "pastix: matrix A must be square");
@@ -367,9 +369,11 @@ DEFUN_DLD (mumps, args, nargout,
 
         b = args(iarg++).matrix_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
         if (error_state) {
             return retval;
         }
+#endif
 
         if (b.rows() != n) {
             error_with_id("mumps:input", "mumps: number of rows of b does not match number of rows of A");
@@ -394,19 +398,23 @@ DEFUN_DLD (mumps, args, nargout,
 
         octave_scalar_map ov_options = args(iarg++).scalar_map_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
         if (error_state) {
             return retval;
         }
-
+#endif
+        
         auto iter_mat_type = ov_options.seek("matrix_type");
 
         if (iter_mat_type != ov_options.end()) {
             int mat_type = ov_options.contents(iter_mat_type).int_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
             if (error_state) {
                 return retval;
             }
-
+#endif
+            
             options.matrix_type = static_cast<MumpsObject::MatrixType>(mat_type);
         }
 
@@ -415,10 +423,11 @@ DEFUN_DLD (mumps, args, nargout,
         if (iter_verbose != ov_options.end()) {
             int verbose = ov_options.contents(iter_verbose).int_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
             if (error_state) {
                 return retval;
             }
-
+#endif
             options.verbose = static_cast<MumpsObject::VerboseType>(verbose);
         }
 
@@ -427,9 +436,11 @@ DEFUN_DLD (mumps, args, nargout,
         if (iter_refine_max_iter != ov_options.end()) {
             options.refine_max_iter = ov_options.contents(iter_refine_max_iter).int_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
             if (error_state) {
                 return retval;
             }
+#endif
         }
 
         auto iter_workspace_inc = ov_options.seek("workspace_inc");
@@ -437,9 +448,11 @@ DEFUN_DLD (mumps, args, nargout,
         if (iter_workspace_inc != ov_options.end()) {
             options.workspace_inc = ov_options.contents(iter_workspace_inc).int_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
             if (error_state) {
                 return retval;
             }
+#endif
         }
     }
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2018(-2020) Reinhard <octave-user@a1.net>
+// Copyright (C) 2018(-2021) Reinhard <octave-user@a1.net>
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -508,19 +508,23 @@ bool PastixObject<T>::get_options(const octave_value& ovOptions, PastixObject::O
 {
      const octave_scalar_map om_options = ovOptions.scalar_map_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
      if (error_state) {
 	  return false;
      }
-
+#endif
+     
      {
 	  const auto imat_type = om_options.seek("matrix_type");
 
 	  if (imat_type != om_options.end()) {
 	       options.matrix_type = static_cast<spm_mtxtype_t>(om_options.contents(imat_type).int_value());
 
+#if OCTAVE_MAJOR_VERSION < 6
 	       if (error_state) {
 		    return false;
 	       }
+#endif
 	  }
      }
      {
@@ -529,9 +533,11 @@ bool PastixObject<T>::get_options(const octave_value& ovOptions, PastixObject::O
 	  if (ifactor != om_options.end()) {
 	       options.factorization = static_cast<pastix_factotype_t>(om_options.contents(ifactor).int_value());
 
+#if OCTAVE_MAJOR_VERSION < 6
 	       if (error_state) {
 		    return false;
 	       }
+#endif
 	  }
      }
      {
@@ -540,9 +546,11 @@ bool PastixObject<T>::get_options(const octave_value& ovOptions, PastixObject::O
 	  if (inum_threads != om_options.end()) {
 	       options.number_of_threads = om_options.contents(inum_threads).int_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
 	       if (error_state) {
 		    return false;
 	       }
+#endif
 	  }
      }
      {
@@ -551,9 +559,11 @@ bool PastixObject<T>::get_options(const octave_value& ovOptions, PastixObject::O
 	  if (iverbose != om_options.end()) {
 	       options.verbose = static_cast<pastix_verbose_t>(om_options.contents(iverbose).int_value());
 
+#if OCTAVE_MAJOR_VERSION < 6
 	       if (error_state) {
 		    return false;
 	       }
+#endif
 	  }
      }
      {
@@ -564,9 +574,11 @@ bool PastixObject<T>::get_options(const octave_value& ovOptions, PastixObject::O
 
 	       options.refine_max_iter = ov_ref.int_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
 	       if (error_state) {
 		    return false;
 	       }
+#endif
 	  }
      }
 
@@ -575,9 +587,11 @@ bool PastixObject<T>::get_options(const octave_value& ovOptions, PastixObject::O
 	  if (icheck != om_options.end()) {
 	       options.check_solution = om_options.contents(icheck).bool_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
 	       if (error_state) {
 		    return false;
 	       }
+#endif
 	  }
      }
 
@@ -587,9 +601,11 @@ bool PastixObject<T>::get_options(const octave_value& ovOptions, PastixObject::O
 	  if (icompress_when != om_options.end()) {
 	       options.compress_when = static_cast<pastix_compress_when_t>(om_options.contents(icompress_when).int_value());
 
+#if OCTAVE_MAJOR_VERSION < 6
 	       if (error_state) {
 		    return false;
 	       }
+#endif
 	  }
      }
      {
@@ -598,9 +614,11 @@ bool PastixObject<T>::get_options(const octave_value& ovOptions, PastixObject::O
 	  if (icompress_method != om_options.end()) {
 	       options.compress_method = static_cast<pastix_compress_method_t>(om_options.contents(icompress_method).int_value());
 
+#if OCTAVE_MAJOR_VERSION < 6
 	       if (error_state) {
 		    return false;
 	       }
+#endif
 	  }
      }
      {
@@ -609,9 +627,11 @@ bool PastixObject<T>::get_options(const octave_value& ovOptions, PastixObject::O
 	  if (icompress_ortho != om_options.end()) {
 	       options.compress_ortho = static_cast<pastix_compress_ortho_t>(om_options.contents(icompress_ortho).int_value());
 
+#if OCTAVE_MAJOR_VERSION < 6
 	       if (error_state) {
 		    return false;
 	       }
+#endif
 	  }
      }
 
@@ -621,9 +641,11 @@ bool PastixObject<T>::get_options(const octave_value& ovOptions, PastixObject::O
 	  if (icompress_min_width != om_options.end()) {
 	       options.compress_min_width = om_options.contents(icompress_min_width).int_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
 	       if (error_state) {
 		    return false;
 	       }
+#endif
 	  }
      }
      {
@@ -632,9 +654,11 @@ bool PastixObject<T>::get_options(const octave_value& ovOptions, PastixObject::O
 	  if (icompress_min_height != om_options.end()) {
 	       options.compress_min_height = om_options.contents(icompress_min_height).int_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
 	       if (error_state) {
 		    return false;
 	       }
+#endif
 	  }
      }
      {
@@ -643,9 +667,11 @@ bool PastixObject<T>::get_options(const octave_value& ovOptions, PastixObject::O
 	  if (icompress_tolerance != om_options.end()) {
 	       options.compress_tolerance = om_options.contents(icompress_tolerance).scalar_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
 	       if (error_state) {
 		    return false;
 	       }
+#endif
 	  }
      }
      {
@@ -654,9 +680,11 @@ bool PastixObject<T>::get_options(const octave_value& ovOptions, PastixObject::O
 	  if (icompress_min_ratio != om_options.end()) {
 	       options.compress_min_ratio = om_options.contents(icompress_min_ratio).scalar_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
 	       if (error_state) {
 		    return false;
 	       }
+#endif
 	  }
      }
 
@@ -677,9 +705,11 @@ octave_value_list PastixObject<T>::eval(const octave_value_list& args, int nargo
      if (args(iarg).is_matrix_type()) {
 	  A = (args(iarg++).*PastixTraits<T>::sparse_matrix_value)(false);
 
+#if OCTAVE_MAJOR_VERSION < 6
 	  if (error_state) {
 	       return retval;
 	  }
+#endif
 
 	  if (A.rows() != A.columns()) {
 	       error_with_id("pastix:input", "pastix: matrix A must be square");
@@ -712,9 +742,11 @@ octave_value_list PastixObject<T>::eval(const octave_value_list& args, int nargo
 	  
 	  b = (args(iarg++).*PastixTraits<T>::matrix_value)(false);
 
+#if OCTAVE_MAJOR_VERSION < 6
 	  if (error_state) {
 	       return retval;
 	  }
+#endif
 
 	  bHaveRightHandSide = true;
      }
@@ -735,10 +767,12 @@ octave_value_list PastixObject<T>::eval(const octave_value_list& args, int nargo
 
 	  bOwnPastix = true;
 
+#if OCTAVE_MAJOR_VERSION < 6
 	  if (error_state) {
 	       delete pPastix;
 	       return retval;
 	  }
+#endif
      }
 
      if (bHaveRightHandSide) {

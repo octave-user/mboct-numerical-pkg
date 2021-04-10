@@ -1,4 +1,4 @@
-// Copyright (C) 2019(-2020) Reinhard <octave-user@a1.net>
+// Copyright (C) 2019(-2021) Reinhard <octave-user@a1.net>
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,9 +60,11 @@ DEFUN_DLD (eig_sym, args, nargout,
 
     Cell ov_op = args(0).cell_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
     if (error_state) {
         return retval;
     }
+#endif
 
     for (octave_idx_type i = 0; i < ov_op.numel(); ++i) {       
       if (!(ov_op(i).is_function() ||
@@ -76,16 +78,20 @@ DEFUN_DLD (eig_sym, args, nargout,
 
     const F77_INT n = args(1).int_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
     if (error_state) {
         return retval;
     }
+#endif
 
     const F77_INT nev = args(2).int_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
     if (error_state) {
         return retval;
     }
-
+#endif
+    
     std::string type;
     double sigma = 0.;
     F77_INT mode = -1;
@@ -93,10 +99,12 @@ DEFUN_DLD (eig_sym, args, nargout,
     if (args(3).is_string() || args(3).is_sq_string()) {
         type = args(3).string_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
         if (error_state) {
             return retval;
         }
-
+#endif
+        
         mode = 2;
 
         if (ov_op.numel() != 3) {
@@ -106,10 +114,12 @@ DEFUN_DLD (eig_sym, args, nargout,
     } else if (args(3).is_real_scalar()) {
         sigma = args(3).scalar_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
         if (error_state) {
             return retval;
         }
-        
+#endif
+
         type = "LM";
         mode = 3;
 
@@ -128,26 +138,32 @@ DEFUN_DLD (eig_sym, args, nargout,
 
     const octave_scalar_map opt = args(4).scalar_map_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
     if (error_state) {
         return retval;
     }
-
+#endif
+    
     const auto itp = opt.seek("p");
 
     const F77_INT ncv = itp == opt.end() ? 2 * nev : opt.contents(itp).int_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
     if (error_state) {
         return retval;
     }
-
+#endif
+    
     const auto itmaxit = opt.seek("maxit");
 
     const octave_idx_type maxit = itmaxit == opt.end() ? 300 : opt.contents(itmaxit).int_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
     if (error_state) {
         return retval;
     }
-
+#endif
+    
     const auto ittol = opt.seek("tol");
 
     const F77_DBLE tol = ittol == opt.end() ? 0. : opt.contents(ittol).scalar_value();
@@ -160,10 +176,12 @@ DEFUN_DLD (eig_sym, args, nargout,
     if (itv0 != opt.end()) {
         resid = opt.contents(itv0).column_vector_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
         if (error_state) {
             return retval;
         }
-
+#endif
+        
         if (resid.rows() != n) {
             error("eig_sym: invalid number of rows for opt.v0");
             return retval;
@@ -277,10 +295,12 @@ DEFUN_DLD (eig_sym, args, nargout,
             
             octave_value_list f = OCTAVE__FEVAL(ov_op(iop), octave_value(w), 1);
 
+#if OCTAVE_MAJOR_VERSION < 6
             if (error_state) {
                 return retval;
             }
-
+#endif
+            
             if (f.length() != 1) {
                 error("eig_sym: invalid number of output arguments");
                 return retval;
@@ -291,10 +311,12 @@ DEFUN_DLD (eig_sym, args, nargout,
             if ((mode == 2 && (ido == 1 || ido == -1)) || (mode == 3 && ido == -1)) {
                 const ColumnVector z = f(0).column_vector_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
                 if (error_state) {
                     return retval;
                 }
-
+#endif
+                
                 if (z.rows() != n) {
                     error("eig_sym: user supplied function returned invalid number of rows");
                     return retval;
@@ -310,10 +332,12 @@ DEFUN_DLD (eig_sym, args, nargout,
                 // mode == 3 : f = (A - sigma * B)^-1 * z = (A - sigma * B)^-1 * B * x
                 f = OCTAVE__FEVAL(ov_op(1), octave_value(z), 1);
 
+#if OCTAVE_MAJOR_VERSION < 6
                 if (error_state) {
                     return retval;
                 }
-
+#endif
+                
                 if (f.length() != 1) {
                     error("eig_sym: invalid number of output arguments");
                     return retval;
@@ -322,10 +346,12 @@ DEFUN_DLD (eig_sym, args, nargout,
 
             y = f(0).column_vector_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
             if (error_state) {
                 return retval;
             }
-
+#endif
+            
             if (y.rows() != n) {
                 error("eig_sym: user supplied function returned an invalid number of rows");
                 return retval;

@@ -35,4 +35,6 @@ jobs:
         run: make -C $GITHUB_WORKSPACE install_local
         
       - name: Run all tests
-        run: make -C $GITHUB_WORKSPACE check_installed
+        run: |
+             make -C $GITHUB_WORKSPACE check_installed
+             cat ${GITHUB_WORKSPACE}/fntests.log

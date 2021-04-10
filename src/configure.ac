@@ -1,4 +1,4 @@
-dnl  Copyright (C) 2018(-2020) Reinhard <octave-user@a1.net>
+dnl  Copyright (C) 2018(-2021) Reinhard <octave-user@a1.net>
 
 dnl This program is free software; you can redistribute it and/or modify
 dnl it under the terms of the GNU General Public License as published by

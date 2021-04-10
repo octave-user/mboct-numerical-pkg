@@ -1,4 +1,4 @@
-// Copyright (C) 2019(-2020) Reinhard <octave-user@a1.net>
+// Copyright (C) 2019(-2021) Reinhard <octave-user@a1.net>
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -303,10 +303,12 @@ octave_value_list UmfpackObject<T>::eval(const octave_value_list& args, int narg
      if (args(iarg).is_matrix_type()) {
 	  A = (args(iarg++).*UmfpackMatrix<T>::sparse_matrix_value)(false);
 
+#if OCTAVE_MAJOR_VERSION < 6
 	  if (error_state) {
 	       return retval;
 	  }
-
+#endif
+          
 	  if (A.rows() != A.columns()) {
 	       error_with_id("umfpack:input", "pastix: matrix A must be square");
 	       return retval;
@@ -347,10 +349,12 @@ octave_value_list UmfpackObject<T>::eval(const octave_value_list& args, int narg
 
 	  b = (args(iarg++).*UmfpackMatrix<T>::matrix_value)(false);
 
+#if OCTAVE_MAJOR_VERSION < 6
 	  if (error_state) {
 	       return retval;
 	  }
-
+#endif
+          
 	  if (b.rows() != n) {
 	       error_with_id("umfpack:input", "umfpack: number of rows of b does not match number of rows of A");
 	       return retval;
@@ -374,19 +378,23 @@ octave_value_list UmfpackObject<T>::eval(const octave_value_list& args, int narg
 
 	  octave_scalar_map ov_options = args(iarg++).scalar_map_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
 	  if (error_state) {
 	       return retval;
 	  }
-
+#endif
+          
 	  auto iter_verbose = ov_options.seek("verbose");
 
 	  if (iter_verbose != ov_options.end()) {
 	       int verbose = ov_options.contents(iter_verbose).int_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
 	       if (error_state) {
 		    return retval;
 	       }
-
+#endif
+               
 	       options.verbose = verbose;
 	  }
 
@@ -395,9 +403,11 @@ octave_value_list UmfpackObject<T>::eval(const octave_value_list& args, int narg
 	  if (iter_refine_max_iter != ov_options.end()) {
 	       options.refine_max_iter = ov_options.contents(iter_refine_max_iter).int_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
 	       if (error_state) {
 		    return retval;
 	       }
+#endif
 	  }
      }
 

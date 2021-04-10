@@ -1,4 +1,4 @@
-// Copyright (C) 2018(-2020) Reinhard <octave-user@a1.net>
+// Copyright (C) 2018(-2021) Reinhard <octave-user@a1.net>
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,22 +39,28 @@ DEFUN_DLD (ndmetis, args, nargout,
 
     idx_t nn = args(0).int_value();
 
+#if OCTAVE_MAJOR_VERSION < 6
     if (error_state) {
         return retval;
     }
+#endif
     
     intNDArray<idx_t> eptr(args(1).int32_array_value());
 
+#if OCTAVE_MAJOR_VERSION < 6
     if (error_state) {
         return retval;
     }
+#endif
     
     intNDArray<idx_t> eind(args(2).int32_array_value());
 
+#if OCTAVE_MAJOR_VERSION < 6
     if (error_state) {
         return retval;
     }
-
+#endif
+    
     intNDArray<idx_t> perm(dim_vector(nn, 1)), iperm(dim_vector(nn, 1));
 
     if (eptr.numel() == 0 || eind.numel() == 0) {

@@ -9,11 +9,18 @@
   - Compute selected eigenvalues, and optionally, eigenvectors of a real generalized symmetric-definite banded eigenproblem using LAPACK (http://www.netlib.org/lapack/).
   - Computes all eigenvalues and, optionally, eigenvectors of a real symmetric matrix in packed storage using LAPACK.
   
-Copyright<sup>&copy;</sup> 2019-2020
+Copyright<sup>&copy;</sup> 2019-2021
 
 [Reinhard](mailto:octave-user@a1.net)
 
 # Installation
+  The following code is an example how mboct-numerical-pkg can be installed on an Ubuntu system:
+  
+  `sudo apt-get install octave liboctave-dev libsuitesparse-dev libarpack2-dev libmumps-seq-dev libmetis-dev libmkl-full-dev`
+
+  `git clone -b master https://github.com/octave-user/mboct-numerical-pkg.git`
+       
+  `make -C mboct-numerical-pkg install_local`
 
 ## PaStiX installation
   - Follow the instructions on (https://gitlab.inria.fr/solverstack/pastix) to install PaStiX (optional but recommended).
