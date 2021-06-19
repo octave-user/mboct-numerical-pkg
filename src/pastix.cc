@@ -88,7 +88,8 @@ public:
 	  double compress_tolerance = 0.01;
 	  double compress_min_ratio = 1.;
 	  int refine_max_iter = 3;
-	  bool check_solution = false;
+          double epsilon_refinement = -1.;
+          bool check_solution = false;
      };
 
      PastixObject();
@@ -109,7 +110,7 @@ private:
 
      template <typename U>
      static U* pastix_malloc(std::size_t size) {
-	  return reinterpret_cast<U*>(malloc(size * sizeof(U)));
+          return reinterpret_cast<U*>(malloc(size * sizeof(U)));
      }
 
      Options options;
@@ -131,7 +132,7 @@ public:
 
      template <typename... Args>
      PastixObjectDouble(const Args&... args)
-	  :PastixObject<double>(args...) {
+          :PastixObject<double>(args...) {
      }
      
 private:
@@ -144,7 +145,7 @@ public:
      
      template <typename... Args>
      PastixObjectComplex(const Args&... args)
-	  :PastixObject<std::complex<double> >(args...) {
+          :PastixObject<std::complex<double> >(args...) {
      }
      
 private:
@@ -172,56 +173,56 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
      const T* const data = A.data();
 
      enum MatrixPattern { MAT_SYM_UPPER,
-			  MAT_SYM_LOWER,
-			  MAT_FULL,
-			  MAT_DIAG } eMatPattern = MAT_DIAG;
+                          MAT_SYM_LOWER,
+                          MAT_FULL,
+                          MAT_DIAG } eMatPattern = MAT_DIAG;
 
      switch (options.matrix_type) {
      case SpmSymmetric:
-	  for (octave_idx_type j = 0; j < ncols; ++j) {
-	       for (octave_idx_type i = cidx[j]; i < cidx[j + 1]; ++i) {
-		    switch (eMatPattern) {
-		    case MAT_DIAG:
-			 if (ridx[i] > j) {
-			      eMatPattern = MAT_SYM_LOWER;
-			 } else if (ridx[i] < j) {
-			      eMatPattern = MAT_SYM_UPPER;
-			 }
-			 break;
-		    case MAT_SYM_UPPER:
-			 if (ridx[i] > j) {
-			      eMatPattern = MAT_FULL;
-			      goto exit_mat_pattern;
-			 }
-			 break;
-		    case MAT_SYM_LOWER:
-			 if (ridx[i] < j) {
-			      eMatPattern = MAT_FULL;
-			      goto exit_mat_pattern;
-			 }
-			 break;
-		    default:
-			 ;
-		    }
-	       }
-	  }
+          for (octave_idx_type j = 0; j < ncols; ++j) {
+               for (octave_idx_type i = cidx[j]; i < cidx[j + 1]; ++i) {
+                    switch (eMatPattern) {
+                    case MAT_DIAG:
+                         if (ridx[i] > j) {
+                              eMatPattern = MAT_SYM_LOWER;
+                         } else if (ridx[i] < j) {
+                              eMatPattern = MAT_SYM_UPPER;
+                         }
+                         break;
+                    case MAT_SYM_UPPER:
+                         if (ridx[i] > j) {
+                              eMatPattern = MAT_FULL;
+                              goto exit_mat_pattern;
+                         }
+                         break;
+                    case MAT_SYM_LOWER:
+                         if (ridx[i] < j) {
+                              eMatPattern = MAT_FULL;
+                              goto exit_mat_pattern;
+                         }
+                         break;
+                    default:
+                         ;
+                    }
+               }
+          }
 
      exit_mat_pattern:
-	  ;
+          ;
 
-	  switch (eMatPattern) {
-	  case MAT_DIAG:
-	  case MAT_FULL: // The matrix has been declared as symmetric but the full matrix has been provided.
-	       // According to Pastix manual only the lower triangular part of a symmetric matrix will be used
-	       eMatPattern = MAT_SYM_LOWER;
-	       break;
-	  default:
-	       ;
-	  }
-	  break;
+          switch (eMatPattern) {
+          case MAT_DIAG:
+          case MAT_FULL: // The matrix has been declared as symmetric but the full matrix has been provided.
+               // According to Pastix manual only the lower triangular part of a symmetric matrix will be used
+               eMatPattern = MAT_SYM_LOWER;
+               break;
+          default:
+               ;
+          }
+          break;
 
      default:
-	  eMatPattern = MAT_FULL;
+          eMatPattern = MAT_FULL;
      }
 
      octave_idx_type nnz = 0;
@@ -229,30 +230,30 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
      switch (eMatPattern) {
      case MAT_SYM_UPPER:
      case MAT_SYM_LOWER:
-	  for (octave_idx_type j = 0; j < ncols; ++j) {
-	       for (octave_idx_type i = cidx[j]; i < cidx[j + 1]; ++i) {
-		    bool bInsert;
+          for (octave_idx_type j = 0; j < ncols; ++j) {
+               for (octave_idx_type i = cidx[j]; i < cidx[j + 1]; ++i) {
+                    bool bInsert;
 
-		    switch (eMatPattern) {
-		    case MAT_SYM_UPPER:
-			 bInsert = ridx[i] <= j;
-			 break;
-		    case MAT_SYM_LOWER:
-			 bInsert = ridx[i] >= j;
-			 break;
-		    default:
-			 bInsert = false;
-		    }
+                    switch (eMatPattern) {
+                    case MAT_SYM_UPPER:
+                         bInsert = ridx[i] <= j;
+                         break;
+                    case MAT_SYM_LOWER:
+                         bInsert = ridx[i] >= j;
+                         break;
+                    default:
+                         bInsert = false;
+                    }
 
-		    if (bInsert) {
-			 ++nnz;
-		    }
-	       }
-	  }
-	  break;
+                    if (bInsert) {
+                         ++nnz;
+                    }
+               }
+          }
+          break;
 
      default:
-	  nnz = A.nnz();
+          nnz = A.nnz();
      }
 
      rows = pastix_malloc<pastix_int_t>(nnz);
@@ -260,55 +261,55 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
      avals = pastix_malloc<T>(nnz);
 
      if (!rows || !colptr || !avals) {
-	  cleanup();
-	  throw std::bad_alloc();
+          cleanup();
+          throw std::bad_alloc();
      }
 
      switch (eMatPattern) {
      case MAT_SYM_UPPER:
      case MAT_SYM_LOWER: {
-	  octave_idx_type idx = 0;
+          octave_idx_type idx = 0;
 
-	  for (octave_idx_type j = 0; j < ncols; ++j) {
-	       colptr[j] = idx + 1; // Use Fortran numbering
+          for (octave_idx_type j = 0; j < ncols; ++j) {
+               colptr[j] = idx + 1; // Use Fortran numbering
 
-	       for (octave_idx_type i = cidx[j]; i < cidx[j + 1]; ++i) {
-		    bool bInsert;
+               for (octave_idx_type i = cidx[j]; i < cidx[j + 1]; ++i) {
+                    bool bInsert;
 
-		    switch (eMatPattern) {
-		    case MAT_SYM_UPPER:
-			 bInsert = ridx[i] <= j;
-			 break;
-		    case MAT_SYM_LOWER:
-			 bInsert = ridx[i] >= j;
-			 break;
-		    default:
-			 bInsert = false;
-		    }
+                    switch (eMatPattern) {
+                    case MAT_SYM_UPPER:
+                         bInsert = ridx[i] <= j;
+                         break;
+                    case MAT_SYM_LOWER:
+                         bInsert = ridx[i] >= j;
+                         break;
+                    default:
+                         bInsert = false;
+                    }
 
-		    if (bInsert) {
-			 rows[idx] = ridx[i] + 1; // Use Fortran numbering
-			 avals[idx] = data[i];
-			 ++idx;
-		    }
-	       }
-	  }
+                    if (bInsert) {
+                         rows[idx] = ridx[i] + 1; // Use Fortran numbering
+                         avals[idx] = data[i];
+                         ++idx;
+                    }
+               }
+          }
 
-	  colptr[ncols] = idx + 1; // Use Fortran numbering
+          colptr[ncols] = idx + 1; // Use Fortran numbering
      } break;
      default:
-	  // Copy the full matrix because it has been declared as unsymmetrical
-	  for (octave_idx_type i = 0; i < nnz; ++i) {
-	       rows[i] = ridx[i] + 1;
-	  }
+          // Copy the full matrix because it has been declared as unsymmetrical
+          for (octave_idx_type i = 0; i < nnz; ++i) {
+               rows[i] = ridx[i] + 1;
+          }
 
-	  for (octave_idx_type i = 0; i < nnz; ++i) {
-	       avals[i] = data[i];
-	  }
+          for (octave_idx_type i = 0; i < nnz; ++i) {
+               avals[i] = data[i];
+          }
 
-	  for (octave_idx_type i = 0; i < ncols + 1; ++i) {
-	       colptr[i] = cidx[i] + 1;
-	  }
+          for (octave_idx_type i = 0; i < ncols + 1; ++i) {
+               colptr[i] = cidx[i] + 1;
+          }
      }
 
      spmInit(&spm);
@@ -317,11 +318,11 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
      case MAT_SYM_LOWER:
      case MAT_SYM_UPPER:
      case MAT_DIAG:
-	  spm.mtxtype = SpmSymmetric;
-	  break;
+          spm.mtxtype = SpmSymmetric;
+          break;
 
      default:
-	  spm.mtxtype = SpmGeneral;
+          spm.mtxtype = SpmGeneral;
      }
 
      spm.flttype = PastixTraits<T>::flttype;
@@ -340,8 +341,8 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
      int rc = spmCheckAndCorrect(&spm, &spm2);
 
      if (0 != rc) {
-	  spmExit(&spm);
-	  spm = spm2;
+          spmExit(&spm);
+          spm = spm2;
      }
 
      pastixInitParam(iparm, dparm);
@@ -357,14 +358,15 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
      iparm[IPARM_COMPRESS_MIN_HEIGHT] = options.compress_min_height;
      dparm[DPARM_COMPRESS_TOLERANCE] = options.compress_tolerance;
      dparm[DPARM_COMPRESS_MIN_RATIO] = options.compress_min_ratio;
-
+     dparm[DPARM_EPSILON_REFINEMENT] = options.epsilon_refinement;
+     
      pastixInit(&pastix_data, MPI_COMM_WORLD, iparm, dparm);
 
      rc = pastix_task_analyze(pastix_data, &spm);
 
      if (PASTIX_SUCCESS != rc) {
-	  error_with_id("pastix:solve", "pastix_task_analyze failed with status %d", rc);
-	  return;
+          error_with_id("pastix:solve", "pastix_task_analyze failed with status %d", rc);
+          return;
      }
 
      normA = spmNorm(SpmFrobeniusNorm, &spm);
@@ -374,8 +376,8 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
      rc = pastix_task_numfact(pastix_data, &spm);
 
      if (PASTIX_SUCCESS != rc) {
-	  error_with_id("pastix:solve", "pastix_task_numfact failed with status %d", rc);
-	  return;
+          error_with_id("pastix:solve", "pastix_task_numfact failed with status %d", rc);
+          return;
      }
 }
 
@@ -387,7 +389,7 @@ size_t PastixObject<T>::byte_size() const
      pastix_int_t nnz = 0;
 
      if (colptr) {
-	  nnz = colptr[ncols] - colptr[0];
+          nnz = colptr[ncols] - colptr[0];
      }
 
      cb += sizeof(*rows) * nnz;
@@ -414,7 +416,7 @@ template <typename T>
 void PastixObject<T>::cleanup()
 {
      if (pastix_data) {
-	  pastixFinalize(&pastix_data);
+          pastixFinalize(&pastix_data);
      }
 
      spmExit(&spm); // will free avals, colptr and rows
@@ -423,8 +425,8 @@ void PastixObject<T>::cleanup()
 template <typename T>
 bool PastixObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x) const {
      if (b.rows() != ncols) {
-	  error_with_id("pastix:solve", "pastix: rows(b)=%ld must be equal to rows(A)=%ld", long(b.rows()), long(ncols));
-	  return false;
+          error_with_id("pastix:solve", "pastix: rows(b)=%ld must be equal to rows(A)=%ld", long(b.rows()), long(ncols));
+          return false;
      }
 
      spmScalVector(spm.flttype, 1. / normA, b.numel(), b.fortran_vec(), 1);
@@ -432,72 +434,72 @@ bool PastixObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x) const {
      x = b;
 
      int rc = pastix_task_solve(pastix_data,
-				x.columns(),
-				x.fortran_vec(),
-				x.rows());
+                                x.columns(),
+                                x.fortran_vec(),
+                                x.rows());
 
      if (PASTIX_SUCCESS != rc) {
-	  error_with_id("pastix:solve", "pastix_task_solve failed with status %d", rc);
-	  return false;
+          error_with_id("pastix:solve", "pastix_task_solve failed with status %d", rc);
+          return false;
      }
 
      OCTAVE_QUIT;
 
      if (options.refine_max_iter) {
-	  for (octave_idx_type j = 0; j < x.columns(); ++j) {
-	       bool bZeroVec = true;
+          for (octave_idx_type j = 0; j < x.columns(); ++j) {
+               bool bZeroVec = true;
 
-	       for (octave_idx_type k = 0; k < x.rows(); ++k) {
-		    if (x(k, j) != 0.) {
-			 bZeroVec = false;
-			 break;
-		    }
-	       }
+               for (octave_idx_type k = 0; k < x.rows(); ++k) {
+                    if (x(k, j) != 0.) {
+                         bZeroVec = false;
+                         break;
+                    }
+               }
 
-	       if (!bZeroVec) {
-		    // Avoid division zero by zero in PaStiX
-		    rc = pastix_task_refine(pastix_data,
-					    spm.n,
-					    1,
-					    b.fortran_vec() + j * b.rows(),
-					    b.rows(),
-					    x.fortran_vec() + j * x.rows(),
-					    x.rows());
+               if (!bZeroVec) {
+                    // Avoid division zero by zero in PaStiX
+                    rc = pastix_task_refine(pastix_data,
+                                            spm.n,
+                                            1,
+                                            b.fortran_vec() + j * b.rows(),
+                                            b.rows(),
+                                            x.fortran_vec() + j * x.rows(),
+                                            x.rows());
 
-		    if (PASTIX_SUCCESS != rc) {
-			 error_with_id("pastix:solve", "pastix_task_refine failed with status %d", rc);
-			 return false;
-		    }
-	       }
+                    if (PASTIX_SUCCESS != rc) {
+                         error_with_id("pastix:solve", "pastix_task_refine failed with status %d", rc);
+                         return false;
+                    }
+               }
 
-	       OCTAVE_QUIT;
-	  }
+               OCTAVE_QUIT;
+          }
 
-	  if (options.check_solution) {
-	       rc = spmCheckAxb(dparm[DPARM_EPSILON_REFINEMENT],
-				b.columns(),
-				&spm,
-				nullptr,
-				b.rows(),
-				b.fortran_vec(),
-				b.rows(),
-				x.fortran_vec(),
-				x.rows());
+          if (options.check_solution) {
+               rc = spmCheckAxb(dparm[DPARM_EPSILON_REFINEMENT],
+                                b.columns(),
+                                &spm,
+                                nullptr,
+                                b.rows(),
+                                b.fortran_vec(),
+                                b.rows(),
+                                x.fortran_vec(),
+                                x.rows());
 
-	       if (SPM_SUCCESS != rc) {
-		    error_with_id("pastix:solve", "spmCheckAxb failed with status %d", rc);
-		    return false;
-	       }
-	  }
+               if (SPM_SUCCESS != rc) {
+                    error_with_id("pastix:solve", "spmCheckAxb failed with status %d", rc);
+                    return false;
+               }
+          }
      }
 
      for (octave_idx_type j = 0; j < x.columns(); ++j) {
-	  for (octave_idx_type i = 0; i < x.rows(); ++i) {
-	       if (!PastixTraits<T>::isfinite(x(i, j))) {
-		    error_with_id("pastix:solve", "solution of pastix is not finite");
-		    return false;
-	       }
-	  }
+          for (octave_idx_type i = 0; i < x.rows(); ++i) {
+               if (!PastixTraits<T>::isfinite(x(i, j))) {
+                    error_with_id("pastix:solve", "solution of pastix is not finite");
+                    return false;
+               }
+          }
      }
 
      return true;
@@ -510,175 +512,189 @@ bool PastixObject<T>::get_options(const octave_value& ovOptions, PastixObject::O
 
 #if OCTAVE_MAJOR_VERSION < 6
      if (error_state) {
-	  return false;
+          return false;
      }
 #endif
      
      {
-	  const auto imat_type = om_options.seek("matrix_type");
+          const auto imat_type = om_options.seek("matrix_type");
 
-	  if (imat_type != om_options.end()) {
-	       options.matrix_type = static_cast<spm_mtxtype_t>(om_options.contents(imat_type).int_value());
+          if (imat_type != om_options.end()) {
+               options.matrix_type = static_cast<spm_mtxtype_t>(om_options.contents(imat_type).int_value());
 
 #if OCTAVE_MAJOR_VERSION < 6
-	       if (error_state) {
-		    return false;
-	       }
+               if (error_state) {
+                    return false;
+               }
 #endif
-	  }
+          }
      }
      {
-	  const auto ifactor = om_options.seek("factorization");
+          const auto ifactor = om_options.seek("factorization");
 
-	  if (ifactor != om_options.end()) {
-	       options.factorization = static_cast<pastix_factotype_t>(om_options.contents(ifactor).int_value());
+          if (ifactor != om_options.end()) {
+               options.factorization = static_cast<pastix_factotype_t>(om_options.contents(ifactor).int_value());
 
 #if OCTAVE_MAJOR_VERSION < 6
-	       if (error_state) {
-		    return false;
-	       }
+               if (error_state) {
+                    return false;
+               }
 #endif
-	  }
+          }
      }
      {
-	  const auto inum_threads = om_options.seek("number_of_threads");
+          const auto inum_threads = om_options.seek("number_of_threads");
 
-	  if (inum_threads != om_options.end()) {
-	       options.number_of_threads = om_options.contents(inum_threads).int_value();
+          if (inum_threads != om_options.end()) {
+               options.number_of_threads = om_options.contents(inum_threads).int_value();
 
 #if OCTAVE_MAJOR_VERSION < 6
-	       if (error_state) {
-		    return false;
-	       }
+               if (error_state) {
+                    return false;
+               }
 #endif
-	  }
+          }
      }
      {
-	  const auto iverbose = om_options.seek("verbose");
+          const auto iverbose = om_options.seek("verbose");
 
-	  if (iverbose != om_options.end()) {
-	       options.verbose = static_cast<pastix_verbose_t>(om_options.contents(iverbose).int_value());
+          if (iverbose != om_options.end()) {
+               options.verbose = static_cast<pastix_verbose_t>(om_options.contents(iverbose).int_value());
 
 #if OCTAVE_MAJOR_VERSION < 6
-	       if (error_state) {
-		    return false;
-	       }
+               if (error_state) {
+                    return false;
+               }
 #endif
-	  }
+          }
      }
      {
-	  const auto irefine = om_options.seek("refine_max_iter");
+          const auto irefine = om_options.seek("refine_max_iter");
 
-	  if (irefine != om_options.end()) {
-	       octave_value ov_ref = om_options.contents(irefine);
+          if (irefine != om_options.end()) {
+               octave_value ov_ref = om_options.contents(irefine);
 
-	       options.refine_max_iter = ov_ref.int_value();
-
-#if OCTAVE_MAJOR_VERSION < 6
-	       if (error_state) {
-		    return false;
-	       }
-#endif
-	  }
-     }
-
-     {
-	  const auto icheck = om_options.seek("check_solution");
-	  if (icheck != om_options.end()) {
-	       options.check_solution = om_options.contents(icheck).bool_value();
+               options.refine_max_iter = ov_ref.int_value();
 
 #if OCTAVE_MAJOR_VERSION < 6
-	       if (error_state) {
-		    return false;
-	       }
+               if (error_state) {
+                    return false;
+               }
 #endif
-	  }
+          }
      }
 
      {
-	  const auto icompress_when = om_options.seek("compress_when");
-
-	  if (icompress_when != om_options.end()) {
-	       options.compress_when = static_cast<pastix_compress_when_t>(om_options.contents(icompress_when).int_value());
-
-#if OCTAVE_MAJOR_VERSION < 6
-	       if (error_state) {
-		    return false;
-	       }
-#endif
-	  }
-     }
-     {
-	  const auto icompress_method = om_options.seek("compress_method");
-
-	  if (icompress_method != om_options.end()) {
-	       options.compress_method = static_cast<pastix_compress_method_t>(om_options.contents(icompress_method).int_value());
+          const auto icheck = om_options.seek("check_solution");
+          if (icheck != om_options.end()) {
+               options.check_solution = om_options.contents(icheck).bool_value();
 
 #if OCTAVE_MAJOR_VERSION < 6
-	       if (error_state) {
-		    return false;
-	       }
+               if (error_state) {
+                    return false;
+               }
 #endif
-	  }
-     }
-     {
-	  const auto icompress_ortho = om_options.seek("compress_ortho");
-
-	  if (icompress_ortho != om_options.end()) {
-	       options.compress_ortho = static_cast<pastix_compress_ortho_t>(om_options.contents(icompress_ortho).int_value());
-
-#if OCTAVE_MAJOR_VERSION < 6
-	       if (error_state) {
-		    return false;
-	       }
-#endif
-	  }
+          }
      }
 
      {
-	  const auto icompress_min_width = om_options.seek("compress_min_width");
+          const auto icompress_when = om_options.seek("compress_when");
 
-	  if (icompress_min_width != om_options.end()) {
-	       options.compress_min_width = om_options.contents(icompress_min_width).int_value();
+          if (icompress_when != om_options.end()) {
+               options.compress_when = static_cast<pastix_compress_when_t>(om_options.contents(icompress_when).int_value());
 
 #if OCTAVE_MAJOR_VERSION < 6
-	       if (error_state) {
-		    return false;
-	       }
+               if (error_state) {
+                    return false;
+               }
 #endif
-	  }
+          }
      }
      {
-	  const auto icompress_min_height = om_options.seek("compress_min_height");
+          const auto icompress_method = om_options.seek("compress_method");
 
-	  if (icompress_min_height != om_options.end()) {
-	       options.compress_min_height = om_options.contents(icompress_min_height).int_value();
+          if (icompress_method != om_options.end()) {
+               options.compress_method = static_cast<pastix_compress_method_t>(om_options.contents(icompress_method).int_value());
 
 #if OCTAVE_MAJOR_VERSION < 6
-	       if (error_state) {
-		    return false;
-	       }
+               if (error_state) {
+                    return false;
+               }
 #endif
-	  }
+          }
      }
      {
-	  const auto icompress_tolerance = om_options.seek("compress_tolerance");
+          const auto icompress_ortho = om_options.seek("compress_ortho");
 
-	  if (icompress_tolerance != om_options.end()) {
-	       options.compress_tolerance = om_options.contents(icompress_tolerance).scalar_value();
+          if (icompress_ortho != om_options.end()) {
+               options.compress_ortho = static_cast<pastix_compress_ortho_t>(om_options.contents(icompress_ortho).int_value());
 
 #if OCTAVE_MAJOR_VERSION < 6
-	       if (error_state) {
-		    return false;
-	       }
+               if (error_state) {
+                    return false;
+               }
 #endif
-	  }
+          }
+     }
+
+     {
+          const auto icompress_min_width = om_options.seek("compress_min_width");
+
+          if (icompress_min_width != om_options.end()) {
+               options.compress_min_width = om_options.contents(icompress_min_width).int_value();
+
+#if OCTAVE_MAJOR_VERSION < 6
+               if (error_state) {
+                    return false;
+               }
+#endif
+          }
      }
      {
-	  const auto icompress_min_ratio = om_options.seek("compress_min_ratio");
+          const auto icompress_min_height = om_options.seek("compress_min_height");
 
-	  if (icompress_min_ratio != om_options.end()) {
-	       options.compress_min_ratio = om_options.contents(icompress_min_ratio).scalar_value();
+          if (icompress_min_height != om_options.end()) {
+               options.compress_min_height = om_options.contents(icompress_min_height).int_value();
+
+#if OCTAVE_MAJOR_VERSION < 6
+               if (error_state) {
+                    return false;
+               }
+#endif
+          }
+     }
+     {
+          const auto icompress_tolerance = om_options.seek("compress_tolerance");
+
+          if (icompress_tolerance != om_options.end()) {
+               options.compress_tolerance = om_options.contents(icompress_tolerance).scalar_value();
+
+#if OCTAVE_MAJOR_VERSION < 6
+               if (error_state) {
+                    return false;
+               }
+#endif
+          }
+     }
+     {
+          const auto icompress_min_ratio = om_options.seek("compress_min_ratio");
+
+          if (icompress_min_ratio != om_options.end()) {
+               options.compress_min_ratio = om_options.contents(icompress_min_ratio).scalar_value();
+
+#if OCTAVE_MAJOR_VERSION < 6
+               if (error_state) {
+                    return false;
+               }
+#endif
+          }
+     }
+
+     {
+	  const auto iepsilon_refinement = om_options.seek("epsilon_refinement");
+
+	  if (iepsilon_refinement != om_options.end()) {
+	       options.epsilon_refinement = om_options.contents(iepsilon_refinement).scalar_value();
 
 #if OCTAVE_MAJOR_VERSION < 6
 	       if (error_state) {
@@ -686,7 +702,7 @@ bool PastixObject<T>::get_options(const octave_value& ovOptions, PastixObject::O
 	       }
 #endif
 	  }
-     }
+     }     
 
      return true;
 }

@@ -421,6 +421,7 @@
 %!               opts.matrix_type = mt;
 %!               opts.number_of_threads = 1;
 %!               opts.check_solution = true;
+%!               opts.epsilon_refinement = eps^0.9;
 %!               Asym = sparse(r(idx), c(idx), d(idx));
 %!               assert(nnz(Asym) > 0);
 %!               x = pastix(Asym, b, opts);
