@@ -295,87 +295,87 @@
 %!   for mt=[PASTIX_API_SYM_YES, PASTIX_API_SYM_NO]
 %!     for ref=[true,false]
 %!       for t=[1,4]
-%! 	for s=0:2
-%! 	  for j=1:2
-%! 	    for k=1:2
-%! 	      switch mt
-%! 		case PASTIX_API_SYM_NO
-%! 		  frange = PASTIX_API_FACT_LU;
-%! 		otherwise
-%! 		  frange = [PASTIX_API_FACT_LDLT, PASTIX_API_FACT_LLT];
-%! 	      endswitch
-%! 	      for f=frange
-%! 		for N=[10, 50]
-%! 		  for i=1:10
-%! 		    for j=1:2
-%! 		      A = sprand(N, N, 0.1, 1) + diag(rand(N, 1) + 1);
-%! 		      switch (k)
-%! 			case 2
+%!         for s=0:2
+%!           for j=1:2
+%!             for k=1:2
+%!               switch mt
+%!                 case PASTIX_API_SYM_NO
+%!                   frange = PASTIX_API_FACT_LU;
+%!                 otherwise
+%!                   frange = [PASTIX_API_FACT_LDLT, PASTIX_API_FACT_LLT];
+%!               endswitch
+%!               for f=frange
+%!                 for N=[10, 50]
+%!                   for i=1:10
+%!                     for j=1:2
+%!                       A = sprand(N, N, 0.1, 1) + diag(rand(N, 1) + 1);
+%!                       switch (k)
+%!                         case 2
 %!                           [r, c, d] = find(A);
-%! 			  A += sparse(r, c, 1j * rand(numel(d), 1), N, N);
-%! 		      endswitch
-%! 		      switch mt
-%! 			case PASTIX_API_SYM_NO
-%! 			case PASTIX_API_SYM_YES
-%! 			  switch f
-%! 			    case {PASTIX_API_FACT_LLT, PASTIX_API_FACT_LDLT}
-%! 			      A *= A.';
-%! 			  endswitch
-%! 		      endswitch
-%! 		      [r, c, d] = find(A);
-%! 		      opts.factorization = f;
-%! 		      switch mt
-%! 			case PASTIX_API_SYM_NO
-%! 			  idx = 1:numel(r);
-%! 			otherwise
-%! 			  switch s
-%! 			    case 0
-%! 			      idx = find(r >= c);
-%! 			    case 1
-%! 			      idx = find(r <= c);
-%! 			    otherwise
-%! 			      idx = 1:numel(r);
-%! 			  endswitch
-%! 		      endswitch
-%! 		      b = rand(N, 10);
-%! 		      switch (k)
-%! 			case 2
-%! 			  b += 1j * rand(N, 10);
-%! 		      endswitch
-%! 		      opts.verbose = PASTIX_API_VERBOSE_NOT;
-%! 		      opts.refine_max_iter = ref;
-%! 		      opts.matrix_type = mt;
-%! 		      opts.number_of_threads = t;
-%! 		      opts.check_solution = true;
-%! 		      Asym = sparse(r(idx), c(idx), d(idx));
-%! 		      assert(nnz(Asym) > 0);
-%! 		      xref = A \ b;
-%! 		      switch j
-%! 			case 1
-%! 			  x = pastix(Asym, b, opts);
-%! 			case 2
-%! 			  x = pastix(pastix(Asym, opts), b);
-%! 		      endswitch
-%! 		      if ref
-%! 			tolf = eps^0.45;
-%! 			tolx = eps^0.45;
-%! 		      else
-%! 			tolf = eps^0.3;
-%! 			tolx = eps^0.4;
-%! 		      endif
-%! 		      fpas = norm(A * x - b, "cols") ./ norm(A * x + b, "cols");
-%! 		      fref = norm(A * xref - b, "cols") ./ norm(A * xref + b, "cols");
-%! 		      assert(max(fpas) < tolf);
-%! 		      assert(max(fref) < tolf);
-%! 		      assert(x, xref, tolx * max(norm(xref, "cols")));
-%! 		      fprintf(stderr, "current test %d passed\n", ++test_idx);
-%! 		    endfor
-%! 		  endfor
-%! 		endfor
-%! 	      endfor
-%! 	    endfor
-%! 	  endfor
-%! 	endfor
+%!                           A += sparse(r, c, 1j * rand(numel(d), 1), N, N);
+%!                       endswitch
+%!                       switch mt
+%!                         case PASTIX_API_SYM_NO
+%!                         case PASTIX_API_SYM_YES
+%!                           switch f
+%!                             case {PASTIX_API_FACT_LLT, PASTIX_API_FACT_LDLT}
+%!                               A *= A.';
+%!                           endswitch
+%!                       endswitch
+%!                       [r, c, d] = find(A);
+%!                       opts.factorization = f;
+%!                       switch mt
+%!                         case PASTIX_API_SYM_NO
+%!                           idx = 1:numel(r);
+%!                         otherwise
+%!                           switch s
+%!                             case 0
+%!                               idx = find(r >= c);
+%!                             case 1
+%!                               idx = find(r <= c);
+%!                             otherwise
+%!                               idx = 1:numel(r);
+%!                           endswitch
+%!                       endswitch
+%!                       b = rand(N, 10);
+%!                       switch (k)
+%!                         case 2
+%!                           b += 1j * rand(N, 10);
+%!                       endswitch
+%!                       opts.verbose = PASTIX_API_VERBOSE_NOT;
+%!                       opts.refine_max_iter = ref;
+%!                       opts.matrix_type = mt;
+%!                       opts.number_of_threads = t;
+%!                       opts.check_solution = true;
+%!                       Asym = sparse(r(idx), c(idx), d(idx));
+%!                       assert(nnz(Asym) > 0);
+%!                       xref = A \ b;
+%!                       switch j
+%!                         case 1
+%!                           x = pastix(Asym, b, opts);
+%!                         case 2
+%!                           x = pastix(pastix(Asym, opts), b);
+%!                       endswitch
+%!                       if ref
+%!                         tolf = eps^0.45;
+%!                         tolx = eps^0.45;
+%!                       else
+%!                         tolf = eps^0.3;
+%!                         tolx = eps^0.4;
+%!                       endif
+%!                       fpas = norm(A * x - b, "cols") ./ norm(A * x + b, "cols");
+%!                       fref = norm(A * xref - b, "cols") ./ norm(A * xref + b, "cols");
+%!                       assert(max(fpas) < tolf);
+%!                       assert(max(fref) < tolf);
+%!                       assert(x, xref, tolx * max(norm(xref, "cols")));
+%!                       fprintf(stderr, "current test %d passed\n", ++test_idx);
+%!                     endfor
+%!                   endfor
+%!                 endfor
+%!               endfor
+%!             endfor
+%!           endfor
+%!         endfor
 %!       endfor
 %!     endfor
 %!   endfor
@@ -449,61 +449,66 @@
 %! if (~isempty(which("mumps")))
 %!   rand("seed", 0);
 %!   n = [2,4,8,16,32,64,128];
-%!   for e=[0,100]
-%!     for u=1:2
-%!       for m=[MUMPS_MAT_GEN, MUMPS_MAT_DEF, MUMPS_MAT_SYM]
-%!         for i=1:10
-%!           for j=1:numel(n)
-%!             for k=1:2
-%!               for l=1:2
-%!                 for s=1:2
-%!                   switch (l)
-%!                     case 1
-%!                       A = rand(n(j),n(j));
-%!                     otherwise
-%!                       A = sprand(n(j), n(j), 0.1) + diag(rand(n(j),1));
-%!                   endswitch
-%!                   Af = A;
-%!                   b = rand(n(j), 3);
-%!                   switch (s)
-%!                     case {1,2}
-%!                       switch (s)
-%!                         case 2
-%!                           A += A.';
-%!                         case 1
-%!                           A *= A.';
-%!                           A += eye(size(A));
-%!                       endswitch
-%!                       Af = A;
-%!                       if (s == 2 && m > 0)
-%!                         [r, c, d] = find(A);
-%!                         if (u == 1)
-%!                           idx = find(r >= c);
-%!                         else
-%!                           idx = find(r <= c);
+%!   for compl=[false, true]
+%!     for e=[0,100]
+%!       for u=1:2
+%!         for m=[MUMPS_MAT_GEN, MUMPS_MAT_DEF, MUMPS_MAT_SYM]
+%!           for i=1:10
+%!             for j=1:numel(n)
+%!               for k=1:2
+%!                 for l=1:2
+%!                   for s=1:2
+%!                     switch (l)
+%!                       case 1
+%!                         A = rand(n(j),n(j));
+%!                       otherwise
+%!                         A = sprand(n(j), n(j), 0.1) + diag(rand(n(j),1));
+%!                     endswitch
+%!                     if (compl)
+%!                       A *= (rand() + 1j * rand());
+%!                     endif
+%!                     Af = A;
+%!                     b = rand(n(j), 3);
+%!                     switch (s)
+%!                       case {1,2}
+%!                         switch (s)
+%!                           case 2
+%!                             A += A.';
+%!                           case 1
+%!                             A *= A.';
+%!                             A += eye(size(A));
+%!                         endswitch
+%!                         Af = A;
+%!                         if (s == 2 && m > 0)
+%!                           [r, c, d] = find(A);
+%!                           if (u == 1)
+%!                             idx = find(r >= c);
+%!                           else
+%!                             idx = find(r <= c);
+%!                           endif
+%!                           r = r(idx);
+%!                           c = c(idx);
+%!                           d = d(idx);
+%!                           Af = sparse(r, c, d, n(j), n(j));
+%!                           if (l == 1)
+%!                             Af = full(Af);
+%!                           endif
 %!                         endif
-%!                         r = r(idx);
-%!                         c = c(idx);
-%!                         d = d(idx);
-%!                         Af = sparse(r, c, d, n(j), n(j));
-%!                         if (l == 1)
-%!                           Af = full(Af);
-%!                         endif
-%!                       endif
-%!                   endswitch
-%!                   xref = A \ b;
-%!                   opt.verbose = MUMPS_VER_WARN;
-%!                   opt.refine_max_iter = e;
-%!                   opt.matrix_type = m;
-%!                   switch (k)
-%!                     case 1
-%!                       x = mumps(Af, b, opt);
-%!                     otherwise
-%!                       x = mumps(mumps(Af, opt), b);
-%!                   endswitch
-%!                   assert(A * x, b, sqrt(eps) * norm(b));
-%!                   assert(norm(A * x - b) < sqrt(eps) * norm(A*x+b));
-%!                   assert(x, xref, sqrt(eps) * norm(x));
+%!                     endswitch
+%!                     xref = A \ b;
+%!                     opt.verbose = MUMPS_VER_WARN;
+%!                     opt.refine_max_iter = e;
+%!                     opt.matrix_type = m;
+%!                     switch (k)
+%!                       case 1
+%!                         x = mumps(Af, b, opt);
+%!                       otherwise
+%!                         x = mumps(mumps(Af, opt), b);
+%!                     endswitch
+%!                     assert(A * x, b, sqrt(eps) * norm(b));
+%!                     assert(norm(A * x - b) < sqrt(eps) * norm(A*x+b));
+%!                     assert(x, xref, sqrt(eps) * norm(x));
+%!                   endfor
 %!                 endfor
 %!               endfor
 %!             endfor
@@ -773,168 +778,169 @@
 %! endif
 
 %!function vn = normalize_U(v)
-%! idxmax = find(abs(v) == max(abs(v)))(1);
-%! vn = v / v(idxmax);
+%!   idxmax = find(abs(v) == max(abs(v)))(1);
+%!   vn = v / v(idxmax);
 
 %!test
-%! if (~isempty(which("dspev")))
-%!   rand("seed", 0);
-%!   for i=1:10
-%!     A = zeros(200,200);
-%!     B = rand(10);
-%!     for j=1:size(A,1)/10
-%!       A((j-1)*10 + (1:10),(j-1)*10 + (1:10)) = rand()*B;
+%!   if (~isempty(which("dspev")))
+%!     rand("seed", 0);
+%!     for i=1:10
+%!       A = zeros(200,200);
+%!       B = rand(10);
+%!       for j=1:size(A,1)/10
+%!         A((j-1)*10 + (1:10),(j-1)*10 + (1:10)) = rand()*B;
+%!       endfor
+%!       A = A + A.';
+%!       [U1,lambda1]=dspev(A);
+%!       [U,lambda]=eig(A);
+%!       lambda = diag(lambda).';
+%!       tol_lambda = sqrt(eps)*max(abs(lambda));
+%!       assert(lambda1,lambda,tol_lambda);
+%!       for j=1:size(U,2)
+%!         assert(normalize_U(U1(:, j)), normalize_U(U(:, j)), sqrt(eps));
+%!       endfor
 %!     endfor
-%!     A = A + A.';
-%!     [U1,lambda1]=dspev(A);
-%!     [U,lambda]=eig(A);
-%!     lambda = diag(lambda).';
-%!     tol_lambda = sqrt(eps)*max(abs(lambda));
-%!     assert(lambda1,lambda,tol_lambda);
-%!     for j=1:size(U,2)
-%!       assert(normalize_U(U1(:, j)), normalize_U(U(:, j)), sqrt(eps));
-%!     endfor
-%!   endfor
-%! else
-%!   warning("dspev is not installed");
-%! endif
+%!   else
+%!     warning("dspev is not installed");
+%!   endif
 
 %!test
-%! if (~isempty(which("dspev")))
-%!   rand("seed", 0);
-%!   format long g;
-%!   for i=1:10
-%!     A = sparse([],[],[],200,200);
-%!     B = rand(10);
-%!     for j=1:size(A,1)/10
-%!       A((j-1)*10 + (1:10),(j-1)*10 + (1:10)) = rand()*B;
+%!   if (~isempty(which("dspev")))
+%!     rand("seed", 0);
+%!     format long g;
+%!     for i=1:10
+%!       A = sparse([],[],[],200,200);
+%!       B = rand(10);
+%!       for j=1:size(A,1)/10
+%!         A((j-1)*10 + (1:10),(j-1)*10 + (1:10)) = rand()*B;
+%!       endfor
+%!       A = A + A.';
+%!       [U1, lambda1] = dspev(A);
+%!       [U,lambda]=eig(A);
+%!       lambda = diag(lambda).';
+%!       tol_lambda = sqrt(eps) * max(abs(lambda));
+%!       assert(lambda1,lambda,tol_lambda);
+%!       for j=1:size(U,2)
+%!         assert(normalize_U(U1(:, j)), normalize_U(U(:, j)), sqrt(eps));
+%!       endfor
 %!     endfor
-%!     A = A + A.';
-%!     [U1, lambda1] = dspev(A);
-%!     [U,lambda]=eig(A);
-%!     lambda = diag(lambda).';
-%!     tol_lambda = sqrt(eps) * max(abs(lambda));
-%!     assert(lambda1,lambda,tol_lambda);
-%!     for j=1:size(U,2)
-%!       assert(normalize_U(U1(:, j)), normalize_U(U(:, j)), sqrt(eps));
-%!     endfor
-%!   endfor
-%! endif
+%!   endif
 
 %!test
-%! state = rand("state");
-%! unwind_protect
-%!   rand("seed", 0);
-%!   tol = eps^0.9;
-%!   for i=1:10
-%!     for N=[1, 10, 100, 1000]
-%!       for M=[1, 10, 20, 100]
-%!         A = sprand(N, N, 0.01);
-%!         A += A.';
-%!         x = rand(N, M);
-%!         b = A * x;
-%!         [r, c, d] = find(A);
-%!         for k=1:2
-%!           switch (k)
-%!             case 1
-%!               idx = find(r >= c);
-%!             case 2
-%!               idx = find(r <= c);
-%!           endswitch
-%!           A2 = sparse(r(idx), c(idx), d(idx), N, N);
-%!           b2 = sp_sym_mtimes(A2, x);
-%!           assert(b2, b, tol * max(max(abs(b))));
+%!   state = rand("state");
+%!   unwind_protect
+%!     rand("seed", 0);
+%!     tol = eps^0.9;
+%!     for i=1:10
+%!       for N=[1, 10, 100, 1000]
+%!         for M=[1, 10, 20, 100]
+%!           A = sprand(N, N, 0.01);
+%!           A += A.';
+%!           x = rand(N, M);
+%!           b = A * x;
+%!           [r, c, d] = find(A);
+%!           for k=1:2
+%!             switch (k)
+%!               case 1
+%!                 idx = find(r >= c);
+%!               case 2
+%!                 idx = find(r <= c);
+%!             endswitch
+%!             A2 = sparse(r(idx), c(idx), d(idx), N, N);
+%!             b2 = sp_sym_mtimes(A2, x);
+%!             assert(b2, b, tol * max(max(abs(b))));
+%!           endfor
 %!         endfor
 %!       endfor
 %!     endfor
-%!   endfor
-%! unwind_protect_cleanup
-%!   rand("state", state);
-%! end_unwind_protect
+%!   unwind_protect_cleanup
+%!     rand("state", state);
+%!   end_unwind_protect
 
 %!test
-%! test_idx = int32(0);
-%! if (~isempty(which("pardiso")))
-%!   rand("seed", 0);
-%!   for z=[true, false]
-%!     for o=[0,2,3]
-%!       for sca=[0,1]
-%!         for wm=[1]
-%!           for ooc=[0]
-%!             for sym=[true, false]
-%!               for ref=[true,false]
-%!                 for t=[1,4]
-%!                   for s=0:4
-%!                     for j=1:2
-%!                       for N=[10, 50]
-%!                         for i=1
-%!                           for j=1:2
-%!                             switch (s)
-%!                               case 3
-%!                                 A = sprand(N, N, 0.9, 1);
-%!                                 if (z)
-%!                                   A += 1j * sprand(N, N, 0.9, 1);
-%!                                 endif
-%!                                 A -= diag(diag(A));
-%!                               case 4
-%!                                 A = sprand(N, N, 0.9, 1);
-%!                                 if (z)
-%!                                   A += 1j * sprand(N, N, 0.9, 1);
-%!                                 endif
-%!                                 for k=1:N
-%!                                   if (rand() > 0.5)
-%!                                     A(k, k) = 0;
+%!   test_idx = int32(0);
+%!   if (~isempty(which("pardiso")))
+%!     rand("seed", 0);
+%!     for z=[true, false]
+%!       for o=[0,2,3]
+%!         for sca=[0,1]
+%!           for wm=[1]
+%!             for ooc=[0]
+%!               for sym=[true, false]
+%!                 for ref=[true,false]
+%!                   for t=[1,4]
+%!                     for s=0:4
+%!                       for j=1:2
+%!                         for N=[10, 50]
+%!                           for i=1
+%!                             for j=1:2
+%!                               switch (s)
+%!                                 case 3
+%!                                   A = sprand(N, N, 0.9, 1);
+%!                                   if (z)
+%!                                     A += 1j * sprand(N, N, 0.9, 1);
 %!                                   endif
-%!                                 endfor
-%!                               otherwise
-%!                                 A = sprand(N, N, 0.1, 1) + 40 * diag(rand(N, 1));
-%!                             endswitch
-%!                             if (sym)
-%!                               A += A.';
-%!                             endif
-%!                             if (rank(A) < N)
-%!                               continue;
-%!                             endif
-%!                             [r, c, d] = find(A);
-%!                             switch(sym)
-%!                               case false
-%!                                 idx = 1:numel(r);
-%!                               otherwise
-%!                                 switch s
-%!                                   case 0
-%!                                     idx = find(r >= c);
-%!                                   case 1
-%!                                     idx = find(r <= c);
-%!                                   otherwise
-%!                                     idx = 1:numel(r);
-%!                                 endswitch
-%!                             endswitch
-%!                             b = rand(N, 10);
-%!                             opts.symmetric = sym;
-%!                             opts.ordering = o;                            
-%!                             opts.verbose = 0;
-%!                             opts.refine_max_iter = ref * 100;
-%!                             opts.number_of_threads = t;
-%!                             opts.out_of_core_mode = ooc;
-%!                             opts.scaling = sca;
-%!                             opts.weighted_matching = wm;
-%!                             Asym = sparse(r(idx), c(idx), d(idx), size(A));
-%!                             assert(nnz(Asym) > 0);
-%!                             xref = A \ b;
-%!                             switch (j)
-%!                               case 1
-%!                                 x = pardiso(Asym, b, opts);
-%!                               case 2
-%!                                 x = pardiso(pardiso(Asym, opts), b);
-%!                             endswitch
-%!                             tolf = eps^0.5;
-%!                             tolx = eps^0.5;
-%!                             fpar = norm(A * x - b, "cols") ./ norm(A * x + b, "cols");
-%!                             fref = norm(A * xref - b, "cols") ./ norm(A * xref + b, "cols");
-%!                             assert(max(fpar) < tolf);
-%!                             assert(max(fref) < tolf);
-%!                             assert(x, xref, tolx * max(norm(xref, "cols")));
-%!                             fprintf(stderr, "current test %d passed\n", ++test_idx);
+%!                                   A -= diag(diag(A));
+%!                                 case 4
+%!                                   A = sprand(N, N, 0.9, 1);
+%!                                   if (z)
+%!                                     A += 1j * sprand(N, N, 0.9, 1);
+%!                                   endif
+%!                                   for k=1:N
+%!                                     if (rand() > 0.5)
+%!                                       A(k, k) = 0;
+%!                                     endif
+%!                                   endfor
+%!                                 otherwise
+%!                                   A = sprand(N, N, 0.1, 1) + 40 * diag(rand(N, 1));
+%!                               endswitch
+%!                               if (sym)
+%!                                 A += A.';
+%!                               endif
+%!                               if (rank(A) < N)
+%!                                 continue;
+%!                               endif
+%!                               [r, c, d] = find(A);
+%!                               switch(sym)
+%!                                 case false
+%!                                   idx = 1:numel(r);
+%!                                 otherwise
+%!                                   switch s
+%!                                     case 0
+%!                                       idx = find(r >= c);
+%!                                     case 1
+%!                                       idx = find(r <= c);
+%!                                     otherwise
+%!                                       idx = 1:numel(r);
+%!                                   endswitch
+%!                               endswitch
+%!                               b = rand(N, 10);
+%!                               opts.symmetric = sym;
+%!                               opts.ordering = o;
+%!                               opts.verbose = 0;
+%!                               opts.refine_max_iter = ref * 100;
+%!                               opts.number_of_threads = t;
+%!                               opts.out_of_core_mode = ooc;
+%!                               opts.scaling = sca;
+%!                               opts.weighted_matching = wm;
+%!                               Asym = sparse(r(idx), c(idx), d(idx), size(A));
+%!                               assert(nnz(Asym) > 0);
+%!                               xref = A \ b;
+%!                               switch (j)
+%!                                 case 1
+%!                                   x = pardiso(Asym, b, opts);
+%!                                 case 2
+%!                                   x = pardiso(pardiso(Asym, opts), b);
+%!                               endswitch
+%!                               tolf = eps^0.5;
+%!                               tolx = eps^0.5;
+%!                               fpar = norm(A * x - b, "cols") ./ norm(A * x + b, "cols");
+%!                               fref = norm(A * xref - b, "cols") ./ norm(A * xref + b, "cols");
+%!                               assert(max(fpar) < tolf);
+%!                               assert(max(fref) < tolf);
+%!                               assert(x, xref, tolx * max(norm(xref, "cols")));
+%!                               fprintf(stderr, "current test %d passed\n", ++test_idx);
+%!                             endfor
 %!                           endfor
 %!                         endfor
 %!                       endfor
@@ -947,7 +953,6 @@
 %!         endfor
 %!       endfor
 %!     endfor
-%!   endfor
-%! else
-%!   warning("pardiso is not available");
-%! endif
+%!   else
+%!     warning("pardiso is not available");
+%!   endif

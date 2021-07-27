@@ -64,7 +64,7 @@ if test -z "${PASTIX_LIBS}"; then
   fi
 fi
 
-MUMPS_LIBS="${MUMPS_LIBS:--ldmumps_seq -lmpiseq_seq -lgfortran}"
+MUMPS_LIBS="${MUMPS_LIBS:--ldmumps_seq -lzmumps_seq -lmpiseq_seq -lgfortran}"
 ARPACK_LIBS="${ARPACK_LIBS:--larpack}"
 UMFPACK_LIBS="${UMFPACK_LIBS:--lumfpack}"
 METIS_LIBS="${METIS_LIBS:--lmetis}"
@@ -116,14 +116,15 @@ LIBS="${MUMPS_LIBS} ${LIBS}"
 
 AC_LANG(C)
 
-AC_CHECK_HEADERS([dmumps_c.h mumps_seq/mpi.h],[have_dmumps_c_h=yes],[have_dmumps_c_h=no])
+AC_CHECK_HEADERS([dmumps_c.h zmumps_c.h mumps_seq/mpi.h],[have_mumps_c_h=yes],[have_mumps_c_h=no])
 
 AC_CHECK_FUNCS([dmumps_c \
+                zmumps_c \
 		MPI_Init \
 		MPI_Comm_rank \
-		MPI_Finalize],[have_dmumps_c_f=yes],[have_dmumps_c_f=no])
+		MPI_Finalize],[have_mumps_c_f=yes],[have_mumps_c_f=no])
 
-AM_CONDITIONAL([USE_MUMPS],[test "${have_dmumps_c_h}" = yes && test "${have_dmumps_c_f}" == "yes"])
+AM_CONDITIONAL([USE_MUMPS],[test "${have_mumps_c_h}" = yes && test "${have_mumps_c_f}" == "yes"])
 
 CPPFLAGS="${TCPPFLAGS}"
 LIBS="${TLIBS}"
