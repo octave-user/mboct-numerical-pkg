@@ -116,15 +116,21 @@ LIBS="${MUMPS_LIBS} ${LIBS}"
 
 AC_LANG(C)
 
-AC_CHECK_HEADERS([dmumps_c.h zmumps_c.h mumps_seq/mpi.h],[have_mumps_c_h=yes],[have_mumps_c_h=no])
+AC_CHECK_HEADERS([mumps_seq/mpi.h],[have_mumps_mpi_seq_h=yes],[have_mumps_mpi_seq_h=no])
+AC_CHECK_HEADERS([dmumps_c.h zmumps_c.h],[have_mumps_c_h=yes],[have_mumps_c_h=no])
 
 AC_CHECK_FUNCS([dmumps_c \
-                zmumps_c \
-		MPI_Init \
+                zmumps_c],[have_mumps_c_f=yes],[have_mumps_c_f=no])
+
+AC_CHECK_FUNCS([MPI_Init \
 		MPI_Comm_rank \
-		MPI_Finalize],[have_mumps_c_f=yes],[have_mumps_c_f=no])
+		MPI_Finalize],[have_mumps_mpi=yes],[have_mumps_mpi=no])
 
 AM_CONDITIONAL([USE_MUMPS],[test "${have_mumps_c_h}" = yes && test "${have_mumps_c_f}" == "yes"])
+
+if test "${have_mumps_mpi_seq_h}" = "yes" -a "${have_mumps_mpi}" = "yes"; then
+   AC_DEFINE([USE_MUMPS_SEQ_MPI_H],1,[Define if mumps_seq/mpi.h can be used])
+fi
 
 CPPFLAGS="${TCPPFLAGS}"
 LIBS="${TLIBS}"

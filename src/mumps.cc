@@ -23,7 +23,9 @@
 #include <octave/CSparse.h>
 
 extern "C" {
+#ifdef USE_MUMPS_SEQ_MPI_H
 #include <mumps_seq/mpi.h>
+#endif
 #include <dmumps_c.h>
 #include <zmumps_c.h>
 }
@@ -106,6 +108,7 @@ public:
           VerboseType verbose = VER_NO;
           int refine_max_iter = 250;
           int workspace_inc = -1;
+          double epsilon_refinement = -1.;
      };
 };
 
@@ -268,17 +271,24 @@ MumpsObject<T>::MumpsObject(const SparseMatrixType& A, const Options& opt)
      jcn.resize(dim_vector(nz, 1));
      a.resize(dim_vector(nz, 1));
 
+#ifdef USE_MUMPS_SEQ_MPI_H
      {
           int ierr = MPI_Init(nullptr, nullptr);
 
           ierr = MPI_Comm_rank(MPI_COMM_WORLD, &idmpi);
      }
-
+#endif
+     
      id.job = -1;
      id.par = 1;
      id.sym = options.matrix_type;
+     
+#ifdef USE_MUMPS_SEQ_MPI_H
      id.comm_fortran = MPI_COMM_WORLD;
-
+#else
+     id.comm_fortran = 0;
+#endif
+     
      MumpsTraits<T>::mumps_c(&id);
 
      if (id.info[0] != 0) {
@@ -303,6 +313,9 @@ MumpsObject<T>::MumpsObject(const SparseMatrixType& A, const Options& opt)
      if (options.workspace_inc >= 0) {
           id.icntl[14 - 1] = options.workspace_inc;
      }
+
+     id.cntl[2 - 1] = options.epsilon_refinement;
+
 
      id.job = 1;
 
@@ -332,8 +345,9 @@ MumpsObject<T>::~MumpsObject()
           id.job = -2;
           MumpsTraits<T>::mumps_c(&id);
      }
-
+#ifdef USE_MUMPS_SEQ_MPI_H
      MPI_Finalize();
+#endif
 }
 
 template <typename T>
@@ -342,17 +356,22 @@ MumpsObject<T>::solve(const DenseMatrixType& b)
 {
      DenseMatrixType x = b;
 
-     x.make_unique();
+     T* px = x.fortran_vec();
 
-     id.rhs = MumpsTraits<T>::convert_pointer(x.fortran_vec());
-     id.nrhs = x.columns();
+     id.nrhs = 1;
      id.lrhs = x.rows();
      id.job = 3;
 
-     MumpsTraits<T>::mumps_c(&id);
+     for (octave_idx_type i = 0; i < x.columns(); ++i) {
+          id.rhs = MumpsTraits<T>::convert_pointer(px);
 
-     if (id.info[0] != 0) {
-          throw std::runtime_error("mumps: failed to solve for x");
+          MumpsTraits<T>::mumps_c(&id);
+
+          if (id.info[0] != 0) {
+               throw std::runtime_error("mumps: failed to solve for x");
+          }
+
+          px += x.rows();
      }
 
      return x;
@@ -481,6 +500,18 @@ MumpsObject<T>::solve(const octave_value_list& args)
 
           if (iter_refine_max_iter != ov_options.end()) {
                options.refine_max_iter = ov_options.contents(iter_refine_max_iter).int_value();
+
+#if OCTAVE_MAJOR_VERSION < 6
+               if (error_state) {
+                    return retval;
+               }
+#endif
+          }
+
+          auto iter_epsilon_refinement = ov_options.seek("epsilon_refinement");
+
+          if (iter_epsilon_refinement != ov_options.end()) {
+               options.epsilon_refinement = ov_options.contents(iter_epsilon_refinement).scalar_value();
 
 #if OCTAVE_MAJOR_VERSION < 6
                if (error_state) {

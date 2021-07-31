@@ -258,6 +258,9 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
+/* Define if mumps_seq/mpi.h can be used */
+#undef USE_MUMPS_SEQ_MPI_H
+
 /* Define if omp_set_num_threads and omp_get_num_threads can be used */
 #undef USE_OMP_THREADS
 
