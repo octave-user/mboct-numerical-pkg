@@ -27,8 +27,6 @@ jobs:
 
       - name: Install GNU/Octave
         run: |
-             sudo apt-get update
-             sudo apt-get dist-upgrade
              sudo apt-get install octave liboctave-dev libsuitesparse-dev libarpack2-dev libmumps-seq-dev libmetis-dev libmkl-full-dev
 
       - name: Create distribution
