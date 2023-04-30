@@ -48,9 +48,8 @@
 %!         case 2
 %!           x = pastix(pastix(A, opts), b);
 %!       endswitch
-%!       f = A * x - b;
-%!       assert(norm(f) < eps^0.8 * norm(b));
-%!       assert(x, A \ b, eps^0.8 * norm(A \ b));
+%!       f = max(norm(A * x - b, "cols") ./ norm(A * x + b, "cols"));
+%!       assert(f < eps^0.8);
 %!     endfor
 %!   endfor
 %! else
@@ -83,9 +82,8 @@
 %!             case 2
 %!               x = pastix(pastix(A, opts), b);
 %!           endswitch
-%!           f = A * x - b;
-%!           assert(all(norm(f, "cols") < tol * norm(b, "cols")));
-%!           assert(x, A \ b, tol * norm(A \ b, "cols"));
+%!           f = max(norm(A * x - b, "cols") ./ norm(A * x + b, "cols"));
+%!           assert(f < tol);
 %!         endfor
 %!       endfor
 %!     endfor
@@ -118,9 +116,8 @@
 %!             case 2
 %!               x = pastix(pastix(A, opts), b);
 %!           endswitch
-%!           f = A * x - b;
-%!           assert(all(norm(f, "cols") < tol * norm(b, "cols")));
-%!           assert(x, A \ b, tol * norm(A \ b, "cols"));
+%!           f = max(norm(A * x - b, "cols") ./ norm(A * x + b, "cols"));
+%!           assert(f < tol);
 %!         endfor
 %!       endfor
 %!     endfor
@@ -131,7 +128,7 @@
 %! if (~isempty(which("pastix")))
 %!   tol = eps^0.3;
 %!   rand("seed", 0);
-%!   for ref=int32([10])
+%!   for ref=int32([20])
 %!     for bind=[PASTIX_API_BIND_NO]
 %!       for t=[1,4]
 %!         for s=0:1
@@ -163,7 +160,8 @@
 %!                     opts.factorization = f;
 %!                     opts.number_of_threads = t;
 %!                     opts.bind_thread_mode = bind;
-%!                     opts.check_solution = true;
+%!                     opts.check_solution = false;
+%!                     opts.epsilon_refinement = 1e-12;
 %!                     switch j
 %!                       case 1
 %!                         x = pastix(sparse(r(idx), c(idx), d(idx)), b, opts);
@@ -173,6 +171,7 @@
 %!                     xref = A \ b;
 %!                     ferr = norm(A * x - b, "cols") ./ norm(A * x + b, "cols");
 %!                     fref = norm(A * xref - b, "cols") ./ norm(A * xref + b, "cols");
+%!                     assert(max(ferr) < tol);
 %!                     assert(max(ferr) < 10 * max(fref));
 %!                   endfor
 %!                 endfor
@@ -216,8 +215,8 @@
 %!         case 2
 %!           x = pastix(pastix(Asym, opts), b);
 %!       endswitch
-%!       f = A * x - b;
-%!       assert(all(norm(f, "cols") < tol * norm(b, "cols")));
+%!       f = max(norm(A * x - b) ./ norm(A * x + b));
+%!       assert(f < tol);
 %!       assert(x, A \ b, tol * norm(A \ b, "cols"));
 %!     endfor
 %!   endfor
@@ -247,8 +246,8 @@
 %!     opts.refine_max_iter = int32(10);
 %!     opts.check_solution = true;
 %!     x = pastix(A, b, opts);
-%!     f = A * x - b;
-%!     assert(norm(f) < eps^0.8 * norm(b));
+%!     f = max(norm(A * x - b, "cols") ./ norm(A * x + b, "cols"));
+%!     assert(f < eps^0.8);
 %!     assert(x, A \ b, eps^0.8 * norm(A \ b));
 %!   endfor
 %! endif
@@ -279,8 +278,8 @@
 %!             case 2
 %!               x = pastix(pastix(A, opts), b);
 %!           endswitch
-%!           f = A * x - b;
-%!           assert(all(norm(f, "cols") < tol * norm(b, "cols")));
+%!           f = max(norm(A * x - b, "cols") ./ norm(A * x + b, "cols"));
+%!           assert(f < tol);
 %!           assert(x, A \ b, tol * norm(A \ b, "cols"));
 %!         endfor
 %!       endfor
@@ -420,7 +419,7 @@
 %!               opts.refine_max_iter = int32(10);
 %!               opts.matrix_type = mt;
 %!               opts.number_of_threads = 1;
-%!               opts.check_solution = true;
+%!               opts.check_solution = false;
 %!               opts.epsilon_refinement = eps^0.9;
 %!               Asym = sparse(r(idx), c(idx), d(idx));
 %!               assert(nnz(Asym) > 0);

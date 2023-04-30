@@ -1,4 +1,4 @@
-// Copyright (C) 2018(-2021) Reinhard <octave-user@a1.net>
+// Copyright (C) 2018(-2023) Reinhard <octave-user@a1.net>
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -271,7 +271,7 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
           octave_idx_type idx = 0;
 
           for (octave_idx_type j = 0; j < ncols; ++j) {
-               colptr[j] = idx + 1; // Use Fortran numbering
+               colptr[j] = idx;
 
                for (octave_idx_type i = cidx[j]; i < cidx[j + 1]; ++i) {
                     bool bInsert;
@@ -288,19 +288,19 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
                     }
 
                     if (bInsert) {
-                         rows[idx] = ridx[i] + 1; // Use Fortran numbering
+                         rows[idx] = ridx[i];
                          avals[idx] = data[i];
                          ++idx;
                     }
                }
           }
 
-          colptr[ncols] = idx + 1; // Use Fortran numbering
+          colptr[ncols] = idx;
      } break;
      default:
           // Copy the full matrix because it has been declared as unsymmetrical
           for (octave_idx_type i = 0; i < nnz; ++i) {
-               rows[i] = ridx[i] + 1;
+               rows[i] = ridx[i];
           }
 
           for (octave_idx_type i = 0; i < nnz; ++i) {
@@ -308,7 +308,7 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
           }
 
           for (octave_idx_type i = 0; i < ncols + 1; ++i) {
-               colptr[i] = cidx[i] + 1;
+               colptr[i] = cidx[i];
           }
      }
 
@@ -434,6 +434,7 @@ bool PastixObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x) const {
      x = b;
 
      int rc = pastix_task_solve(pastix_data,
+                                x.rows(),
                                 x.columns(),
                                 x.fortran_vec(),
                                 x.rows());
