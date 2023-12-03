@@ -98,11 +98,11 @@ struct UmfpackMatrix<std::complex<double> > {
      octave_idx_type columns() const { return A.columns(); }
      
      SuiteSparse_long umfpack_symbolic(void **Symbolic, const double Control [], double Info []) const {
-	  return umfpack_zl_symbolic(A.rows(), A.cols(), A.cidx(), A.ridx(), Are.fortran_vec(), Aim.fortran_vec(), Symbolic, Control, Info);
+	  return umfpack_zl_symbolic(A.rows(), A.cols(), A.cidx(), A.ridx(), Are.data(), Aim.data(), Symbolic, Control, Info);
      }
 
      SuiteSparse_long umfpack_numeric(void *Symbolic, void **Numeric, const double Control[], double Info[]) const {
-	  return umfpack_zl_numeric(A.cidx(), A.ridx(), Are.fortran_vec(), Aim.fortran_vec(), Symbolic, Numeric, Control, Info);
+	  return umfpack_zl_numeric(A.cidx(), A.ridx(), Are.data(), Aim.data(), Symbolic, Numeric, Control, Info);
      }
 
      SuiteSparse_long umfpack_solve(SuiteSparse_long sys, std::complex<double> X[], const std::complex<double> B[], void *Numeric, const double Control[], double Info[]) {
@@ -252,7 +252,7 @@ typename UmfpackObject<T>::DenseMatrixType UmfpackObject<T>::solve(const DenseMa
      const octave_idx_type n = oMat.columns();
 
      T* const xp = x.fortran_vec();
-     const T* const bp = b.fortran_vec();
+     const T* const bp = b.data();
 
      for (octave_idx_type j = 0; j < b.columns(); ++j) {
 	  auto status = oMat.umfpack_solve(UMFPACK_A,
