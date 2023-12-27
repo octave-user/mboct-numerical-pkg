@@ -1,4 +1,4 @@
-// Copyright (C) 2018(-2021) Reinhard <octave-user@a1.net>
+// Copyright (C) 2018(-2023) Reinhard <octave-user@a1.net>
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ DEFUN_DLD (ndmetis, args, nargout,
         return retval;
     }
 #endif
-    
+
     intNDArray<idx_t> eptr(args(1).int32_array_value());
 
 #if OCTAVE_MAJOR_VERSION < 6
@@ -52,7 +52,7 @@ DEFUN_DLD (ndmetis, args, nargout,
         return retval;
     }
 #endif
-    
+
     intNDArray<idx_t> eind(args(2).int32_array_value());
 
 #if OCTAVE_MAJOR_VERSION < 6
@@ -60,7 +60,7 @@ DEFUN_DLD (ndmetis, args, nargout,
         return retval;
     }
 #endif
-    
+
     intNDArray<idx_t> perm(dim_vector(nn, 1)), iperm(dim_vector(nn, 1));
 
     if (eptr.numel() == 0 || eind.numel() == 0) {
@@ -87,20 +87,20 @@ DEFUN_DLD (ndmetis, args, nargout,
                 return retval;
             }
         }
-        
+
         idx_t ne = eptr.numel() - 1;
         idx_t* xadj = nullptr;
         idx_t* adjncy = nullptr;
         idx_t options[METIS_NOPTIONS];
 
         METIS_SetDefaultOptions(options);
-    
+
         options[METIS_OPTION_NUMBERING] = 1;
-    
+
         int status = METIS_MeshToNodal(&ne,
                                        &nn,
                                        eptr.fortran_vec(),
-                                       eind.fortran_vec(), 
+                                       eind.fortran_vec(),
                                        &options[METIS_OPTION_NUMBERING],
                                        &xadj,
                                        &adjncy);
@@ -109,7 +109,7 @@ DEFUN_DLD (ndmetis, args, nargout,
             error("METIS_MeshToNodal failed with status %d", status);
             goto exit_handler;
         }
-    
+
         status = METIS_NodeND(&nn,
                               xadj,
                               adjncy,
@@ -127,17 +127,9 @@ DEFUN_DLD (ndmetis, args, nargout,
         METIS_Free(xadj);
         METIS_Free(adjncy);
     }
-    
+
     retval.append(int32NDArray(perm));
     retval.append(int32NDArray(iperm));
-    
+
     return retval;
 }
-
-/*
-%!test
-%! eptr = int32([1, 10, 12]);
-%! eind = int32([2, 30, 1, 40, 9, 7, 55, 80, 77, 13, 5, 100]);
-%! nn = int32(100);
-%! [perm, iperm] = ndmetis(nn, eptr, eind);
-*/

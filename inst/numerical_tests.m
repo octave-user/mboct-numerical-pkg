@@ -826,6 +826,10 @@
 %!   endif
 
 %!test
+%!  if (isempty(which("sp_sym_mtimes")))
+%!    warning("sp_sym_mtimes was not installed");
+%!    return
+%!  endif
 %!   state = rand("state");
 %!   unwind_protect
 %!     rand("seed", 0);
@@ -955,3 +959,200 @@
 %!   else
 %!     warning("pardiso is not available");
 %!   endif
+
+%!function [A,B]=build_test_mat(N)
+%! B = gallery("poisson", N);
+%! A = gallery("tridiag", columns(B));
+
+%!test
+%! if (isempty(which("eig_sym")))
+%!   warning("eig_sym was not installed");
+%!   return;
+%! endif
+%! rand("seed", 0);
+%! for k=[5, 7, 10]
+%! [A, B] = build_test_mat(k);
+%! for k=1:10
+%! opts.v0 = rand(columns(B), 1);
+%! sigma = "LM";
+
+%! op{1} = @(x) A * x;
+%! op{2} = @(Ax) B \ Ax;
+%! op{3} = @(x) B * x;
+
+%! nev = 10;
+%! opts.maxit = 3000;
+%! opts.p = 20;
+%! opts.tol = 0;
+%! n = columns(A);
+%! [v, lambda] = eig_sym(op, n, nev, sigma, opts);
+%! tol = 1e-6;
+%! assert(columns(lambda), nev)
+%! for i=1:columns(v)
+%!  v1 = A * v(:, i);
+%!  v2 = lambda(i,i) * B * v(:,i);
+%!  assert(norm(v1 - v2) <= tol * max([norm(v1),norm(v2)]));
+%! endfor
+%! endfor
+%! endfor
+
+%!test
+%! if (isempty(which("eig_sym")))
+%!   warning("eig_sym was not installed");
+%!   return;
+%! endif
+%! rand("seed", 0);
+%! for l=[5, 7, 10]
+%! [A,B]=build_test_mat(l);
+%! for k=1:10
+%! opts.v0 = rand(columns(B), 1);
+%! sigma = (k - 1) / 1000;
+%! op{1} = @(x) B * x;
+%! op{2} = @(Bx) (A - sigma * B) \ Bx;
+%! nev = 10;
+%! opts.maxit = 3000;
+%! opts.p = 20;
+%! opts.tol = 0;
+%! n = columns(A);
+%! [v, lambda] = eig_sym(op, n, nev, sigma, opts);
+%! tol = 1e-6;
+%! assert(columns(lambda), nev)
+%! for i=1:columns(v)
+%!  v1 = A * v(:, i);
+%!  v2 = lambda(i,i) * B * v(:,i);
+%!  assert(norm(v1 - v2) <= tol * max([norm(v1),norm(v2)]));
+%! endfor
+%! endfor
+%! endfor
+
+%!test
+%! if (isempty(which("eig_sym")))
+%!   warning("eig_sym was not installed");
+%!   return;
+%! endif
+%! trace = false;
+%! rand("seed", 0);
+%! sigma={"SM","LM"};
+%! for s=1:numel(sigma)
+%! for n = [10, 20, 50, 100, 200, 500, 1000];
+%! nev = 3;
+%! ncv = min([n, 2 * nev + floor(5 * sqrt(n))]);
+%! h = 1 / (n+1);
+%! r1 = (4 / 6) * h;
+%! r2 = (1 / 6) * h;
+%! B = sparse([],[],[], n, n);
+%! for i=1:n
+%!   B(i, i) = r1;
+%!   if (i + 1 <= n)
+%!     B(i, i + 1) = r2;
+%!     B(i + 1, i) = r2;
+%!   endif
+%! endfor
+%! A = sparse([], [], [], n, n);
+%! A(1, 1) = 2 / h;
+%! A(1, 2) = -1 / h;
+%! for i=2:n
+%!   A(i, i) = 2 / h;
+%!   A(i, i - 1) = -1 / h;
+%!   A(i - 1, i) = -1 / h;
+%! endfor
+%! assert(isdefinite(A));
+%! assert(isdefinite(B));
+%! op{1} = @(x) A * x;
+%! op{2} = @(Ax) B \ Ax;
+%! op{3} = @(x) B * x;
+%! opts.maxit = 300;
+%! opts.p = ncv;
+%! opts.tol = 0;
+%! ## A * x = lambda * B * x
+%! v1 = [];
+%! lambda1 = [];
+%! opts.v0 = rand(n, 1);
+%! for k=1:2
+%! [v, lambda] = eig_sym(op, n, nev, sigma{s}, opts);
+%! if (k == 1)
+%! v1 = v;
+%! lambda1 = lambda;
+%! else
+%! assert(norm(v1 - v) <= eps * norm(v));
+%! assert(norm(lambda1 - lambda) <= eps * norm(lambda));
+%! endif
+%! endfor
+%! tol = sqrt(eps);
+%! assert(columns(lambda), nev)
+%! for i=1:columns(v)
+%!  v1 = A * v(:, i);
+%!  v2 = lambda(i,i) * B * v(:,i);
+%!  assert(norm(v1 - v2) <= tol * max([norm(v1),norm(v2)]));
+%! endfor
+%! endfor
+%! endfor
+
+%!test
+%! if (isempty(which("eig_sym")))
+%!   warning("eig_sym was not installed");
+%!   return;
+%! endif
+%! trace = false;
+%! rand("seed", 0);
+%! for n = [10, 20, 50, 100, 200, 500, 1000];
+%! nev = 3;
+%! ncv = min([n, 2 * nev + floor(5 * sqrt(n))]);
+%! h = 1 / (n+1);
+%! r1 = (4 / 6) * h;
+%! r2 = (1 / 6) * h;
+%! B = sparse([],[],[], n, n);
+%! for i=1:n
+%!   B(i, i) = r1;
+%!   if (i + 1 <= n)
+%!     B(i, i + 1) = r2;
+%!     B(i + 1, i) = r2;
+%!   endif
+%! endfor
+%! A = sparse([], [], [], n, n);
+%! A(1, 1) = 2 / h;
+%! A(1, 2) = -1 / h;
+%! for i=2:n
+%!   A(i, i) = 2 / h;
+%!   A(i, i - 1) = -1 / h;
+%!   A(i - 1, i) = -1 / h;
+%! endfor
+%! assert(isdefinite(A));
+%! assert(isdefinite(B));
+%! for sigma = 0:0.1:1;
+%! op{1} = @(x) B * x;
+%! op{2} = @(Bx) (A - sigma * B) \ Bx;
+%! opts.maxit = 300;
+%! opts.p = ncv;
+%! opts.tol = 0;
+%! opts.v0 = rand(n, 1);
+%! ## A * x = lambda * B * x
+%! for k=1:2
+%! [v, lambda] = eig_sym(op, n, nev, sigma, opts);
+%! if (k == 1)
+%!   v1 = v;
+%!   lambda1 = lambda;
+%! else
+%!   assert(norm(lambda - lambda1) <= eps * norm(lambda));
+%!   assert(norm(v - v1) <= eps * norm(v));
+%! endif
+%! endfor
+%! tol = sqrt(eps);
+%! assert(columns(lambda), nev)
+%! for i=1:columns(v)
+%!  v1 = A * v(:, i);
+%!  v2 = lambda(i,i) * B * v(:,i);
+%!  assert(norm(v1 - v2) <= tol * max([norm(v1),norm(v2)]));
+%! endfor
+%! endfor
+%! endfor
+
+%!test
+%! if (~isempty(which("ndmetis")))
+%!   eptr = int32([1, 10, 12]);
+%!   eind = int32([2, 30, 1, 40, 9, 7, 55, 80, 77, 13, 5, 100]);
+%!   nn = int32(100);
+%!   [perm, iperm] = ndmetis(nn, eptr, eind);
+%! else
+%!   warning("ndmetis was not installed");
+%! endif

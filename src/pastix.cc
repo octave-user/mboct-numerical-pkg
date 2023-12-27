@@ -43,7 +43,7 @@ struct PastixTraits<double> {
      static constexpr auto matrix_value = &octave_value::matrix_value;
 
      static bool isfinite(double x) {
-	  return std::isfinite(x);
+          return std::isfinite(x);
      }
 
      typedef PastixObjectDouble PastixObjectType;
@@ -61,7 +61,7 @@ struct PastixTraits<std::complex<double> > {
      static constexpr auto matrix_value = &octave_value::complex_matrix_value;
 
      static bool isfinite(const std::complex<double>& z) {
-	  return std::isfinite(std::real(z)) && std::isfinite(std::imag(z));
+          return std::isfinite(std::real(z)) && std::isfinite(std::imag(z));
      }
 
      typedef PastixObjectComplex PastixObjectType;
@@ -76,18 +76,18 @@ class PastixObject : public octave_base_value {
      typedef typename PastixTraits<T>::PastixObjectType PastixObjectType;
 public:
      struct Options {
-	  spm_mtxtype_t matrix_type = SpmGeneral;
-	  pastix_factotype_t factorization = PastixFactLU;
-	  pastix_int_t number_of_threads = 1;
-	  pastix_verbose_t verbose = PastixVerboseNo;
-	  pastix_compress_when_t compress_when = PastixCompressNever;
-	  pastix_compress_method_t compress_method = PastixCompressMethodPQRCP;
-	  pastix_compress_ortho_t compress_ortho = PastixCompressOrthoCGS;
-	  pastix_int_t compress_min_width = 120;
-	  pastix_int_t compress_min_height = 20;
-	  double compress_tolerance = 0.01;
-	  double compress_min_ratio = 1.;
-	  int refine_max_iter = 3;
+          spm_mtxtype_t matrix_type = SpmGeneral;
+          pastix_factotype_t factorization = PastixFactLU;
+          pastix_int_t number_of_threads = 1;
+          pastix_verbose_t verbose = PastixVerboseNo;
+          pastix_compress_when_t compress_when = PastixCompressNever;
+          pastix_compress_method_t compress_method = PastixCompressMethodPQRCP;
+          pastix_compress_ortho_t compress_ortho = PastixCompressOrthoCGS;
+          pastix_int_t compress_min_width = 120;
+          pastix_int_t compress_min_height = 20;
+          double compress_tolerance = 0.01;
+          double compress_min_ratio = 1.;
+          int refine_max_iter = 3;
           double epsilon_refinement = -1.;
           bool check_solution = false;
      };
@@ -104,7 +104,7 @@ public:
      virtual bool isreal() const { return PastixTraits<T>::isreal; }
      virtual bool iscomplex() const { return PastixTraits<T>::iscomplex; }
      static octave_value_list eval(const octave_value_list& args, int nargout);
-     
+
 private:
      void cleanup();
 
@@ -134,7 +134,7 @@ public:
      PastixObjectDouble(const Args&... args)
           :PastixObject<double>(args...) {
      }
-     
+
 private:
      DECLARE_OV_TYPEID_FUNCTIONS_AND_DATA
 };
@@ -142,12 +142,12 @@ private:
 class PastixObjectComplex: public PastixObject<std::complex<double> > {
 public:
      PastixObjectComplex()=default;
-     
+
      template <typename... Args>
      PastixObjectComplex(const Args&... args)
           :PastixObject<std::complex<double> >(args...) {
      }
-     
+
 private:
      DECLARE_OV_TYPEID_FUNCTIONS_AND_DATA
 };
@@ -359,7 +359,7 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
      dparm[DPARM_COMPRESS_TOLERANCE] = options.compress_tolerance;
      dparm[DPARM_COMPRESS_MIN_RATIO] = options.compress_min_ratio;
      dparm[DPARM_EPSILON_REFINEMENT] = options.epsilon_refinement;
-     
+
      pastixInit(&pastix_data, MPI_COMM_WORLD, iparm, dparm);
 
      rc = pastix_task_analyze(pastix_data, &spm);
@@ -516,7 +516,7 @@ bool PastixObject<T>::get_options(const octave_value& ovOptions, PastixObject::O
           return false;
      }
 #endif
-     
+
      {
           const auto imat_type = om_options.seek("matrix_type");
 
@@ -692,18 +692,18 @@ bool PastixObject<T>::get_options(const octave_value& ovOptions, PastixObject::O
      }
 
      {
-	  const auto iepsilon_refinement = om_options.seek("epsilon_refinement");
+          const auto iepsilon_refinement = om_options.seek("epsilon_refinement");
 
-	  if (iepsilon_refinement != om_options.end()) {
-	       options.epsilon_refinement = om_options.contents(iepsilon_refinement).scalar_value();
+          if (iepsilon_refinement != om_options.end()) {
+               options.epsilon_refinement = om_options.contents(iepsilon_refinement).scalar_value();
 
 #if OCTAVE_MAJOR_VERSION < 6
-	       if (error_state) {
-		    return false;
-	       }
+               if (error_state) {
+                    return false;
+               }
 #endif
-	  }
-     }     
+          }
+     }
 
      return true;
 }
@@ -720,89 +720,89 @@ octave_value_list PastixObject<T>::eval(const octave_value_list& args, int nargo
      bool bHaveRightHandSide = false;
 
      if (args(iarg).is_matrix_type()) {
-	  A = (args(iarg++).*PastixTraits<T>::sparse_matrix_value)(false);
+          A = (args(iarg++).*PastixTraits<T>::sparse_matrix_value)(false);
 
 #if OCTAVE_MAJOR_VERSION < 6
-	  if (error_state) {
-	       return retval;
-	  }
+          if (error_state) {
+               return retval;
+          }
 #endif
 
-	  if (A.rows() != A.columns()) {
-	       error_with_id("pastix:input", "pastix: matrix A must be square");
-	       return retval;
-	  }
+          if (A.rows() != A.columns()) {
+               error_with_id("pastix:input", "pastix: matrix A must be square");
+               return retval;
+          }
 
-	  if (A.columns() < 1) {
-	       error_with_id("pastix:input", "pastix: matrix A must have at least one column");
-	       return retval;
-	  }
+          if (A.columns() < 1) {
+               error_with_id("pastix:input", "pastix: matrix A must have at least one column");
+               return retval;
+          }
 
-	  bHaveMatrix = true;
+          bHaveMatrix = true;
      } else {
-	  octave_base_value& oOctaveObj = const_cast<octave_base_value&>(args(iarg++).get_rep());
-	  pPastix = dynamic_cast<PastixObject<T>*>(&oOctaveObj);
+          octave_base_value& oOctaveObj = const_cast<octave_base_value&>(args(iarg++).get_rep());
+          pPastix = dynamic_cast<PastixObject<T>*>(&oOctaveObj);
 
-	  if (!pPastix) {
-	       error_with_id("pastix:input", "pastix: class(pastix_obj) must be equal to \"pastix\"");
-	       return retval;
-	  }
+          if (!pPastix) {
+               error_with_id("pastix:input", "pastix: class(pastix_obj) must be equal to \"pastix\"");
+               return retval;
+          }
      }
 
      DenseMatrixType x, b;
 
      if (!bHaveMatrix || args.length() >= 3) {
-	  if (args(0).isreal() && !args(0).is_matrix_type() && args(1).iscomplex()) {
-	       error_with_id("pastix:input", "pastix: complex right hand side cannot be used with a real matrix");
-	       return retval;
-	  }
-	  
-	  b = (args(iarg++).*PastixTraits<T>::matrix_value)(false);
+          if (args(0).isreal() && !args(0).is_matrix_type() && args(1).iscomplex()) {
+               error_with_id("pastix:input", "pastix: complex right hand side cannot be used with a real matrix");
+               return retval;
+          }
+
+          b = (args(iarg++).*PastixTraits<T>::matrix_value)(false);
 
 #if OCTAVE_MAJOR_VERSION < 6
-	  if (error_state) {
-	       return retval;
-	  }
+          if (error_state) {
+               return retval;
+          }
 #endif
 
-	  bHaveRightHandSide = true;
+          bHaveRightHandSide = true;
      }
 
      if (bHaveMatrix) {
-	  if (args.length() <= iarg) {
-	       error_with_id("pastix:input", "pastix: missing argument \"options\"");
-	       return retval;
-	  }
+          if (args.length() <= iarg) {
+               error_with_id("pastix:input", "pastix: missing argument \"options\"");
+               return retval;
+          }
 
-	  Options options;
+          Options options;
 
-	  if (!get_options(args(iarg++), options)) {
-	       return retval;
-	  }
+          if (!get_options(args(iarg++), options)) {
+               return retval;
+          }
 
-	  pPastix = new PastixObjectType{A, options};
+          pPastix = new PastixObjectType{A, options};
 
-	  bOwnPastix = true;
+          bOwnPastix = true;
 
 #if OCTAVE_MAJOR_VERSION < 6
-	  if (error_state) {
-	       delete pPastix;
-	       return retval;
-	  }
+          if (error_state) {
+               delete pPastix;
+               return retval;
+          }
 #endif
      }
 
      if (bHaveRightHandSide) {
-	  if (pPastix->solve(b, x)) {
-	       retval.append(x);
-	  }
+          if (pPastix->solve(b, x)) {
+               retval.append(x);
+          }
 
-	  if (bOwnPastix) {
-	       delete pPastix;
-	       pPastix = nullptr;
-	  }
+          if (bOwnPastix) {
+               delete pPastix;
+               pPastix = nullptr;
+          }
      } else {
-	  retval.append(pPastix);
+          retval.append(pPastix);
      }
 
      return retval;
@@ -838,40 +838,40 @@ octave_value_list PastixObject<T>::eval(const octave_value_list& args, int nargo
 // PKG_DEL: autoload ("PASTIX_API_BIND_AUTO", "__mboct_numerical__.oct", "remove");
 
 DEFUN_DLD (pastix, args, nargout,
-	   "-*- texinfo -*-\n"
-	   "@deftypefn {} @var{pastix_obj} = pastix(@var{A}, @var{options})\n\n"
-	   "@var{x} = pastix(@var{pastix_obj}, @var{b})\n\n"
-	   "@var{x} = pastix(@var{A}, @var{b}, @var{options})\n\n"
-	   "Solve a system of linear equations by means of PaStiX (http://pastix.gforge.inria.fr/)\n\n"
-	   "The first form creates an factor object @var{pastix_obj} from matrix @var{A}\n\n"
-	   "After the factor object has been created, the second form uses the factor object @var{pastix_obj} to solve a system of linear equations @var{A} * @var{x} = @var{b}\n\n"
-	   "The third form solves a system of linear equations @var{A} * @var{x} = @var{b} but no factor object is returned\n\n"
-	   "Several options are supported in struct @var{options}:\n\n"
-	   "@var{options}.verbose = PASTIX_API_VERBOSE_NOT | PASTIX_API_VERBOSE_NO | PASTIX_API_VERBOSE_YES\n\n"
-	   "@var{options}.factorization = PASTIX_API_FACT_LU | PASTIX_API_FACT_LLT | PASTIX_API_FACT_LDLT\n\n"
-	   "@var{options}.matrix_type = PASTIX_API_SYM_NO | PASTIX_API_SYM_YES\n\n"
-	   "@var{options}.refine_max_iter @dots{} maximum number of iterations for refinement of the solution\n\n"
-	   "@var{options}.bind_thread_mode = PASTIX_API_BIND_NO | PASTIX_API_BIND_AUTO\n\n"
-	   "@var{options}.number_of_threads @dots{} number of threads to use\n\n"
-	   "@end deftypefn\n")
+           "-*- texinfo -*-\n"
+           "@deftypefn {} @var{pastix_obj} = pastix(@var{A}, @var{options})\n\n"
+           "@var{x} = pastix(@var{pastix_obj}, @var{b})\n\n"
+           "@var{x} = pastix(@var{A}, @var{b}, @var{options})\n\n"
+           "Solve a system of linear equations by means of PaStiX (http://pastix.gforge.inria.fr/)\n\n"
+           "The first form creates an factor object @var{pastix_obj} from matrix @var{A}\n\n"
+           "After the factor object has been created, the second form uses the factor object @var{pastix_obj} to solve a system of linear equations @var{A} * @var{x} = @var{b}\n\n"
+           "The third form solves a system of linear equations @var{A} * @var{x} = @var{b} but no factor object is returned\n\n"
+           "Several options are supported in struct @var{options}:\n\n"
+           "@var{options}.verbose = PASTIX_API_VERBOSE_NOT | PASTIX_API_VERBOSE_NO | PASTIX_API_VERBOSE_YES\n\n"
+           "@var{options}.factorization = PASTIX_API_FACT_LU | PASTIX_API_FACT_LLT | PASTIX_API_FACT_LDLT\n\n"
+           "@var{options}.matrix_type = PASTIX_API_SYM_NO | PASTIX_API_SYM_YES\n\n"
+           "@var{options}.refine_max_iter @dots{} maximum number of iterations for refinement of the solution\n\n"
+           "@var{options}.bind_thread_mode = PASTIX_API_BIND_NO | PASTIX_API_BIND_AUTO\n\n"
+           "@var{options}.number_of_threads @dots{} number of threads to use\n\n"
+           "@end deftypefn\n")
 {
      octave_value_list retval;
 
      if (args.length() < 2 || nargout > 1) {
-	  print_usage();
-	  return retval;
+          print_usage();
+          return retval;
      }
 
      bool bcomplex = args(0).iscomplex();
 
      if (args.length() > 1 && args(1).is_matrix_type()) {
-	  bcomplex = bcomplex || args(1).iscomplex();
+          bcomplex = bcomplex || args(1).iscomplex();
      }
-     
+
      if (bcomplex) {
-	  retval = PastixObject<std::complex<double> >::eval(args, nargout);
+          retval = PastixObject<std::complex<double> >::eval(args, nargout);
      } else {
-	  retval = PastixObject<double>::eval(args, nargout);
+          retval = PastixObject<double>::eval(args, nargout);
      }
 
      return retval;
@@ -880,7 +880,7 @@ DEFUN_DLD (pastix, args, nargout,
 #define DEFINE_GLOBAL_CONSTANT(CONST,VALUE)                             \
      DEFUN_DLD(PASTIX_##CONST, args, nargout, "id = PASTIX_" #CONST  "()\n") \
      {									\
-	  return octave_value(octave_int32(VALUE));			\
+          return octave_value(octave_int32(VALUE));			\
      }
 
 #define DEFINE_GLOBAL_CONSTANT2(CONST)          \
@@ -898,377 +898,3 @@ DEFINE_GLOBAL_CONSTANT(API_VERBOSE_NO, PastixVerboseNo)
 DEFINE_GLOBAL_CONSTANT(API_VERBOSE_YES, PastixVerboseYes)
 DEFINE_GLOBAL_CONSTANT(API_BIND_NO, -1)
 DEFINE_GLOBAL_CONSTANT(API_BIND_AUTO, -2)
-
-/*
-%!test
-%! if 3 == exist("pastix", "file")
-%! for i=1:2
-%! A = [1 0 0 0 0
-%! 0 3 0 0 0
-%! 2 0 5 0 0
-%! 0 0 6 7 0
-%! 0 0 0 0 8];
-%! b = [1, 9;
-%!      2, 5;
-%!      3, 4;
-%!      4, 8;
-%!      6, 7];
-%! opts.verbose = PASTIX_API_VERBOSE_NOT;
-%! opts.factorization = PASTIX_API_FACT_LU;
-%! opts.matrix_type = PASTIX_API_SYM_NO;
-%! opts.refine_max_iter = int32(10);
-%! opts.bind_thread_mode = PASTIX_API_BIND_NO;
-%! opts.number_of_threads = int32(4);
-%! opts.check_solution = true;
-%! switch i
-%! case 1
-%! x = pastix(A, b, opts);
-%! case 2
-%! x = pastix(pastix(A, opts), b);
-%! endswitch
-%! f = A * x - b;
-%! assert(norm(f) < eps^0.8 * norm(b));
-%! assert(x, A \ b, eps^0.8 * norm(A \ b));
-%! endfor
-%! else
-%! warning("pastix is not available");
-%! endif
-
-%!test
-%! if 3 == exist("pastix", "file")
-%! tol = eps^0.35;
-%! rand("seed", 0);
-%! for N=[2, 10, 100]
-%! for i=1:10
-%! for j=1:2
-%! A = rand(N, N);
-%! b = rand(N, 10);
-%! opts.verbose = PASTIX_API_VERBOSE_NOT;
-%! opts.factorization = PASTIX_API_FACT_LU;
-%! opts.matrix_type = PASTIX_API_SYM_NO;
-%! opts.refine_max_iter = int32(10);
-%! opts.check_solution = true;
-%! switch j
-%! case 1
-%! x = pastix(A, b, opts);
-%! case 2
-%! x = pastix(pastix(A, opts), b);
-%! endswitch
-%! f = A * x - b;
-%! assert(all(norm(f, "cols") < tol * norm(b, "cols")));
-%! assert(x, A \ b, tol * norm(A \ b, "cols"));
-%! endfor
-%! endfor
-%! endfor
-%! else
-%! warning("pastix is not available");
-%! endif
-
-%!test
-%! if 3 == exist("pastix", "file")
-%! tol = eps^0.35;
-%! rand("seed", 0);
-%! for N=[2, 10, 100]
-%! for i=1:10
-%! for j=1:2
-%! A = rand(N, N);
-%! b = rand(N, 10);
-%! opts.verbose = PASTIX_API_VERBOSE_NOT;
-%! opts.factorization = PASTIX_API_FACT_LU;
-%! opts.matrix_type = PASTIX_API_SYM_NO;
-%! opts.refine_max_iter = int32(10);
-%! opts.check_solution = true;
-%! switch j
-%! case 1
-%! x = pastix(A, b, opts);
-%! case 2
-%! x = pastix(pastix(A, opts), b);
-%! endswitch
-%! f = A * x - b;
-%! assert(all(norm(f, "cols") < tol * norm(b, "cols")));
-%! assert(x, A \ b, tol * norm(A \ b, "cols"));
-%! endfor
-%! endfor
-%! endfor
-%! else
-%! warning("pastix is not available");
-%! endif
-
-%!test
-%! if 3 == exist("pastix", "file")
-%! tol = eps^0.3;
-%! rand("seed", 0);
-%! for ref=int32([10])
-%! for bind=[PASTIX_API_BIND_NO]
-%! for t=[1,4]
-%! for s=0:1
-%! for f=[PASTIX_API_FACT_LLT, PASTIX_API_FACT_LDLT]
-%! for N=[10, 100]
-%! for i=1:10
-%! for j=1:2
-%! A = rand(N, N);
-%! A *= A.';
-%! [r, c, d] = find(A);
-%! if s
-%! idx = find(r >= c);
-%! else
-%! idx = 1:numel(r);
-%! endif
-%! b = rand(N, 10);
-%! opts.verbose = PASTIX_API_VERBOSE_NOT;
-%! opts.refine_max_iter = ref;
-%! opts.matrix_type = PASTIX_API_SYM_YES;
-%! opts.factorization = f;
-%! opts.number_of_threads = t;
-%! opts.bind_thread_mode = bind;
-%! opts.check_solution = true;
-%! switch j
-%! case 1
-%! x = pastix(sparse(r(idx), c(idx), d(idx)), b, opts);
-%! case 2
-%! x = pastix(pastix(sparse(r(idx), c(idx), d(idx)), opts), b);
-%! endswitch
-%! xref = A \ b;
-%! ferr = norm(A * x - b, "cols") ./ norm(A * x + b, "cols");
-%! fref = norm(A * xref - b, "cols") ./ norm(A * xref + b, "cols");
-%! assert(max(ferr) < 10 * max(fref));
-%! endfor
-%! endfor
-%! endfor
-%! endfor
-%! endfor
-%! endfor
-%! endfor
-%! endfor
-%! else
-%! warning("pastix is not available");
-%! endif
-
-%!test
-%! if 3 == exist("pastix", "file")
-%! tol = sqrt(eps);
-%! A = [ 1, -1,  0, 0,  1;
-%!      -1,  2, -1, 0,  0;
-%!       0, -1,  2, -1, 0;
-%!       0,  0, -1,  1, 0;
-%!       1,  0,  0,  0, 0];
-
-%! b = [1; 2; 3; 4; 5];
-%! opts.verbose = PASTIX_API_VERBOSE_NOT;
-%! opts.refine_max_iter = int32(10);
-%! opts.matrix_type = PASTIX_API_SYM_YES;
-%! opts.factorization = PASTIX_API_FACT_LDLT;
-%! opts.check_solution = true;
-%! for i=1:2
-%! [r, c, d] = find(A);
-%! idx = find(r >= c);
-%! Asym = sparse(r(idx), c(idx), d(idx), rows(A), columns(A));
-%! switch i
-%! case 1
-%! x = pastix(Asym, b, opts);
-%! case 2
-%! x = pastix(pastix(Asym, opts), b);
-%! endswitch
-%! f = A * x - b;
-%! assert(all(norm(f, "cols") < tol * norm(b, "cols")));
-%! assert(x, A \ b, tol * norm(A \ b, "cols"));
-%! endfor
-%! else
-%! warning("pastix is not available");
-%! endif
-
-*/
-
-/*
-%!test
-%! if 3 == exist("pastix", "file")
-%! A = [1 0 0 0 0
-%! 0 3 0 0 0
-%! 2 0 5 0 0
-%! 0 0 6 7 0
-%! 0 0 0 0 8];
-%! b = [1, 9;
-%!      2, 5;
-%!      3, 4;
-%!      4, 8;
-%!      6, 7];
-%! opts.verbose = PASTIX_API_VERBOSE_NOT;
-%! opts.factorization = PASTIX_API_FACT_LU;
-%! opts.matrix_type = PASTIX_API_SYM_NO;
-%! opts.refine_max_iter = int32(10);
-%! opts.check_solution = true;
-%! x = pastix(A, b, opts);
-%! f = A * x - b;
-%! assert(norm(f) < eps^0.8 * norm(b));
-%! assert(x, A \ b, eps^0.8 * norm(A \ b));
-%! else
-%! warning("pastix is not available");
-%! endif
-
-%!test
-%! if 3 == exist("pastix", "file")
-%! tol = eps^0.35;
-%! rand("seed", 0);
-%! for N=[10, 20, 100]
-%! for i=1:10
-%! for j=1:2
-%! A = rand(N, N);
-%! b = rand(N, 10);
-%! opts.verbose = PASTIX_API_VERBOSE_NOT;
-%! opts.factorization = PASTIX_API_FACT_LU;
-%! opts.matrix_type = PASTIX_API_SYM_NO;
-%! opts.refine_max_iter = int32(10);
-%! opts.check_solution = true;
-%! switch j
-%! case 1
-%! x = pastix(A, b, opts);
-%! case 2
-%! x = pastix(pastix(A, opts), b);
-%! endswitch
-%! f = A * x - b;
-%! assert(all(norm(f, "cols") < tol * norm(b, "cols")));
-%! assert(x, A \ b, tol * norm(A \ b, "cols"));
-%! endfor
-%! endfor
-%! endfor
-%! else
-%! warning("pastix is not available");
-%! endif
-
-%!test
-%! test_idx = int32(0);
-%! if 3 == exist("pastix", "file")
-%! rand("seed", 0);
-%! for mt=[PASTIX_API_SYM_YES, PASTIX_API_SYM_NO]
-%! for ref=[true,false]
-%! for t=[1,4]
-%! for s=0:2
-%! for j=1:2
-%! switch mt
-%! case PASTIX_API_SYM_NO
-%! frange = PASTIX_API_FACT_LU;
-%! otherwise
-%! frange = [PASTIX_API_FACT_LDLT, PASTIX_API_FACT_LLT];
-%! endswitch
-%! for f=frange
-%! for N=[10, 50]
-%! for i=1:10
-%! for j=1:2
-%! A = sprand(N, N, 0.1, 1) + 100 * diag(rand(N, 1));
-%! switch mt
-%! case PASTIX_API_SYM_NO
-%! case PASTIX_API_SYM_YES
-%! switch f
-%! case {PASTIX_API_FACT_LLT, PASTIX_API_FACT_LDLT}
-%! A *= A.';
-%! endswitch
-%! endswitch
-%! [r, c, d] = find(A);
-%! opts.factorization = f;
-%! switch mt
-%! case PASTIX_API_SYM_NO
-%! idx = 1:numel(r);
-%! otherwise
-%! switch s
-%! case 0
-%! idx = find(r >= c);
-%! case 1
-%! idx = find(r <= c);
-%! otherwise
-%! idx = 1:numel(r);
-%! endswitch
-%! endswitch
-%! b = rand(N, 10);
-%! opts.verbose = PASTIX_API_VERBOSE_NOT;
-%! opts.refine_max_iter = ref;
-%! opts.matrix_type = mt;
-%! opts.number_of_threads = t;
-%! opts.check_solution = true;
-%! Asym = sparse(r(idx), c(idx), d(idx));
-%! assert(nnz(Asym) > 0);
-%! xref = A \ b;
-%! switch j
-%! case 1
-%! x = pastix(Asym, b, opts);
-%! case 2
-%! x = pastix(pastix(Asym, opts), b);
-%! endswitch
-%! if ref
-%! tolf = eps^0.45;
-%! tolx = eps^0.45;
-%! else
-%! tolf = eps^0.3;
-%! tolx = eps^0.4;
-%! endif
-%! fpas = norm(A * x - b, "cols") ./ norm(A * x + b, "cols");
-%! fref = norm(A * xref - b, "cols") ./ norm(A * xref + b, "cols");
-%! assert(max(fpas) < tolf);
-%! assert(max(fref) < tolf);
-%! assert(x, xref, tolx * max(norm(xref, "cols")));
-%! fprintf(stderr, "current test %d passed\n", ++test_idx);
-%! endfor
-%! endfor
-%! endfor
-%! endfor
-%! endfor
-%! endfor
-%! endfor
-%! endfor
-%! endfor
-%! else
-%! warning("pastix is not available");
-%! endif
-
-%!test
-%! if 3 == exist("pastix", "file")
-%! rand("seed", 0);
-%! for mt=[PASTIX_API_SYM_YES]
-%! for s=0:2
-%! for f=[PASTIX_API_FACT_LLT, PASTIX_API_FACT_LDLT]
-%! for N=[2, 10, 100]
-%! for i=1:10
-%! A = rand(N, N)+2 * diag(rand(N,1));
-%! switch mt
-%! case PASTIX_API_SYM_NO
-%! case PASTIX_API_SYM_YES
-%! switch f
-%! case PASTIX_API_FACT_LLT
-%! A *= A.';
-%! case PASTIX_API_FACT_LDLT
-%! A *= A.';
-%! endswitch
-%! endswitch
-%! [r, c, d] = find(A);
-%! opts.factorization = f;
-%! switch s
-%! case 0
-%! idx = find(r >= c);
-%! case 1
-%! idx = find(r <= c);
-%! otherwise
-%! idx = 1:numel(r);
-%! endswitch
-%! b = rand(N, 10);
-%! opts.verbose = PASTIX_API_VERBOSE_NOT;
-%! opts.refine_max_iter = int32(10);
-%! opts.matrix_type = mt;
-%! opts.number_of_threads = 1;
-%! opts.check_solution = true;
-%! Asym = sparse(r(idx), c(idx), d(idx));
-%! assert(nnz(Asym) > 0);
-%! x = pastix(Asym, b, opts);
-%! xref = A \ b;
-%! tol = eps^0.3;
-%! fpas = norm(A * x - b, "cols") ./ norm(A * x + b, "cols");
-%! fref = norm(A * xref - b, "cols") ./ norm(A * xref + b, "cols");
-%! assert(max(fpas) < tol);
-%! assert(max(fref) < tol);
-%! endfor
-%! endfor
-%! endfor
-%! endfor
-%! endfor
-%! else
-%! warning("pastix is not available");
-%! endif
-*/

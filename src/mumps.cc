@@ -1,4 +1,4 @@
-// Copyright (C) 2019(-2021) Reinhard <octave-user@a1.net>
+// Copyright (C) 2019(-2023) Reinhard <octave-user@a1.net>
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ struct MumpsTraits<std::complex<double> > {
 
           return reinterpret_cast<ScalarType*>(b);
      }
-     
+
      static constexpr bool isreal = false;
 };
 
@@ -129,7 +129,7 @@ public:
      virtual bool is_defined(void) const override { return true; }
      virtual dim_vector dims (void) const override { return dim_vector (id.n, id.n); }
      virtual bool isreal() const override { return MumpsTraits<T>::isreal; }
-     virtual bool iscomplex() const override { return !MumpsTraits<T>::isreal; }     
+     virtual bool iscomplex() const override { return !MumpsTraits<T>::isreal; }
      virtual void print(std::ostream& os, bool pr_as_read_syntax) override;
 
 private:
@@ -278,17 +278,17 @@ MumpsObject<T>::MumpsObject(const SparseMatrixType& A, const Options& opt)
           ierr = MPI_Comm_rank(MPI_COMM_WORLD, &idmpi);
      }
 #endif
-     
+
      id.job = -1;
      id.par = 1;
      id.sym = options.matrix_type;
-     
+
 #ifdef USE_MUMPS_SEQ_MPI_H
      id.comm_fortran = MPI_COMM_WORLD;
 #else
      id.comm_fortran = 0;
 #endif
-     
+
      MumpsTraits<T>::mumps_c(&id);
 
      if (id.info[0] != 0) {
@@ -636,78 +636,3 @@ DEFINE_GLOBAL_CONSTANT(VER_ERR)
 DEFINE_GLOBAL_CONSTANT(VER_WARN)
 DEFINE_GLOBAL_CONSTANT(VER_DIAG)
 DEFINE_GLOBAL_CONSTANT(VER_ALL)
-
-/*
-%!error mumps([]);
-%!error mumps(eye(3));
-%!error mumps(eye(3), zeros(3,1));
-%!error mumps(mumps(eye(3), struct()));
-%!error mumps(eye(3),zeros(2,1),struct());
-%!error mumps(ones(3,2),zeros(3,1),struct());
-%!test
-%! rand("seed", 0);
-%! n = [2,4,8,16,32,64,128];
-%! for e=[0,100]
-%!   for u=1:2
-%!     for m=[MUMPS_MAT_GEN, MUMPS_MAT_DEF, MUMPS_MAT_SYM]
-%!       for i=1:10
-%!         for j=1:numel(n)
-%!           for k=1:2
-%!             for l=1:2
-%!               for s=1:2
-%!                 switch (l)
-%!                   case 1
-%!                     A = rand(n(j),n(j));
-%!                   otherwise
-%!                     A = sprand(n(j), n(j), 0.1) + diag(rand(n(j),1));
-%!                 endswitch
-%!                 Af = A;
-%!                 b = rand(n(j), 3);
-%!                 switch (s)
-%!                   case {1,2}
-%!                     switch (s)
-%!                       case 2
-%!                         A += A.';
-%!                       case 1
-%!                         A *= A.';
-%!                         A += eye(size(A));
-%!                     endswitch
-%!                     Af = A;
-%!                     if (s == 2 && m > 0)
-%!                       [r, c, d] = find(A);
-%!                       if (u == 1)
-%!                         idx = find(r >= c);
-%!                       else
-%!                         idx = find(r <= c);
-%!                       endif
-%!                       r = r(idx);
-%!                       c = c(idx);
-%!                       d = d(idx);
-%!                       Af = sparse(r, c, d, n(j), n(j));
-%!                       if (l == 1)
-%!                         Af = full(Af);
-%!                       endif
-%!                     endif
-%!                 endswitch
-%!                 xref = A \ b;
-%!                 opt.verbose = MUMPS_VER_WARN;
-%!                 opt.refine_max_iter = e;
-%!                 opt.matrix_type = m;
-%!                 switch (k)
-%!                   case 1
-%!                     x = mumps(Af, b, opt);
-%!                   otherwise
-%!                     x = mumps(mumps(Af, opt), b);
-%!                 endswitch
-%!                 assert(A * x, b, sqrt(eps) * norm(b));
-%!                 assert(norm(A * x - b) < sqrt(eps) * norm(A*x+b));
-%!                 assert(x, xref, sqrt(eps) * norm(x));
-%!               endfor
-%!             endfor
-%!           endfor
-%!         endfor
-%!       endfor
-%!     endfor
-%!   endfor
-%! endfor
-*/

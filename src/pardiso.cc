@@ -1,4 +1,4 @@
-// Copyright (C) 2021(-2021) Reinhard <octave-user@a1.net>
+// Copyright (C) 2021(-2023) Reinhard <octave-user@a1.net>
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ struct PardisoTraits<double> {
      static constexpr bool iscomplex = false;
      static constexpr long long mtypesym = -2;
      static constexpr long long mtypeunsym = 11;
-     
+
 #ifndef NDEBUG
      static constexpr double nan = NAN;
 #endif
@@ -266,7 +266,7 @@ PardisoObject<T>::PardisoObject(const SparseMatrixType& A, const Options& option
                          diag[irow] = true;
                     }
                     break;
-                    
+
                default:
                     break;
                }
@@ -305,7 +305,7 @@ PardisoObject<T>::PardisoObject(const SparseMatrixType& A, const Options& option
      std::fill(std::begin(Ai), std::end(Ai), std::numeric_limits<long long>::min());
      std::fill(std::begin(Ap), std::end(Ap), std::numeric_limits<long long>::min());
 #endif
-     
+
      Ap[0] = 0LL;
 
      for (long long i = 0LL; i < n; ++i) {
@@ -323,12 +323,12 @@ PardisoObject<T>::PardisoObject(const SparseMatrixType& A, const Options& option
                if (!diag[irow]) {
                     assert(nnz[irow] == 0LL);
                     assert(nnz[irow] < Ap[irow + 1LL] - Ap[irow]);
-                         
+
                     const long long idx = Ap[irow];
 
                     assert(idx >= 0);
                     assert(idx < nnztot);
-                         
+
                     Ax[idx] = 0.0;
                     Ai[idx] = irow;
 
@@ -341,7 +341,7 @@ PardisoObject<T>::PardisoObject(const SparseMatrixType& A, const Options& option
      default:
           break;
      }
-     
+
      for (octave_idx_type j = 0L; j < n; ++j) {
           for (octave_idx_type i = cidx[j]; i < cidx[j + 1L]; ++i) {
                const long long irow = transpose ? j : ridx[i];
@@ -351,16 +351,16 @@ PardisoObject<T>::PardisoObject(const SparseMatrixType& A, const Options& option
 
                if (eMatType == MAT_FULL || irow <= icol) {
                     assert(ptr >= 0LL);
-                    assert(ptr < Ap[irow + 1LL] - Ap[irow]);                    
+                    assert(ptr < Ap[irow + 1LL] - Ap[irow]);
 
                     const long long idx = Ap[irow] + ptr;
 
                     assert(idx >= 0);
                     assert(idx < nnztot);
-                    
+
                     Ai[idx] = icol;
                     Ax[idx] = data[i];
-                    
+
                     ++ptr;
 
                     assert(ptr <= Ap[irow + 1LL] - Ap[irow]);
@@ -383,11 +383,11 @@ PardisoObject<T>::PardisoObject(const SparseMatrixType& A, const Options& option
      iparm[10] = options.scaling;
      iparm[12] = options.weighted_matching;
      iparm[34] = 1LL; // Zero-based indexing
-     
+
 #ifdef PARDISO_USE_OUT_OF_CORE_MODE
      iparm[59] = options.out_of_core_mode;
 #endif
-     
+
      long long ierror = pardiso(nullptr, nullptr, 0LL);
 
      if (ierror != 0LL) {
@@ -426,7 +426,7 @@ long long PardisoObject<T>::pardiso(T* b, T* x, long long nrhs) const
      const int num_threads_prev = omp_get_num_threads();
      omp_set_num_threads(options.number_of_threads);
 #endif
-     
+
      pardiso_64(pt, &maxfct, &mnum, &mtype, &phase, &n, &Ax.front(), &Ap.front(), &Ai.front(), nullptr, &nrhs, iparm, &msglvl, b, x, &ierror);
 
 #ifdef USE_OMP_THREADS
@@ -515,7 +515,7 @@ bool PardisoObject<T>::get_options(const octave_value& ovOptions, PardisoObject:
           }
      }
 #endif
-     
+
 #ifdef PARDISO_USE_OUT_OF_CORE_MODE
      {
           const auto iout_of_core = om_options.seek("out_of_core_mode");
@@ -557,7 +557,7 @@ bool PardisoObject<T>::get_options(const octave_value& ovOptions, PardisoObject:
                options.weighted_matching = ov_weighted_matching.int_value();
           }
      }
-     
+
      return true;
 }
 
@@ -693,105 +693,3 @@ DEFUN_DLD (pardiso, args, nargout,
      {                                                                  \
           return octave_value(octave_int32(VALUE));                     \
      }
-
-/*
-%!test
-%! test_idx = int32(0);
-%! if (3 == exist("pardiso", "file"))
-%!   rand("seed", 0);
-%!   for z=[true, false]
-%!     for o=[0,2,3]
-%!       for sca=[0,1]
-%!         for wm=[0,1]
-%!           for ooc=[0]
-%!             for sym=[true, false]
-%!               for ref=[true,false]
-%!                 for t=[1,4]
-%!                   for s=0:4
-%!                     for j=1:2
-%!                       for N=[10, 50]
-%!                         for i=1:10
-%!                           for j=1:2
-%!                             switch (s)
-%!                               case 3
-%!                                 A = sprand(N, N, 0.9, 1);
-%!                                 if (z)
-%!                                   A += 1j * sprand(N, N, 0.9, 1);
-%!                                 endif
-%!                                 A -= diag(diag(A));
-%!                               case 4
-%!                                 A = sprand(N, N, 0.9, 1);
-%!                                 if (z)
-%!                                   A += 1j * sprand(N, N, 0.9, 1);
-%!                                 endif
-%!                                 for k=1:N
-%!                                   if (rand() > 0.5)
-%!                                     A(k, k) = 0;
-%!                                   endif
-%!                                 endfor
-%!                               otherwise
-%!                                 A = sprand(N, N, 0.1, 1) + 40 * diag(rand(N, 1));
-%!                             endswitch
-%!                             if (sym)
-%!                               A += A.';
-%!                             endif
-%!                             if (rank(A) < N)
-%!                               continue;
-%!                             endif
-%!                             [r, c, d] = find(A);
-%!                             switch(sym)
-%!                               case false
-%!                                 idx = 1:numel(r);
-%!                               otherwise
-%!                                 switch s
-%!                                   case 0
-%!                                     idx = find(r >= c);
-%!                                   case 1
-%!                                     idx = find(r <= c);
-%!                                   otherwise
-%!                                     idx = 1:numel(r);
-%!                                 endswitch
-%!                             endswitch
-%!                             b = rand(N, 10);
-%!                             opts.symmetric = sym;
-%!                             opts.ordering = o;                            
-%!                             opts.verbose = true;
-%!                             opts.refine_max_iter = ref * 100;
-%!                             opts.number_of_threads = t;
-%!                             opts.out_of_core_mode = ooc;
-%!                             opts.scaling = sca;
-%!                             opts.weighted_matching = wm;
-%!                             Asym = sparse(r(idx), c(idx), d(idx), size(A));
-%!                             assert(nnz(Asym) > 0);
-%!                             xref = A \ b;
-%!                             switch (j)
-%!                               case 1
-%!                                 x = pardiso(Asym, b, opts);
-%!                               case 2
-%!                                 x = pardiso(pardiso(Asym, opts), b);
-%!                             endswitch
-%!                             tolf = eps^0.5;
-%!                             tolx = eps^0.5;
-%!                             fpar = norm(A * x - b, "cols") ./ norm(A * x + b, "cols");
-%!                             fref = norm(A * xref - b, "cols") ./ norm(A * xref + b, "cols");
-%!                             assert(max(fpar) < tolf);
-%!                             assert(max(fref) < tolf);
-%!                             assert(x, xref, tolx * max(norm(xref, "cols")));
-%!                             fprintf(stderr, "current test %d passed\n", ++test_idx);
-%!                           endfor
-%!                         endfor
-%!                       endfor
-%!                     endfor
-%!                   endfor
-%!                 endfor
-%!               endfor
-%!             endfor
-%!           endfor
-%!         endfor
-%!       endfor
-%!     endfor
-%!   endfor
-%! else
-%!   warning("pardiso is not available");
-%! endif
-*/

@@ -1,4 +1,4 @@
-// Copyright (C) 2021(-2021) Reinhard <octave-user@a1.net>
+// Copyright (C) 2021(-2023) Reinhard <octave-user@a1.net>
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -241,7 +241,7 @@ bool StrumpackObject<T>::get_options(const octave_value& ovOptions, StrumpackObj
                options.verbose = om_options.contents(iverbose).bool_value();
           }
      }
-     
+
      {
           const auto irefine = om_options.seek("refine_max_iter");
 

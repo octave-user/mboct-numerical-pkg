@@ -1,4 +1,4 @@
-// Copyright (C) 2019(-2021) Reinhard <octave-user@a1.net>
+// Copyright (C) 2019(-2023) Reinhard <octave-user@a1.net>
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -66,12 +66,12 @@ DEFUN_DLD (eig_sym, args, nargout,
     }
 #endif
 
-    for (octave_idx_type i = 0; i < ov_op.numel(); ++i) {       
+    for (octave_idx_type i = 0; i < ov_op.numel(); ++i) {
       if (!(ov_op(i).is_function() ||
-	    ov_op(i).is_function_handle() ||
-	    ov_op(i).is_anonymous_function() ||
-	    ov_op(i).is_inline_function())) {
-	    error("argument OP must be a cell array of functions");
+            ov_op(i).is_function_handle() ||
+            ov_op(i).is_anonymous_function() ||
+            ov_op(i).is_inline_function())) {
+            error("argument OP must be a cell array of functions");
             return retval;
         }
     }
@@ -91,11 +91,11 @@ DEFUN_DLD (eig_sym, args, nargout,
         return retval;
     }
 #endif
-    
+
     std::string type;
     double sigma = 0.;
     F77_INT mode = -1;
-    
+
     if (args(3).is_string() || args(3).is_sq_string()) {
         type = args(3).string_value();
 
@@ -104,7 +104,7 @@ DEFUN_DLD (eig_sym, args, nargout,
             return retval;
         }
 #endif
-        
+
         mode = 2;
 
         if (ov_op.numel() != 3) {
@@ -130,7 +130,7 @@ DEFUN_DLD (eig_sym, args, nargout,
         error("eig_sym: invalid value for SIGMA");
         return retval;
     }
-    
+
     if (type != "SM" && type != "LM") {
         error("invalid value for TYPE");
         return retval;
@@ -143,7 +143,7 @@ DEFUN_DLD (eig_sym, args, nargout,
         return retval;
     }
 #endif
-    
+
     const auto itp = opt.seek("p");
 
     const F77_INT ncv = itp == opt.end() ? 2 * nev : opt.contents(itp).int_value();
@@ -153,7 +153,7 @@ DEFUN_DLD (eig_sym, args, nargout,
         return retval;
     }
 #endif
-    
+
     const auto itmaxit = opt.seek("maxit");
 
     const octave_idx_type maxit = itmaxit == opt.end() ? 300 : opt.contents(itmaxit).int_value();
@@ -163,7 +163,7 @@ DEFUN_DLD (eig_sym, args, nargout,
         return retval;
     }
 #endif
-    
+
     const auto ittol = opt.seek("tol");
 
     const F77_DBLE tol = ittol == opt.end() ? 0. : opt.contents(ittol).scalar_value();
@@ -181,18 +181,18 @@ DEFUN_DLD (eig_sym, args, nargout,
             return retval;
         }
 #endif
-        
+
         if (resid.rows() != n) {
             error("eig_sym: invalid number of rows for opt.v0");
             return retval;
         }
-        
+
         info = 1;
     } else {
         resid.resize(n);
         info = 0;
     }
-    
+
     static const char bmat[] = "G";
 
     Array<F77_INT> ip (dim_vector(11, 1));
@@ -216,7 +216,7 @@ DEFUN_DLD (eig_sym, args, nargout,
     RowVector workl(lwork);
     double* const worklp = workl.fortran_vec();
     RowVector workd(3 * n);
-    double* const workdp = workd.fortran_vec();    
+    double* const workdp = workd.fortran_vec();
     double *const presid = resid.fortran_vec();
     ColumnVector w(n);
 
@@ -242,7 +242,7 @@ DEFUN_DLD (eig_sym, args, nargout,
              F77_CHAR_ARG_LEN(2));
 
         OCTAVE_QUIT;
-        
+
 #if EIGSYM_TRACE > 0
         std::cout << "ido=" << ido << std::endl;
         std::cout << "bmat=" << bmat << std::endl;
@@ -276,23 +276,23 @@ DEFUN_DLD (eig_sym, args, nargout,
             } else {
                 iinptr = iptr(2) - 1; // w = B * x
             }
-            
+
             for (F77_INT i = 0; i < n; i++) {
                 w(i) = workd(i + iinptr);
             }
 
             octave_idx_type iop;
-            
+
             if (mode == 2) {
                 iop = (ido == 1 || ido == -1)
                     ? 0  // z = A * x
                     : 2; // z = B * x
-            } else if (ido == -1 || ido == 2) {                
+            } else if (ido == -1 || ido == 2) {
                 iop = 0; // z = B * x
             } else {
                 iop = 1; // z = (A - sigma * B)^-1 * w = (A - sigma * B)^-1 * B * x
             }
-            
+
             octave_value_list f = OCTAVE__FEVAL(ov_op(iop), octave_value(w), 1);
 
 #if OCTAVE_MAJOR_VERSION < 6
@@ -300,7 +300,7 @@ DEFUN_DLD (eig_sym, args, nargout,
                 return retval;
             }
 #endif
-            
+
             if (f.length() != 1) {
                 error("eig_sym: invalid number of output arguments");
                 return retval;
@@ -316,7 +316,7 @@ DEFUN_DLD (eig_sym, args, nargout,
                     return retval;
                 }
 #endif
-                
+
                 if (z.rows() != n) {
                     error("eig_sym: user supplied function returned invalid number of rows");
                     return retval;
@@ -337,11 +337,11 @@ DEFUN_DLD (eig_sym, args, nargout,
                     return retval;
                 }
 #endif
-                
+
                 if (f.length() != 1) {
                     error("eig_sym: invalid number of output arguments");
                     return retval;
-                }                
+                }
             }
 
             y = f(0).column_vector_value();
@@ -351,7 +351,7 @@ DEFUN_DLD (eig_sym, args, nargout,
                 return retval;
             }
 #endif
-            
+
             if (y.rows() != n) {
                 error("eig_sym: user supplied function returned an invalid number of rows");
                 return retval;
@@ -419,7 +419,7 @@ DEFUN_DLD (eig_sym, args, nargout,
     if (iconv < nev) {
         warning("eig_sym: number of eigenvalues requested: %d, number of eigenvalues converged: %d", nev, iconv);
     }
-    
+
     eig_val.resize(iconv);
     eig_vec.resize(n, iconv);
 
@@ -428,178 +428,3 @@ DEFUN_DLD (eig_sym, args, nargout,
 
     return retval;
 }
-
-/*
-%!function [A,B]=build_test_mat(N)
-%! B = gallery("poisson", N);
-%! A = gallery("tridiag", columns(B));
-
-%!test
-%! rand("seed", 0);
-%! for k=[5,10,50,100]
-%! [A, B] = build_test_mat(k);
-%! for k=1:10
-%! opts.v0 = rand(columns(B), 1);
-%! sigma = "LM";
-
-%! op{1} = @(x) A * x;
-%! op{2} = @(Ax) B \ Ax;
-%! op{3} = @(x) B * x;
-
-%! nev = 10;
-%! opts.maxit = 3000;
-%! opts.p = 20;
-%! opts.tol = 0;
-%! n = columns(A);
-%! [v, lambda] = eig_sym(op, n, nev, sigma, opts);
-%! tol = 1e-6;
-%! assert(columns(lambda), nev)
-%! for i=1:columns(v)
-%!  v1 = A * v(:, i);
-%!  v2 = lambda(i,i) * B * v(:,i);
-%!  assert(v1, v2, tol * max([norm(v1),norm(v2)]));
-%! endfor
-%! endfor
-%! endfor
-
-%!test
-%! rand("seed", 0);
-%! for l=[5,10,20,50,100]
-%! [A,B]=build_test_mat(l);
-%! for k=1:10
-%! opts.v0 = rand(columns(B), 1);
-%! sigma = (k - 1) / 1000;
-%! op{1} = @(x) B * x;
-%! op{2} = @(Bx) (A - sigma * B) \ Bx;
-%! nev = 10;
-%! opts.maxit = 3000;
-%! opts.p = 20;
-%! opts.tol = 0;
-%! n = columns(A);
-%! [v, lambda] = eig_sym(op, n, nev, sigma, opts);
-%! tol = 1e-6;
-%! assert(columns(lambda), nev)
-%! for i=1:columns(v)
-%!  v1 = A * v(:, i);
-%!  v2 = lambda(i,i) * B * v(:,i);
-%!  assert(v1, v2, tol * max([norm(v1),norm(v2)]));
-%! endfor
-%! endfor
-%! endfor
-
-%!test
-%! trace = false;
-%! rand("seed", 0);
-%! sigma={"SM","LM"};
-%! for s=1:numel(sigma)
-%! for n = [10, 20, 50, 100, 200, 500, 1000];
-%! nev = 3;
-%! ncv = min([n, 2 * nev + floor(5 * sqrt(n))]);
-%! h = 1 / (n+1);
-%! r1 = (4 / 6) * h;
-%! r2 = (1 / 6) * h;
-%! B = sparse([],[],[], n, n);
-%! for i=1:n
-%!   B(i, i) = r1;
-%!   if (i + 1 <= n)
-%!     B(i, i + 1) = r2;
-%!     B(i + 1, i) = r2;
-%!   endif
-%! endfor
-
-%! A = sparse([], [], [], n, n);
-%! A(1, 1) = 2 / h;
-%! A(1, 2) = -1 / h;
-%! for i=2:n
-%!   A(i, i) = 2 / h;
-%!   A(i, i - 1) = -1 / h;
-%!   A(i - 1, i) = -1 / h;
-%! endfor
-%! assert(isdefinite(A));
-%! assert(isdefinite(B));
-%! op{1} = @(x) A * x;
-%! op{2} = @(Ax) B \ Ax;
-%! op{3} = @(x) B * x;
-%! opts.maxit = 300;
-%! opts.p = ncv;
-%! opts.tol = 0;
-%! ## A * x = lambda * B * x
-%! v1 = [];
-%! lambda1 = [];
-%! opts.v0 = rand(n, 1);
-%! for k=1:2
-%! [v, lambda] = eig_sym(op, n, nev, sigma{s}, opts);
-%! if (k == 1)
-%! v1 = v;
-%! lambda1 = lambda;
-%! else
-%! assert(v1, v, 0);
-%! assert(lambda1, lambda, 0);
-%! endif
-%! endfor
-%! tol = sqrt(eps);
-%! assert(columns(lambda), nev)
-%! for i=1:columns(v)
-%!  v1 = A * v(:, i);
-%!  v2 = lambda(i,i) * B * v(:,i);
-%!  assert(v1, v2, tol * max([norm(v1),norm(v2)]));
-%! endfor
-%! endfor
-%! endfor
-
-%!test
-%! trace = false;
-%! rand("seed", 0);
-%! for n = [10, 20, 50, 100, 200, 500, 1000];
-%! nev = 3;
-%! ncv = min([n, 2 * nev + floor(5 * sqrt(n))]);
-%! h = 1 / (n+1);
-%! r1 = (4 / 6) * h;
-%! r2 = (1 / 6) * h;
-%! B = sparse([],[],[], n, n);
-%! for i=1:n
-%!   B(i, i) = r1;
-%!   if (i + 1 <= n)
-%!     B(i, i + 1) = r2;
-%!     B(i + 1, i) = r2;
-%!   endif
-%! endfor
-
-%! A = sparse([], [], [], n, n);
-%! A(1, 1) = 2 / h;
-%! A(1, 2) = -1 / h;
-%! for i=2:n
-%!   A(i, i) = 2 / h;
-%!   A(i, i - 1) = -1 / h;
-%!   A(i - 1, i) = -1 / h;
-%! endfor
-%! assert(isdefinite(A));
-%! assert(isdefinite(B));
-%! for sigma = 0:0.1:1;
-%! op{1} = @(x) B * x;
-%! op{2} = @(Bx) (A - sigma * B) \ Bx;
-%! opts.maxit = 300;
-%! opts.p = ncv;
-%! opts.tol = 0;
-%! opts.v0 = rand(n, 1);
-%! ## A * x = lambda * B * x
-%! for k=1:2
-%! [v, lambda] = eig_sym(op, n, nev, sigma, opts);
-%! if (k == 1)
-%!   v1 = v;
-%!   lambda1 = lambda;
-%! else
-%!   assert(lambda, lambda1, 0);
-%!   assert(v, v1, 0);
-%! endif
-%! endfor
-%! tol = sqrt(eps);
-%! assert(columns(lambda), nev)
-%! for i=1:columns(v)
-%!  v1 = A * v(:, i);
-%!  v2 = lambda(i,i) * B * v(:,i);
-%!  assert(v1, v2, tol * max([norm(v1),norm(v2)]));
-%! endfor
-%! endfor
-%! endfor
- */

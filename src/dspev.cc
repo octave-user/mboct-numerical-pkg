@@ -1,4 +1,4 @@
-// Copyright (C) 2018(-2021) Reinhard <octave-user@a1.net>
+// Copyright (C) 2018(-2023) Reinhard <octave-user@a1.net>
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -110,7 +110,7 @@ DEFUN_DLD (dspev, args, nargout,
     if (INFO != 0)
     {
             long lINFO = INFO;
-            
+
             if (INFO < 0)
             {
                     error("dspev failed with INFO=%ld: the %ld-th argument had an illegal value", lINFO, lINFO);
@@ -132,59 +132,3 @@ DEFUN_DLD (dspev, args, nargout,
 
     return retval;
 }
-
-/*
-%!function vn = normalize_U(v)
-%! idxmax = find(abs(v) == max(abs(v)))(1);
-%! vn = v / v(idxmax);
-
-%!test
-%! rand("seed", 0);
-%! format long g;
-%! fprintf(stderr,"\n\nTest with dense matrix:\n\n");
-%! for i=1:10
-%!   A = zeros(200,200);
-%!   B = rand(10);
-%!   for j=1:size(A,1)/10
-%!     A((j-1)*10 + (1:10),(j-1)*10 + (1:10)) = rand()*B;
-%!   endfor
-%!   A = A + A.';
-%!  tic();
-%!  [U1,lambda1]=dspev(A);
-%!  fprintf(stderr,"dspev: %fs\n",toc());
-%!  tic();
-%!  [U,lambda]=eig(A);
-%!  lambda = diag(lambda).';
-%!  fprintf(stderr,"eig: %fs\n",toc());
-%!  tol_lambda = sqrt(eps)*max(abs(lambda));
-%!  assert(lambda1,lambda,tol_lambda);
-%!  for j=1:size(U,2)
-%!    assert(normalize_U(U1(:, j)), normalize_U(U(:, j)), sqrt(eps));
-%!  endfor
-%! endfor
-
-%!test
-%! rand("seed", 0);
-%! format long g;
-%! fprintf(stderr,"\n\nTest with sparse matrix:\n\n");
-%! for i=1:10
-%!  A = sparse([],[],[],200,200);
-%!  B = rand(10);
-%!  for j=1:size(A,1)/10
-%!     A((j-1)*10 + (1:10),(j-1)*10 + (1:10)) = rand()*B;
-%!  endfor
-%!  A = A + A.';
-%!  tic();
-%!  [U1, lambda1] = dspev(A);
-%!  fprintf(stderr,"dspev: %fs\n",toc());
-%!  tic();
-%!  [U,lambda]=eig(A);
-%!  lambda = diag(lambda).';
-%!  fprintf(stderr,"eig: %fs\n",toc());
-%!  tol_lambda = sqrt(eps) * max(abs(lambda));
-%!  assert(lambda1,lambda,tol_lambda);
-%!  for j=1:size(U,2)
-%!    assert(normalize_U(U1(:, j)), normalize_U(U(:, j)), sqrt(eps));
-%!  endfor
-%! endfor
-*/
