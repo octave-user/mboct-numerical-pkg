@@ -66,6 +66,9 @@
 /* Define to 1 if you have the <mkl/mkl_pardiso.h> header file. */
 #undef HAVE_MKL_MKL_PARDISO_H
 
+/* Define to 1 if you have the <mkl_pardiso.h> header file. */
+#undef HAVE_MKL_PARDISO_H
+
 /* Define to 1 if you have the `MPI_Comm_rank' function. */
 #undef HAVE_MPI_COMM_RANK
 
@@ -227,6 +230,9 @@
 
 /* Define to 1 if you have the <zmumps_c.h> header file. */
 #undef HAVE_ZMUMPS_C_H
+
+/* Define if mkl_pardiso.h is not located in a subfolder */
+#undef MKL_PARDISO_H
 
 /* macro for alternative Octave symbols */
 #undef OCTAVE__FEVAL
