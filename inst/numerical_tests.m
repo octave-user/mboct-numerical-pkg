@@ -1,4 +1,4 @@
-## Copyright (C) 2011(-2021) Reinhard <octave-user@a1.net>
+## Copyright (C) 2011(-2023) Reinhard <octave-user@a1.net>
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@
 %!           x = pastix(pastix(A, opts), b);
 %!       endswitch
 %!       f = max(norm(A * x - b, "cols") ./ norm(A * x + b, "cols"));
-%!       assert(f < eps^0.8);
+%!       assert(f <= eps^0.8);
 %!     endfor
 %!   endfor
 %! else
@@ -83,7 +83,7 @@
 %!               x = pastix(pastix(A, opts), b);
 %!           endswitch
 %!           f = max(norm(A * x - b, "cols") ./ norm(A * x + b, "cols"));
-%!           assert(f < tol);
+%!           assert(f <= tol);
 %!         endfor
 %!       endfor
 %!     endfor
@@ -117,7 +117,7 @@
 %!               x = pastix(pastix(A, opts), b);
 %!           endswitch
 %!           f = max(norm(A * x - b, "cols") ./ norm(A * x + b, "cols"));
-%!           assert(f < tol);
+%!           assert(f <= tol);
 %!         endfor
 %!       endfor
 %!     endfor
@@ -171,8 +171,8 @@
 %!                     xref = A \ b;
 %!                     ferr = norm(A * x - b, "cols") ./ norm(A * x + b, "cols");
 %!                     fref = norm(A * xref - b, "cols") ./ norm(A * xref + b, "cols");
-%!                     assert(max(ferr) < tol);
-%!                     assert(max(ferr) < 10 * max(fref));
+%!                     assert(max(ferr) <= tol);
+%!                     assert(max(ferr) <= 10 * max(fref));
 %!                   endfor
 %!                 endfor
 %!               endfor
@@ -216,8 +216,8 @@
 %!           x = pastix(pastix(Asym, opts), b);
 %!       endswitch
 %!       f = max(norm(A * x - b) ./ norm(A * x + b));
-%!       assert(f < tol);
-%!       assert(x, A \ b, tol * norm(A \ b, "cols"));
+%!       assert(f <= tol);
+%!       assert(max(norm(x - A \ b, "cols")) <= tol * max(norm(A \ b, "cols")));
 %!     endfor
 %!   endfor
 %! endif
@@ -247,8 +247,8 @@
 %!     opts.check_solution = true;
 %!     x = pastix(A, b, opts);
 %!     f = max(norm(A * x - b, "cols") ./ norm(A * x + b, "cols"));
-%!     assert(f < eps^0.8);
-%!     assert(x, A \ b, eps^0.8 * norm(A \ b));
+%!     assert(f <= eps^0.8);
+%!     assert(max(norm(x - A \ b, "cols")) <= eps^0.8 * max(norm(A \ b, "cols")));
 %!   endfor
 %! endif
 
@@ -279,8 +279,8 @@
 %!               x = pastix(pastix(A, opts), b);
 %!           endswitch
 %!           f = max(norm(A * x - b, "cols") ./ norm(A * x + b, "cols"));
-%!           assert(f < tol);
-%!           assert(x, A \ b, tol * norm(A \ b, "cols"));
+%!           assert(f <= tol);
+%!           assert(max(norm(x - A \ b, "cols")) <= tol * max(norm(A \ b, "cols")));
 %!         endfor
 %!       endfor
 %!     endfor
@@ -364,9 +364,9 @@
 %!                       endif
 %!                       fpas = norm(A * x - b, "cols") ./ norm(A * x + b, "cols");
 %!                       fref = norm(A * xref - b, "cols") ./ norm(A * xref + b, "cols");
-%!                       assert(max(fpas) < tolf);
-%!                       assert(max(fref) < tolf);
-%!                       assert(x, xref, tolx * max(norm(xref, "cols")));
+%!                       assert(max(fpas) <= tolf);
+%!                       assert(max(fref) <= tolf);
+%!                       assert(max(norm(x - xref, "cols")) <= tolx * max(norm(xref, "cols")));
 %!                       fprintf(stderr, "current test %d passed\n", ++test_idx);
 %!                     endfor
 %!                   endfor
@@ -428,8 +428,8 @@
 %!               tol = eps^0.3;
 %!               fpas = norm(A * x - b, "cols") ./ norm(A * x + b, "cols");
 %!               fref = norm(A * xref - b, "cols") ./ norm(A * xref + b, "cols");
-%!               assert(max(fpas) < tol);
-%!               assert(max(fref) < tol);
+%!               assert(max(fpas) <= tol);
+%!               assert(max(fref) <= tol);
 %!             endfor
 %!           endfor
 %!         endfor
@@ -504,9 +504,9 @@
 %!                       otherwise
 %!                         x = mumps(mumps(Af, opt), b);
 %!                     endswitch
-%!                     assert(A * x, b, sqrt(eps) * norm(b));
-%!                     assert(norm(A * x - b) < sqrt(eps) * norm(A*x+b));
-%!                     assert(x, xref, sqrt(eps) * norm(x));
+%!                     assert(max(norm(A * x - b, "cols")) <= sqrt(eps) * norm(b));
+%!                     assert(max(norm(A * x - b, "cols")) <= sqrt(eps) * norm(A*x+b));
+%!                     assert(max(norm(x - xref, "cols")) <= sqrt(eps) * norm(x));
 %!                   endfor
 %!                 endfor
 %!               endfor
@@ -578,9 +578,9 @@
 %!                     otherwise
 %!                       x = umfpack(umfpack(A, opt), b);
 %!                   endswitch
-%!                   assert(A * x, b, sqrt(eps) * norm(b));
-%!                   assert(norm(A * x - b) < sqrt(eps) * norm(A*x+b));
-%!                   assert(x, xref, sqrt(eps) * norm(x));
+%!                   assert(max(norm(A * x - b, "cols")) <= sqrt(eps) * norm(b));
+%!                   assert(max(norm(A * x - b, "cols")) <= sqrt(eps) * norm(A*x+b));
+%!                   assert(max(norm(x - xref, "cols")) <= sqrt(eps) * norm(x));
 %!                 endfor
 %!               endfor
 %!             endfor
@@ -643,9 +643,9 @@
 %!                     otherwise
 %!                       x = strumpack(strumpack(A, opt), b);
 %!                   endswitch
-%!                   assert(A * x, b, sqrt(eps) * norm(b));
-%!                   assert(norm(A * x - b) < sqrt(eps) * norm(A*x+b));
-%!                   assert(x, xref, sqrt(eps) * norm(x));
+%!                   assert(max(norm(A * x - b, "cols")) <= sqrt(eps) * norm(b));
+%!                   assert(max(norm(A * x - b, "cols")) <= sqrt(eps) * max(norm(A*x+b, "cols")));
+%!                   assert(max(norm(x - xref, "cols")) <= sqrt(eps) * norm(x));
 %!                 endfor
 %!               endfor
 %!             endfor
@@ -684,7 +684,7 @@
 %!     assert(length(lambda),columns(x));
 %!     assert(rows(x),rows(B));
 %!     for i=1:length(lambda)
-%!       assert(A*x(:,i),lambda(i)*B*x(:,i),sqrt(eps)*norm(lambda(i)*B*x(:,i)));
+%!       assert(max(norm(A*x(:,i) - lambda(i)*B*x(:,i), "cols")) <= sqrt(eps)*norm(lambda(i)*B*x(:,i)));
 %!     endfor
 %!   endfor
 %! else
@@ -714,7 +714,7 @@
 %!     assert(length(lambda),columns(x));
 %!     assert(rows(x),rows(B));
 %!     for i=1:length(lambda)
-%!       assert(A*x(:,i),lambda(i)*B*x(:,i),sqrt(eps)*norm(lambda(i)*B*x(:,i)));
+%!       assert(norm(A*x(:,i) - lambda(i)*B*x(:,i)) <= sqrt(eps)*norm(lambda(i)*B*x(:,i)));
 %!     endfor
 %!   endfor
 %! endif
@@ -742,7 +742,7 @@
 %!     assert(length(lambda),columns(x));
 %!     assert(rows(x),rows(B));
 %!     for i=1:length(lambda)
-%!       assert(A*x(:,i),lambda(i)*B*x(:,i),sqrt(eps)*norm(lambda(i)*B*x(:,i)));
+%!       assert(norm(A*x(:,i) - lambda(i)*B*x(:,i)) < sqrt(eps)*norm(lambda(i)*B*x(:,i)));
 %!     endfor
 %!   endfor
 %! endif
@@ -771,7 +771,7 @@
 %!     assert(length(lambda),columns(x));
 %!     assert(rows(x),rows(B));
 %!     for i=1:length(lambda)
-%!       assert(A*x(:,i),lambda(i)*B*x(:,i),eps^0.4*norm(lambda(i)*B*x(:,i)));
+%!       assert(norm(A*x(:,i) - lambda(i)*B*x(:,i)) < eps^0.4*norm(lambda(i)*B*x(:,i)));
 %!     endfor
 %!   endfor
 %! endif
@@ -794,9 +794,9 @@
 %!       [U,lambda]=eig(A);
 %!       lambda = diag(lambda).';
 %!       tol_lambda = sqrt(eps)*max(abs(lambda));
-%!       assert(lambda1,lambda,tol_lambda);
+%!       assert(norm(lambda1 - lambda) <= tol_lambda);
 %!       for j=1:size(U,2)
-%!         assert(normalize_U(U1(:, j)), normalize_U(U(:, j)), sqrt(eps));
+%!         assert(norm(normalize_U(U1(:, j)) - normalize_U(U(:, j))) <= sqrt(eps));
 %!       endfor
 %!     endfor
 %!   else
@@ -818,9 +818,9 @@
 %!       [U,lambda]=eig(A);
 %!       lambda = diag(lambda).';
 %!       tol_lambda = sqrt(eps) * max(abs(lambda));
-%!       assert(lambda1,lambda,tol_lambda);
+%!       assert(norm(lambda1 - lambda) <= tol_lambda);
 %!       for j=1:size(U,2)
-%!         assert(normalize_U(U1(:, j)), normalize_U(U(:, j)), sqrt(eps));
+%!         assert(norm(normalize_U(U1(:, j)) - normalize_U(U(:, j))) <= sqrt(eps));
 %!       endfor
 %!     endfor
 %!   endif
@@ -847,7 +847,7 @@
 %!             endswitch
 %!             A2 = sparse(r(idx), c(idx), d(idx), N, N);
 %!             b2 = sp_sym_mtimes(A2, x);
-%!             assert(b2, b, tol * max(max(abs(b))));
+%!             assert(norm(b2 - b) <= tol * norm(b));
 %!           endfor
 %!         endfor
 %!       endfor
@@ -935,9 +935,9 @@
 %!                               tolx = eps^0.5;
 %!                               fpar = norm(A * x - b, "cols") ./ norm(A * x + b, "cols");
 %!                               fref = norm(A * xref - b, "cols") ./ norm(A * xref + b, "cols");
-%!                               assert(max(fpar) < tolf);
-%!                               assert(max(fref) < tolf);
-%!                               assert(x, xref, tolx * max(norm(xref, "cols")));
+%!                               assert(max(fpar) <= tolf);
+%!                               assert(max(fref) <= tolf);
+%!                               assert(max(norm(x - xref, "cols")) <= tolx * max(norm(xref, "cols")));
 %!                               fprintf(stderr, "current test %d passed\n", ++test_idx);
 %!                             endfor
 %!                           endfor
