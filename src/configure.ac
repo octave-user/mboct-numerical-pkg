@@ -199,6 +199,7 @@ if test "${ac_cv_header_mkl_mkl_pardiso_h}" = "yes"; then
 else
    if test "${ac_cv_header_mkl_pardiso_h}" = "yes"; then
       AC_DEFINE([MKL_PARDISO_H], [<mkl_pardiso.h>], [Define if mkl_pardiso.h is not located in a subfolder])
+      ac_cv_header_mkl_mkl_pardiso_h="yes"
    fi
 fi
 
