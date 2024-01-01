@@ -52,8 +52,6 @@ fi
 
 PKG_CONFIG="${PKG_CONFIG:-pkg-config}"
 
-pkg-config --list-all
-
 MUMPS_LIBS="${MUMPS_LIBS:--ldmumps_seq -lzmumps_seq -lmpiseq_seq -lgfortran}"
 ARPACK_LIBS="${ARPACK_LIBS:-`${PKG_CONFIG} --libs arpack`}"
 ARPACK_LIBS="${ARPACK_LIBS:--larpack}"
