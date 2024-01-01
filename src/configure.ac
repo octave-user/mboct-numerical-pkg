@@ -52,6 +52,8 @@ fi
 
 PKG_CONFIG="${PKG_CONFIG:-pkg-config}"
 
+pkg-config --list-all
+
 MUMPS_LIBS="${MUMPS_LIBS:--ldmumps_seq -lzmumps_seq -lmpiseq_seq -lgfortran}"
 ARPACK_LIBS="${ARPACK_LIBS:-`${PKG_CONFIG} --libs arpack`}"
 ARPACK_LIBS="${ARPACK_LIBS:--larpack}"
@@ -67,6 +69,12 @@ PASTIX_LIBS="${PASTIX_LIBS:-`${PKG_CONFIG} --libs pastix`}"
 PASTIX_LIBS="${PASTIX_LIBS:--lpastix -lpastix_kernels -lspm -lhwloc}"
 PARDISO_INC="${PARDISO_INC:-`${PKG_CONFIG} --cflags mkl-dynamic-lp64-gomp`}"
 PARDISO_LIBS="${PARDISO_LIBS:-`${PKG_CONFIG} --libs mkl-dynamic-lp64-gomp`}"
+PARDISO_INC="${PARDISO_INC:-`${PKG_CONFIG} --cflags mkl-dynamic-lp64-iomp`}"
+PARDISO_LIBS="${PARDISO_LIBS:-`${PKG_CONFIG} --libs mkl-dynamic-lp64-iomp`}"
+PARDISO_INC="${PARDISO_INC:-`${PKG_CONFIG} --cflags mkl-dynamic-lp64-tbb`}"
+PARDISO_LIBS="${PARDISO_LIBS:-`${PKG_CONFIG} --libs mkl-dynamic-lp64-tbb`}"
+PARDISO_INC="${PARDISO_INC:-`${PKG_CONFIG} --cflags mkl-dynamic-lp64-seq`}"
+PARDISO_LIBS="${PARDISO_LIBS:-`${PKG_CONFIG} --libs mkl-dynamic-lp64-seq`}"
 PARDISO_INC="${PARDISO_INC:--I/usr/include/mkl}"
 PARDISO_LIBS="${PARDISO_LIBS:--lmkl_gf_lp64 -lmkl_core -lmkl_gnu_thread -lm -lgomp}"
 
