@@ -26,7 +26,7 @@
 #include <vector>
 #include <octave/oct.h>
 
-#include MKL_PARDISO_H
+#include <mkl_pardiso.h>
 
 #ifdef USE_OMP_THREADS
 #include <omp.h>
