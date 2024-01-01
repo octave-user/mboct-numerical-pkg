@@ -67,7 +67,7 @@ PASTIX_LIBS="${PASTIX_LIBS:-`${PKG_CONFIG} --libs pastix`}"
 PASTIX_LIBS="${PASTIX_LIBS:--lpastix -lpastix_kernels -lspm -lhwloc}"
 PARDISO_INC="${PARDISO_INC:-`${PKG_CONFIG} --cflags mkl-dynamic-lp64-gomp`}"
 PARDISO_LIBS="${PARDISO_LIBS:-`${PKG_CONFIG} --libs mkl-dynamic-lp64-gomp`}"
-PARDISO_INC="${PARDISO_INC:--Imkl}"
+PARDISO_INC="${PARDISO_INC:--I/usr/include/mkl}"
 PARDISO_LIBS="${PARDISO_LIBS:--lmkl_gf_lp64 -lmkl_core -lmkl_gnu_thread -lm -lgomp}"
 
 AC_LANG(C++)
