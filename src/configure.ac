@@ -188,7 +188,8 @@ LIBS="${TLIBS}"
 CPPFLAGS="${PARDISO_INC} ${CPPFLAGS}"
 LIBS="${PARDISO_LIBS} ${LIBS}"
 
-AC_CHECK_HEADERS([mkl_pardiso.h \
+AC_CHECK_HEADERS([mkl/mkl_pardiso.h \
+                  mkl_pardiso.h \
                   omp.h])
 AC_CHECK_FUNCS([pardiso_64],[have_pardiso=yes],[have_pardiso=no])
 AC_CHECK_FUNCS([omp_set_num_threads \
@@ -196,6 +197,15 @@ AC_CHECK_FUNCS([omp_set_num_threads \
 
 if test "${ac_cv_header_omp_h}" = "yes" -a "${have_omp_threads}" = "yes"; then
    AC_DEFINE([USE_OMP_THREADS],1,[Define if omp_set_num_threads and omp_get_num_threads can be used])
+fi
+
+if test "${ac_cv_header_mkl_mkl_pardiso_h}" = "yes"; then
+   AC_DEFINE([MKL_PARDISO_H], [<mkl/mkl_pardiso.h>], [Define if mkl_pardiso.h is located in a subfolder called mkl])
+   ac_cv_header_mkl_pardiso_h="yes"
+else
+   if test "${ac_cv_header_mkl_pardiso_h}" = "yes"; then
+      AC_DEFINE([MKL_PARDISO_H], [<mkl_pardiso.h>], [Define if mkl_pardiso.h is not located in a subfolder])
+   fi
 fi
 
 AM_CONDITIONAL([USE_PARDISO],[test "${ac_cv_header_mkl_pardiso_h}" = "yes" && test "${have_pardiso}" = "yes"])
