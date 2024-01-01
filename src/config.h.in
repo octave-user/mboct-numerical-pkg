@@ -231,7 +231,7 @@
 /* Define to 1 if you have the <zmumps_c.h> header file. */
 #undef HAVE_ZMUMPS_C_H
 
-/* Define if mkl_pardiso.h is not located in a subfolder */
+/* Define if mkl_pardiso.h is located in a subfolder called mkl */
 #undef MKL_PARDISO_H
 
 /* macro for alternative Octave symbols */

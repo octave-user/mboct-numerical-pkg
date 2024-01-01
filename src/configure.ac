@@ -195,12 +195,12 @@ if test "${ac_cv_header_omp_h}" = "yes" -a "${have_omp_threads}" = "yes"; then
    AC_DEFINE([USE_OMP_THREADS],1,[Define if omp_set_num_threads and omp_get_num_threads can be used])
 fi
 
-if test "${ac_cv_header_mkl_mkl_pardiso_h}" = "yes"; then
-   AC_DEFINE([MKL_PARDISO_H], [<mkl/mkl_pardiso.h>], [Define if mkl_pardiso.h is located in a subfolder called mkl])
-   ac_cv_header_mkl_pardiso_h="yes"
+if test "${ac_cv_header_mkl_pardiso_h}" = "yes"; then
+   AC_DEFINE([MKL_PARDISO_H], [<mkl_pardiso.h>], [Define if mkl_pardiso.h is not located in a subfolder])
 else
-   if test "${ac_cv_header_mkl_pardiso_h}" = "yes"; then
-      AC_DEFINE([MKL_PARDISO_H], [<mkl_pardiso.h>], [Define if mkl_pardiso.h is not located in a subfolder])
+   if test "${ac_cv_header_mkl_mkl_pardiso_h}" = "yes"; then
+      AC_DEFINE([MKL_PARDISO_H], [<mkl/mkl_pardiso.h>], [Define if mkl_pardiso.h is located in a subfolder called mkl])
+      ac_cv_header_mkl_pardiso_h="yes"
    fi
 fi
 

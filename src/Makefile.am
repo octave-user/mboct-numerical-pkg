@@ -16,13 +16,13 @@
 oct_OBJ:=sp_sym_mtimes.@OBJEXT@
 
 if USE_PASTIX
-  CXXFLAGS+=$(PASTIX_INC)
+  CPPFLAGS+=$(PASTIX_INC)
   LIBS+=$(PASTIX_LIBS)
   oct_OBJ+=pastix.@OBJEXT@
 endif
 
 if USE_MUMPS
-  CXXFLAGS+=$(MUMPS_INC)
+  CPPFLAGS+=$(MUMPS_INC)
   LIBS+=$(MUMPS_LIBS)
   oct_OBJ+=mumps.@OBJEXT@
 endif
@@ -33,13 +33,13 @@ if USE_ARPACK
 endif
 
 if USE_UMFPACK
-  CXXFLAGS+=$(UMFPACK_INC)
+  CPPFLAGS+=$(UMFPACK_INC)
   LIBS+=$(UMFPACK_LIBS)
   oct_OBJ+=umfpack.@OBJEXT@
 endif
 
 if USE_METIS
-  CXXFLAGS+=$(METIS_INC)
+  CPPFLAGS+=$(METIS_INC)
   LIBS+=$(METIS_LIBS)
   oct_OBJ+=ndmetis.@OBJEXT@
 endif
@@ -55,13 +55,13 @@ if USE_DSBGVX
 endif
 
 if USE_STRUMPACK
-  CXXFLAGS+=$(STRUMPACK_INC)
+  CPPFLAGS+=$(STRUMPACK_INC)
   LIBS+=$(STRUMPACK_LIBS)
   oct_OBJ+=strumpack.@OBJEXT@
 endif
 
 if USE_PARDISO
-  CXXFLAGS+=$(PARDISO_INC)
+  CPPFLAGS+=$(PARDISO_INC)
   LIBS+=$(PARDISO_LIBS)
   oct_OBJ+=pardiso.@OBJEXT@
 endif
@@ -79,7 +79,7 @@ distclean-local:
 	rm -f oct-alt-includes.h
 
 %.@OBJEXT@: %.cc
-	$(MKOCTFILE) $(CXXFLAGS) -c $< -o $@
+	$(MKOCTFILE) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 $(oct_FILE): $(oct_OBJ)
 	$(MKOCTFILE) $^ $(LDFLAGS) $(LIBS) -o $@
