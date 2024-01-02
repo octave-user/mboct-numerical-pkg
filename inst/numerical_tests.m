@@ -367,7 +367,7 @@
 %!                       assert(max(fpas) <= tolf);
 %!                       assert(max(fref) <= tolf);
 %!                       assert(max(norm(x - xref, "cols")) <= tolx * max(norm(xref, "cols")));
-%!                       fprintf(stderr, "current test %d passed\n", ++test_idx);
+%!                       fprintf(stdout, "current test %d passed\n", ++test_idx);
 %!                     endfor
 %!                   endfor
 %!                 endfor
@@ -942,7 +942,7 @@
 %!                               assert(max(fpar) <= tolf);
 %!                               assert(max(fref) <= tolf);
 %!                               assert(max(norm(x - xref, "cols")) <= tolx * max(norm(xref, "cols")));
-%!                               fprintf(stderr, "current test %d passed\n", ++test_idx);
+%!                               fprintf(stdout, "current test %d passed\n", ++test_idx);
 %!                             endfor
 %!                           endfor
 %!                         endfor
