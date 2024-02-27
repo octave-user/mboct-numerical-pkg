@@ -27,10 +27,7 @@
 #include <octave/oct.h>
 
 #include MKL_PARDISO_H
-
-#ifdef USE_OMP_THREADS
-#include <omp.h>
-#endif
+#include MKL_SERVICE_H
 
 class PardisoObjectDouble;
 class PardisoObjectComplex;
@@ -102,9 +99,7 @@ public:
           bool verbose = false;
           bool symmetric = false;
           int refine_max_iter = 3;
-#ifdef USE_OMP_THREADS
           int number_of_threads = 1;
-#endif
 #ifdef PARDISO_USE_OUT_OF_CORE_MODE
           int out_of_core_mode = 0;
 #endif
@@ -422,16 +417,14 @@ long long PardisoObject<T>::pardiso(T* b, T* x, long long nrhs) const
 {
      long long ierror = -1LL;
 
-#ifdef USE_OMP_THREADS
-     const int num_threads_prev = omp_get_num_threads();
-     omp_set_num_threads(options.number_of_threads);
-#endif
+     const int num_threads_prev = mkl_get_max_threads();
+
+     mkl_set_num_threads(options.number_of_threads);
 
      pardiso_64(pt, &maxfct, &mnum, &mtype, &phase, &n, &Ax.front(), &Ap.front(), &Ai.front(), nullptr, &nrhs, iparm, &msglvl, b, x, &ierror);
 
-#ifdef USE_OMP_THREADS
-     omp_set_num_threads(num_threads_prev);
-#endif
+     mkl_set_num_threads(num_threads_prev);
+
      return ierror;
 }
 
@@ -504,7 +497,6 @@ bool PardisoObject<T>::get_options(const octave_value& ovOptions, PardisoObject:
           }
      }
 
-#ifdef USE_OMP_THREADS
      {
           const auto ithreads = om_options.seek("number_of_threads");
 
@@ -514,7 +506,6 @@ bool PardisoObject<T>::get_options(const octave_value& ovOptions, PardisoObject:
                options.number_of_threads = ov_threads.int_value();
           }
      }
-#endif
 
 #ifdef PARDISO_USE_OUT_OF_CORE_MODE
      {
