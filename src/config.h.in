@@ -63,11 +63,23 @@
 /* Define to 1 if you have the `METIS_SetDefaultOptions' function. */
 #undef HAVE_METIS_SETDEFAULTOPTIONS
 
+/* Define to 1 if you have the `mkl_get_max_threads' function. */
+#undef HAVE_MKL_GET_MAX_THREADS
+
 /* Define to 1 if you have the <mkl/mkl_pardiso.h> header file. */
 #undef HAVE_MKL_MKL_PARDISO_H
 
+/* Define to 1 if you have the <mkl/mkl_service.h> header file. */
+#undef HAVE_MKL_MKL_SERVICE_H
+
 /* Define to 1 if you have the <mkl_pardiso.h> header file. */
 #undef HAVE_MKL_PARDISO_H
+
+/* Define to 1 if you have the <mkl_service.h> header file. */
+#undef HAVE_MKL_SERVICE_H
+
+/* Define to 1 if you have the `mkl_set_num_threads' function. */
+#undef HAVE_MKL_SET_NUM_THREADS
 
 /* Define to 1 if you have the `MPI_Comm_rank' function. */
 #undef HAVE_MPI_COMM_RANK
@@ -92,15 +104,6 @@
 
 /* Define to 1 if you have the <octave/parse.h> header file. */
 #undef HAVE_OCTAVE_PARSE_H
-
-/* Define to 1 if you have the `omp_get_num_threads' function. */
-#undef HAVE_OMP_GET_NUM_THREADS
-
-/* Define to 1 if you have the <omp.h> header file. */
-#undef HAVE_OMP_H
-
-/* Define to 1 if you have the `omp_set_num_threads' function. */
-#undef HAVE_OMP_SET_NUM_THREADS
 
 /* Define to 1 if you have the `pardiso_64' function. */
 #undef HAVE_PARDISO_64
@@ -234,6 +237,9 @@
 /* Define if mkl_pardiso.h is located in a subfolder called mkl */
 #undef MKL_PARDISO_H
 
+/* Define if mkl_service.h is located in a subfolder called mkl */
+#undef MKL_SERVICE_H
+
 /* macro for alternative Octave symbols */
 #undef OCTAVE__FEVAL
 
@@ -266,9 +272,6 @@
 
 /* Define if mumps_seq/mpi.h can be used */
 #undef USE_MUMPS_SEQ_MPI_H
-
-/* Define if omp_set_num_threads and omp_get_num_threads can be used */
-#undef USE_OMP_THREADS
 
 /* Define if the PaStiX interface from version 6.0 or later can be used */
 #undef USE_PASTIX

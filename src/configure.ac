@@ -71,6 +71,9 @@ PARDISO_INC="${PARDISO_INC:-`${PKG_CONFIG} --cflags mkl-dynamic-lp64-tbb`}"
 PARDISO_LIBS="${PARDISO_LIBS:-`${PKG_CONFIG} --libs mkl-dynamic-lp64-tbb`}"
 PARDISO_INC="${PARDISO_INC:-`${PKG_CONFIG} --cflags mkl-dynamic-lp64-seq`}"
 PARDISO_LIBS="${PARDISO_LIBS:-`${PKG_CONFIG} --libs mkl-dynamic-lp64-seq`}"
+dnl Intel OMP was disabled
+dnl PARDISO_INC="${PARDISO_INC:-`${PKG_CONFIG} --cflags mkl-dynamic-lp64-iomp`}"
+dnl PARDISO_LIBS="${PARDISO_LIBS:-`${PKG_CONFIG} --libs mkl-dynamic-lp64-iomp`}"
 PARDISO_INC="${PARDISO_INC:--I/usr/include/mkl}"
 PARDISO_LIBS="${PARDISO_LIBS:--lmkl_gf_lp64 -lmkl_core -lmkl_gnu_thread -lm -lgomp}"
 
@@ -185,26 +188,25 @@ CPPFLAGS="${PARDISO_INC} ${CPPFLAGS}"
 LIBS="${PARDISO_LIBS} ${LIBS}"
 
 AC_CHECK_HEADERS([mkl/mkl_pardiso.h \
-                  mkl_pardiso.h \
-                  omp.h])
-AC_CHECK_FUNCS([pardiso_64],[have_pardiso=yes],[have_pardiso=no])
-AC_CHECK_FUNCS([omp_set_num_threads \
-                omp_get_num_threads],[have_omp_threads=yes],[have_omp_threads=no])
+                  mkl/mkl_service.h],[have_pardiso_h_subdir=yes],[have_pardiso_h_subdir=no])
+AC_CHECK_HEADERS([mkl_pardiso.h \
+                  mkl_service.h],[have_pardiso_h=yes],[have_pardiso_h=no])
+AC_CHECK_FUNCS([pardiso_64 \
+                mkl_set_num_threads \
+                mkl_get_max_threads],[have_pardiso=yes],[have_pardiso=no])
 
-if test "${ac_cv_header_omp_h}" = "yes" -a "${have_omp_threads}" = "yes"; then
-   AC_DEFINE([USE_OMP_THREADS],1,[Define if omp_set_num_threads and omp_get_num_threads can be used])
-fi
-
-if test "${ac_cv_header_mkl_pardiso_h}" = "yes"; then
+if test "${have_pardiso_h}"; then
    AC_DEFINE([MKL_PARDISO_H], [<mkl_pardiso.h>], [Define if mkl_pardiso.h is not located in a subfolder])
+   AC_DEFINE([MKL_SERVICE_H], [<mkl_service.h>], [Define if mkl_service.h is not located in a subfolder])
 else
-   if test "${ac_cv_header_mkl_mkl_pardiso_h}" = "yes"; then
+   if test "${have_pardiso_h_subdir}" = "yes"; then
       AC_DEFINE([MKL_PARDISO_H], [<mkl/mkl_pardiso.h>], [Define if mkl_pardiso.h is located in a subfolder called mkl])
-      ac_cv_header_mkl_pardiso_h="yes"
+      AC_DEFINE([MKL_SERVICE_H], [<mkl/mkl_service.h>], [Define if mkl_service.h is located in a subfolder called mkl])
+      have_pardiso_h=yes
    fi
 fi
 
-AM_CONDITIONAL([USE_PARDISO],[test "${ac_cv_header_mkl_pardiso_h}" = "yes" && test "${have_pardiso}" = "yes"])
+AM_CONDITIONAL([USE_PARDISO],[test "${have_pardiso_h}" = "yes" && test "${have_pardiso}" = "yes"])
 
 CPPFLAGS="${TCPPFLAGS}"
 LIBS="${TLIBS}"
