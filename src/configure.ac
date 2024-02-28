@@ -69,13 +69,13 @@ PARDISO_INC="${PARDISO_INC:-`${PKG_CONFIG} --cflags mkl-dynamic-lp64-gomp`}"
 PARDISO_LIBS="${PARDISO_LIBS:-`${PKG_CONFIG} --libs mkl-dynamic-lp64-gomp`}"
 PARDISO_INC="${PARDISO_INC:-`${PKG_CONFIG} --cflags mkl-dynamic-lp64-tbb`}"
 PARDISO_LIBS="${PARDISO_LIBS:-`${PKG_CONFIG} --libs mkl-dynamic-lp64-tbb`}"
-PARDISO_INC="${PARDISO_INC:-`${PKG_CONFIG} --cflags mkl-dynamic-lp64-seq`}"
-PARDISO_LIBS="${PARDISO_LIBS:-`${PKG_CONFIG} --libs mkl-dynamic-lp64-seq`}"
+dnl PARDISO_INC="${PARDISO_INC:-`${PKG_CONFIG} --cflags mkl-dynamic-lp64-seq`}"
+dnl PARDISO_LIBS="${PARDISO_LIBS:-`${PKG_CONFIG} --libs mkl-dynamic-lp64-seq`}"
 dnl Intel OMP was disabled
 dnl PARDISO_INC="${PARDISO_INC:-`${PKG_CONFIG} --cflags mkl-dynamic-lp64-iomp`}"
 dnl PARDISO_LIBS="${PARDISO_LIBS:-`${PKG_CONFIG} --libs mkl-dynamic-lp64-iomp`}"
 PARDISO_INC="${PARDISO_INC:--I/usr/include/mkl}"
-PARDISO_LIBS="${PARDISO_LIBS:--lmkl_gf_lp64 -lmkl_core -lmkl_gnu_thread -lm -lgomp}"
+PARDISO_LIBS="${PARDISO_LIBS:--lmkl_gf_lp64 -lmkl_rt -lmkl_core -lmkl_gnu_thread -lm -lomp5}"
 
 AC_LANG(C++)
 
