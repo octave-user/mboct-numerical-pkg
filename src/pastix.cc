@@ -809,13 +809,6 @@ octave_value_list PastixObject<T>::eval(const octave_value_list& args, int nargo
           case 0:
                sys = PastixNoTrans;
                break;
-          case 1:
-               if constexpr(std::is_same<T, double>::value) {
-                    sys = PastixTrans;
-               } else {
-                    sys = PastixConjTrans;
-               }
-               break;
           case 2:
                sys = PastixTrans;
                break;
