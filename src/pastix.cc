@@ -97,7 +97,7 @@ public:
      virtual ~PastixObject(void);
      virtual size_t byte_size() const;
      virtual dim_vector dims() const;
-     bool solve(DenseMatrixType& b, DenseMatrixType& x) const;
+     bool solve(DenseMatrixType& b, DenseMatrixType& x, pastix_trans_t sys) const;
      static bool get_options(const octave_value& ovOptions, PastixObject::Options& options);
      virtual bool is_constant(void) const{ return true; }
      virtual bool is_defined(void) const{ return true; }
@@ -423,7 +423,7 @@ void PastixObject<T>::cleanup()
 }
 
 template <typename T>
-bool PastixObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x) const {
+bool PastixObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x, pastix_trans_t sys) const {
      if (b.rows() != ncols) {
           error_with_id("pastix:solve", "pastix: rows(b)=%ld must be equal to rows(A)=%ld", long(b.rows()), long(ncols));
           return false;
@@ -433,12 +433,18 @@ bool PastixObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x) const {
 
      x = b;
 
+     const auto save_sys = iparm[IPARM_TRANSPOSE_SOLVE];
+     
+     iparm[IPARM_TRANSPOSE_SOLVE] = sys;
+          
      int rc = pastix_task_solve(pastix_data,
                                 x.rows(),
                                 x.columns(),
                                 x.fortran_vec(),
                                 x.rows());
 
+     iparm[IPARM_TRANSPOSE_SOLVE] = save_sys;
+     
      if (PASTIX_SUCCESS != rc) {
           error_with_id("pastix:solve", "pastix_task_solve failed with status %d", rc);
           return false;
@@ -792,8 +798,26 @@ octave_value_list PastixObject<T>::eval(const octave_value_list& args, int nargo
 #endif
      }
 
+     pastix_trans_t sys = PastixNoTrans;
+
+     if (args.length() > iarg) {
+          switch (args(iarg++).long_value()) {
+          case 0:
+               sys = PastixNoTrans;
+               break;
+          case 1:
+               sys = PastixConjTrans;
+               break;
+          case 2:
+               sys = PastixTrans;
+               break;
+          default:
+               sys = static_cast<pastix_trans_t>(-1);
+          }
+     }
+     
      if (bHaveRightHandSide) {
-          if (pPastix->solve(b, x)) {
+          if (pPastix->solve(b, x, sys)) {
                retval.append(x);
           }
 
