@@ -486,7 +486,8 @@ bool PastixObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x, pastix_trans
                OCTAVE_QUIT;
           }
 
-          if (options.check_solution) {
+          if (options.check_solution && sys == PastixNoTrans) {
+               // FIXME: Is there any transposed version of spmCheckAxb?
                rc = spmCheckAxb(dparm[DPARM_EPSILON_REFINEMENT],
                                 b.columns(),
                                 &spm,
