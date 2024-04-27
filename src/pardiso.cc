@@ -113,7 +113,7 @@ public:
      virtual ~PardisoObject(void);
      virtual size_t byte_size() const;
      virtual dim_vector dims() const;
-     bool solve(DenseMatrixType& b, DenseMatrixType& x) const;
+     bool solve(DenseMatrixType& b, DenseMatrixType& x, long long sys) const;
      static bool get_options(const octave_value& ovOptions, PardisoObject::Options& options);
      virtual bool is_constant(void) const{ return true; }
      virtual bool is_defined(void) const{ return true; }
@@ -447,7 +447,7 @@ PardisoObject<T>::~PardisoObject()
 }
 
 template <typename T>
-bool PardisoObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x) const {
+bool PardisoObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x, long long sys) const {
      if (b.rows() != n) {
           error_with_id("pardiso:solve", "pardiso: rows(b)=%Ld must be equal to rows(A)=%Ld", static_cast<long long>(b.rows()), n);
           return false;
@@ -456,7 +456,13 @@ bool PardisoObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x) const {
      assert(b.rows() == x.rows());
      assert(b.columns() == x.columns());
 
+     const auto save_sys = iparm[11];
+     
+     iparm[11] = sys;
+
      long long ierror = pardiso(b.fortran_vec(), x.fortran_vec(), b.columns());
+
+     iparm[11] = save_sys;
 
      if (ierror != 0LL) {
           error_with_id("pardiso:solve", "pardiso solve failed with status %Ld", ierror);
@@ -623,8 +629,14 @@ octave_value_list PardisoObject<T>::eval(const octave_value_list& args, int narg
           bOwnPardiso = true;
      }
 
+     long long sys = 0LL;
+
+     if (args.length() > iarg) {
+          sys = args(iarg++).long_value();
+     }
+     
      if (bHaveRightHandSide) {
-          if (pPardiso->solve(b, x)) {
+          if (pPardiso->solve(b, x, sys)) {
                retval.append(x);
           }
 

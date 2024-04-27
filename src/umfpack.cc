@@ -413,8 +413,8 @@ octave_value_list UmfpackObject<T>::eval(const octave_value_list& args, int narg
 
      SuiteSparse_long sys = UMFPACK_A;
      
-     if (args.length() > iarg && args(iarg++).bool_value()) {
-          sys = UMFPACK_At;
+     if (args.length() > iarg) {
+          sys = args(iarg++).long_value();
      }
      
      try {
