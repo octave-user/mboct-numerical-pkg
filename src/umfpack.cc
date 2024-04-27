@@ -1,4 +1,4 @@
-// Copyright (C) 2019(-2023) Reinhard <octave-user@a1.net>
+// Copyright (C) 2019(-2024) Reinhard <octave-user@a1.net>
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -150,7 +150,7 @@ public:
      UmfpackObject();
      explicit UmfpackObject(const SparseMatrixType& A, const Options& options);
      virtual ~UmfpackObject(void);
-     DenseMatrixType solve(const DenseMatrixType& b);
+     DenseMatrixType solve(const DenseMatrixType& b, SuiteSparse_long sys);
      virtual bool is_constant(void) const{ return true; }
      virtual bool is_defined(void) const{ return true; }
      virtual dim_vector dims (void) const { return oMat.dims(); }
@@ -245,7 +245,7 @@ UmfpackObject<T>::~UmfpackObject()
 }
 
 template <typename T>
-typename UmfpackObject<T>::DenseMatrixType UmfpackObject<T>::solve(const DenseMatrixType& b)
+typename UmfpackObject<T>::DenseMatrixType UmfpackObject<T>::solve(const DenseMatrixType& b, SuiteSparse_long sys)
 {
      DenseMatrixType x(b.rows(), b.columns());
 
@@ -255,7 +255,7 @@ typename UmfpackObject<T>::DenseMatrixType UmfpackObject<T>::solve(const DenseMa
      const T* const bp = b.data();
 
      for (octave_idx_type j = 0; j < b.columns(); ++j) {
-          auto status = oMat.umfpack_solve(UMFPACK_A,
+          auto status = oMat.umfpack_solve(sys,
                                             xp + j * n,
                                             bp + j * n,
                                             Numeric,
@@ -411,6 +411,12 @@ octave_value_list UmfpackObject<T>::eval(const octave_value_list& args, int narg
           }
      }
 
+     SuiteSparse_long sys = UMFPACK_A;
+     
+     if (args.length() > iarg && args(++iarg).bool_value()) {
+          sys = UMFPACK_At;
+     }
+     
      try {
           if (bHaveMatrix) {
                pUmfpack = new UmfpackObjectType{A, options};
@@ -419,7 +425,7 @@ octave_value_list UmfpackObject<T>::eval(const octave_value_list& args, int narg
           }
 
           if (bHaveRightHandSide) {
-               retval.append(pUmfpack->solve(b));
+               retval.append(pUmfpack->solve(b, sys));
 
                if (bOwnUmfpack) {
                     delete pUmfpack;
