@@ -434,9 +434,9 @@ bool PastixObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x, pastix_trans
      x = b;
 
      const auto save_sys = iparm[IPARM_TRANSPOSE_SOLVE];
-     
+
      iparm[IPARM_TRANSPOSE_SOLVE] = sys;
-          
+
      int rc = pastix_task_solve(pastix_data,
                                 x.rows(),
                                 x.columns(),
@@ -444,8 +444,8 @@ bool PastixObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x, pastix_trans
                                 x.rows());
 
      iparm[IPARM_TRANSPOSE_SOLVE] = save_sys;
-     
-     if (PASTIX_SUCCESS != rc) {          
+
+     if (PASTIX_SUCCESS != rc) {
           error_with_id("pastix:solve", "pastix_task_solve failed with status %d", rc);
           return false;
      }
@@ -465,7 +465,7 @@ bool PastixObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x, pastix_trans
 
                if (!bZeroVec) {
                     iparm[IPARM_TRANSPOSE_SOLVE] = sys;
-                    
+
                     // Avoid division zero by zero in PaStiX
                     rc = pastix_task_refine(pastix_data,
                                             spm.n,
@@ -474,9 +474,9 @@ bool PastixObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x, pastix_trans
                                             b.rows(),
                                             x.fortran_vec() + j * x.rows(),
                                             x.rows());
-                    
+
                     iparm[IPARM_TRANSPOSE_SOLVE] = save_sys;
-                    
+
                     if (PASTIX_SUCCESS != rc) {
                          error_with_id("pastix:solve", "pastix_task_refine failed with status %d", rc);
                          return false;
@@ -816,7 +816,7 @@ octave_value_list PastixObject<T>::eval(const octave_value_list& args, int nargo
                sys = static_cast<pastix_trans_t>(-1);
           }
      }
-     
+
      if (bHaveRightHandSide) {
           if (pPastix->solve(b, x, sys)) {
                retval.append(x);

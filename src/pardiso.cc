@@ -457,7 +457,7 @@ bool PardisoObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x, long long s
      assert(b.columns() == x.columns());
 
      const auto save_sys = iparm[11];
-     
+
      iparm[11] = sys;
 
      long long ierror = pardiso(b.fortran_vec(), x.fortran_vec(), b.columns());
@@ -634,7 +634,7 @@ octave_value_list PardisoObject<T>::eval(const octave_value_list& args, int narg
      if (args.length() > iarg) {
           sys = args(iarg++).long_value();
      }
-     
+
      if (bHaveRightHandSide) {
           if (pPardiso->solve(b, x, sys)) {
                retval.append(x);
