@@ -1,7 +1,7 @@
 ## numerical_tests.tst:01
 %!test
 %! if (~isempty(which("pastix")))
-%!   for i=1:2
+%!   for i=1:4
 %!     for j=1:2
 %!       A = [1 0 0 0 0
 %!            0 3 0 0 0
@@ -26,12 +26,23 @@
 %!       opts.number_of_threads = int32(4);
 %!       opts.check_solution = true;
 %!       switch i
-%!         case 1
-%!           x = pastix(A, b, opts);
-%!         case 2
-%!           x = pastix(pastix(A, opts), b);
+%!       case {1, 2}
+%!         trans = 0;
+%!       case {3, 4}
+%!         trans = 2;
 %!       endswitch
-%!       f = max(norm(A * x - b, "cols") ./ norm(A * x + b, "cols"));
+%!       switch i
+%!         case {1, 3}
+%!           x = pastix(A, b, opts, trans);
+%!         case {2, 4}
+%!           x = pastix(pastix(A, opts), b, trans);
+%!       endswitch
+%!       switch (trans)
+%!       case 0
+%!         f = max(norm(A * x - b, "cols") ./ norm(A * x + b, "cols"));
+%!       case 2
+%!         f = max(norm(A.' * x - b, "cols") ./ norm(A.' * x + b, "cols"));
+%!       endswitch
 %!       assert(f <= eps^0.8);
 %!     endfor
 %!   endfor
