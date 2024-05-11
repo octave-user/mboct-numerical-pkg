@@ -1,5 +1,6 @@
 ## numerical_tests.tst:04
 %!test
+%! try
 %! if (~isempty(which("pastix")))
 %!   tol = eps^0.3;
 %!   rand("seed", 0);
@@ -58,3 +59,8 @@
 %!     endfor
 %!   endfor
 %! endif
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error);
+%!   rethrow(gtest_error);
+%! end_try_catch
