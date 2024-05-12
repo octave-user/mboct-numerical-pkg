@@ -32,7 +32,7 @@ jobs:
 
       - name: Install mboct-octave-pkg
         run: |
-           git clone -b gtest https://github.com/octave-user/mboct-octave-pkg.git && \
+           git clone -b master https://github.com/octave-user/mboct-octave-pkg.git && \
            pushd mboct-octave-pkg && \
            make install_local && popd
 
