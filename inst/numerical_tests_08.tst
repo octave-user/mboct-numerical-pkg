@@ -1,5 +1,6 @@
 ## numerical_tests.tst:08
 %!test
+%! try
 %! test_idx = int32(0);
 %! if (~isempty(which("pastix")))
 %!   rand("seed", 0);
@@ -91,3 +92,8 @@
 %!     endfor
 %!   endfor
 %! endif
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
+%!   rethrow(gtest_error);
+%! end_try_catch

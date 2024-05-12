@@ -3,6 +3,7 @@
 %!   idxmax = find(abs(v) == max(abs(v)))(1);
 %!   vn = v / v(idxmax);
 %!test
+%! try
 %!   if (~isempty(which("dspev")))
 %!     rand("seed", 0);
 %!     for i=1:10
@@ -24,3 +25,8 @@
 %!   else
 %!     warning("dspev is not installed");
 %!   endif
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
+%!   rethrow(gtest_error);
+%! end_try_catch

@@ -30,6 +30,12 @@ jobs:
              sudo apt-get update
              sudo apt-get install octave liboctave-dev libsuitesparse-dev libarpack2-dev libmumps-seq-dev libmetis-dev libmkl-full-dev
 
+      - name: Install mboct-octave-pkg
+        run: |
+           git clone -b master https://github.com/octave-user/mboct-octave-pkg.git && \
+           pushd mboct-octave-pkg && \
+           make install_local && popd
+
       - name: Create distribution
         run: make -C $GITHUB_WORKSPACE dist
 

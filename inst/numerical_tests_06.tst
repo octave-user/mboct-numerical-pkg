@@ -1,5 +1,6 @@
 ## numerical_tests.tst:06
 %!test
+%! try
 %! if (~isempty(which("pastix")))
 %!   for k=1:2
 %!     A = [1 0 0 0 0
@@ -28,3 +29,8 @@
 %!     assert(max(norm(x - A \ b, "cols")) <= eps^0.8 * max(norm(A \ b, "cols")));
 %!   endfor
 %! endif
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
+%!   rethrow(gtest_error);
+%! end_try_catch

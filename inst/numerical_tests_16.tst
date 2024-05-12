@@ -1,5 +1,6 @@
 ## numerical_tests.tst:16
 %!test
+%! try
 %! if (~isempty(which("dsbgvx")))
 %!   rand("seed", 0);
 %!   L = 1;
@@ -24,3 +25,8 @@
 %!     endfor
 %!   endfor
 %! endif
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
+%!   rethrow(gtest_error);
+%! end_try_catch

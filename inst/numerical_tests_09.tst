@@ -1,5 +1,6 @@
 ## numerical_tests.tst:09
 %!test
+%! try
 %! if (~isempty(which("pastix")))
 %!   rand("seed", 0);
 %!   for mt=[PASTIX_API_SYM_YES]
@@ -56,6 +57,11 @@
 %!     endfor
 %!   endfor
 %! endif
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
+%!   rethrow(gtest_error);
+%! end_try_catch
 %!error mumps([]);
 %!error mumps(eye(3));
 %!error mumps(eye(3), zeros(3,1));

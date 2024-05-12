@@ -1,5 +1,6 @@
 ## numerical_tests.tst:13
 %!test
+%! try
 %! if (~isempty(which("strumpack")))
 %!   state = rand("state");
 %!   unwind_protect
@@ -57,3 +58,8 @@
 %! else
 %!   warning("strumpack is not installed");
 %! endif
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
+%!   rethrow(gtest_error);
+%! end_try_catch

@@ -1,5 +1,6 @@
 ## numerical_tests.tst:10
 %!test
+%! try
 %! if (~isempty(which("mumps")))
 %!   rand("seed", 0);
 %!   n = [2,4,8,16,32,64,128];
@@ -74,3 +75,8 @@
 %! else
 %!   warning("mumps is not installed");
 %! endif
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
+%!   rethrow(gtest_error);
+%! end_try_catch

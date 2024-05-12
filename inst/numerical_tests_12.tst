@@ -1,5 +1,6 @@
 ## numerical_tests.tst:12
 %!test
+%! try
 %! if (~isempty(which("umfpack")))
 %!   state = rand("state");
 %!   unwind_protect
@@ -57,6 +58,11 @@
 %! else
 %!   warning("umfpack is not installed");
 %! endif
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
+%!   rethrow(gtest_error);
+%! end_try_catch
 %!error strumpack([]);
 %!error strumpack(eye(3));
 %!error strumpack(eye(3), zeros(3,1));

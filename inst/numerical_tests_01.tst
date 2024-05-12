@@ -1,5 +1,6 @@
 ## numerical_tests.tst:01
 %!test
+%! try
 %! if (~isempty(which("pastix")))
 %!   for i=1:4
 %!     for j=1:2
@@ -49,3 +50,8 @@
 %! else
 %!   warning("pastix is not installed");
 %! endif
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
+%!   rethrow(gtest_error);
+%! end_try_catch

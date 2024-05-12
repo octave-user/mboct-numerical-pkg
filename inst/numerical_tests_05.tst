@@ -1,5 +1,6 @@
 ## numerical_tests.tst:05
 %!test
+%! try
 %! if (~isempty(which("pastix")))
 %!   for k=1:2
 %!     tol = sqrt(eps);
@@ -35,3 +36,8 @@
 %!     endfor
 %!   endfor
 %! endif
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
+%!   rethrow(gtest_error);
+%! end_try_catch

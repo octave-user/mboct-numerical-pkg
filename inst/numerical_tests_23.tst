@@ -3,6 +3,7 @@
 %! B = gallery("poisson", N);
 %! A = gallery("tridiag", columns(B));
 %!test
+%! try
 %! if (isempty(which("eig_sym")))
 %!   warning("eig_sym was not installed");
 %!   return;
@@ -30,3 +31,8 @@
 %! endfor
 %! endfor
 %! endfor
+%! catch
+%!   gtest_error = lasterror();
+%!   gtest_fail(gtest_error, evalin("caller", "__file"));
+%!   rethrow(gtest_error);
+%! end_try_catch
