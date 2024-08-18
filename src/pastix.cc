@@ -169,9 +169,9 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
 {
      std::memset(&spm, 0, sizeof(spm));
 
-     const octave_idx_type* const cidx = A.cidx();
-     const octave_idx_type* const ridx = A.ridx();
-     const T* const data = A.data();
+     const octave_idx_type* cidx = A.cidx();
+     const octave_idx_type* ridx = A.ridx();
+     const T* data = A.data();
 
      enum MatrixPattern { MAT_SYM_UPPER,
                           MAT_SYM_LOWER,
@@ -226,6 +226,16 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
           eMatPattern = MAT_FULL;
      }
 
+     
+     SparseMatrixType AT;
+
+     if (eMatPattern == MAT_SYM_LOWER) {
+          AT = A.transpose();
+          cidx = AT.cidx();
+          ridx = AT.ridx();
+          data = AT.data();
+     }
+     
      octave_idx_type nnz = 0;
 
      switch (eMatPattern) {
@@ -299,7 +309,7 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
           colptr[ncols] = idx;
      } break;
      default:
-          // Copy the full matrix because it has been declared as unsymmetrical
+          // Copy the full matrix because it has been declared as unsymmetric
           for (octave_idx_type i = 0; i < nnz; ++i) {
                rows[i] = ridx[i];
           }
@@ -328,23 +338,13 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
 
      spm.flttype = PastixTraits<T>::flttype;
 
-     switch (eMatPattern) {
-     case MAT_SYM_LOWER:
-          spm.fmttype = SpmCSR;
-          spm.colptr = rows;
-          spm.rowptr = colptr;
-          break;
-     default:
-          spm.fmttype = SpmCSC;
-          spm.rowptr = rows;
-          spm.colptr = colptr;
-     }
-
+     spm.fmttype = SpmCSC;
+     spm.rowptr = rows;
+     spm.colptr = colptr;
      spm.nnz = nnz;
      spm.n = ncols;
      spm.dof = 1;
      spm.values = avals;
-
 
      spmUpdateComputedFields(&spm);
 
