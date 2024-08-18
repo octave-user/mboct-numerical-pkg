@@ -331,17 +331,20 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
      switch (eMatPattern) {
      case MAT_SYM_LOWER:
           spm.fmttype = SpmCSR;
+          spm.colptr = rows;
+          spm.rowptr = colptr;
           break;
      default:
           spm.fmttype = SpmCSC;
+          spm.rowptr = rows;
+          spm.colptr = colptr;
      }
 
      spm.nnz = nnz;
      spm.n = ncols;
      spm.dof = 1;
      spm.values = avals;
-     spm.rowptr = rows;
-     spm.colptr = colptr;
+
 
      spmUpdateComputedFields(&spm);
 
