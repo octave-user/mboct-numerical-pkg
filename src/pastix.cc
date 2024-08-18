@@ -371,7 +371,7 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
 
      normA = spmNorm(SpmFrobeniusNorm, &spm);
 
-     spmScalMatrix(1. / normA, &spm);
+     spmScal(1. / normA, &spm);
 
      rc = pastix_task_numfact(pastix_data, &spm);
 
@@ -429,7 +429,7 @@ bool PastixObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x, pastix_trans
           return false;
      }
 
-     spmScalVector(spm.flttype, 1. / normA, b.numel(), b.fortran_vec(), 1);
+     spmScalMat(1. / normA, &spm, b.columns(), b.fortran_vec(), b.rows());
 
      x = b;
 
