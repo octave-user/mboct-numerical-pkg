@@ -429,7 +429,7 @@ bool PastixObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x, pastix_trans
           return false;
      }
 
-     spmScalMat(1. / normA, &spm, b.columns(), b.fortran_vec(), b.rows());
+     spmScalMat(1. / normA, &spm, b.columns(), b.fortran_vec(), spm.nexp);
 
      x = b;
 
@@ -445,7 +445,6 @@ bool PastixObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x, pastix_trans
           error_with_id("pastix:solve", "pastix_task_solve failed with status %d", rc);
           return false;
      }
-
 
      if (options.check_solution && sys == PastixNoTrans) {
           // FIXME: Is there any transposed version of spmCheckAxb?
