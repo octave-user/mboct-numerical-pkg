@@ -437,11 +437,7 @@ bool PastixObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x, pastix_trans
 
      iparm[IPARM_TRANSPOSE_SOLVE] = sys;
 
-     int rc = pastix_task_solve(pastix_data,
-                                x.rows(),
-                                x.columns(),
-                                x.fortran_vec(),
-                                x.rows());
+     int rc = pastix_task_solve_and_refine(pastix_data, spm.nexp, b.columns(), b.fortran_vec(), spm.nexp, x.fortran_vec(), spm.nexp);
 
      iparm[IPARM_TRANSPOSE_SOLVE] = save_sys;
 
@@ -450,58 +446,22 @@ bool PastixObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x, pastix_trans
           return false;
      }
 
-     OCTAVE_QUIT;
 
-     if (options.refine_max_iter) {
-          for (octave_idx_type j = 0; j < x.columns(); ++j) {
-               bool bZeroVec = true;
+     if (options.check_solution && sys == PastixNoTrans) {
+          // FIXME: Is there any transposed version of spmCheckAxb?
+          rc = spmCheckAxb(dparm[DPARM_EPSILON_REFINEMENT],
+                           b.columns(),
+                           &spm,
+                           nullptr,
+                           spm.nexp,
+                           b.fortran_vec(),
+                           spm.nexp,
+                           x.fortran_vec(),
+                           spm.nexp);
 
-               for (octave_idx_type k = 0; k < x.rows(); ++k) {
-                    if (x(k, j) != 0.) {
-                         bZeroVec = false;
-                         break;
-                    }
-               }
-
-               if (!bZeroVec) {
-                    iparm[IPARM_TRANSPOSE_SOLVE] = sys;
-
-                    // Avoid division zero by zero in PaStiX
-                    rc = pastix_task_refine(pastix_data,
-                                            spm.n,
-                                            1,
-                                            b.fortran_vec() + j * b.rows(),
-                                            b.rows(),
-                                            x.fortran_vec() + j * x.rows(),
-                                            x.rows());
-
-                    iparm[IPARM_TRANSPOSE_SOLVE] = save_sys;
-
-                    if (PASTIX_SUCCESS != rc) {
-                         error_with_id("pastix:solve", "pastix_task_refine failed with status %d", rc);
-                         return false;
-                    }
-               }
-
-               OCTAVE_QUIT;
-          }
-
-          if (options.check_solution && sys == PastixNoTrans) {
-               // FIXME: Is there any transposed version of spmCheckAxb?
-               rc = spmCheckAxb(dparm[DPARM_EPSILON_REFINEMENT],
-                                b.columns(),
-                                &spm,
-                                nullptr,
-                                b.rows(),
-                                b.fortran_vec(),
-                                b.rows(),
-                                x.fortran_vec(),
-                                x.rows());
-
-               if (SPM_SUCCESS != rc) {
-                    error_with_id("pastix:solve", "spmCheckAxb failed with status %d", rc);
-                    return false;
-               }
+          if (SPM_SUCCESS != rc) {
+               error_with_id("pastix:solve", "spmCheckAxb failed with status %d", rc);
+               return false;
           }
      }
 
