@@ -900,7 +900,7 @@ DEFUN_DLD (pastix_save, args, nargout,
 {
      octave_value_list retval;
 
-     if (args.length() < 2 || nargout > 1) {
+     if (args.length() != 2 || nargout > 1) {
           print_usage();
           return retval;
      }
