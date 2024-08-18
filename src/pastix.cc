@@ -429,7 +429,7 @@ bool PastixObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x, pastix_trans
           return false;
      }
 
-     spmScalMat(1. / normA, &spm, b.columns(), b.fortran_vec(), spm.nexp);
+     spmScalMat(1. / normA, &spm, b.columns(), b.fortran_vec(), b.rows());
 
      x = b;
 
@@ -437,7 +437,7 @@ bool PastixObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x, pastix_trans
 
      iparm[IPARM_TRANSPOSE_SOLVE] = sys;
 
-     int rc = pastix_task_solve_and_refine(pastix_data, spm.nexp, b.columns(), b.fortran_vec(), spm.nexp, x.fortran_vec(), spm.nexp);
+     int rc = pastix_task_solve_and_refine(pastix_data, spm.nexp, b.columns(), b.fortran_vec(), b.rows(), x.fortran_vec(), x.rows());
 
      iparm[IPARM_TRANSPOSE_SOLVE] = save_sys;
 
