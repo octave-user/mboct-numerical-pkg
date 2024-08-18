@@ -429,7 +429,7 @@ bool PastixObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x, pastix_trans
           return false;
      }
 
-     spmScalMat(1. / normA, spm, b.columns(), b.fortran_vec(), b.rows());
+     spmScalMat(1. / normA, &spm, b.columns(), b.fortran_vec(), b.rows());
 
      x = b;
 
