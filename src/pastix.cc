@@ -226,16 +226,6 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
           eMatPattern = MAT_FULL;
      }
 
-     
-     SparseMatrixType AT;
-
-     if (eMatPattern == MAT_SYM_LOWER) {
-          AT = A.transpose();
-          cidx = AT.cidx();
-          ridx = AT.ridx();
-          data = AT.data();
-     }
-     
      octave_idx_type nnz = 0;
 
      switch (eMatPattern) {
