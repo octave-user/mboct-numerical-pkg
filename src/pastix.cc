@@ -327,7 +327,15 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
      }
 
      spm.flttype = PastixTraits<T>::flttype;
-     spm.fmttype = SpmCSC;
+
+     switch (eMatPattern) {
+     case MAT_SYM_UPPER:
+          spm.fmttype = SpmCSC;
+          break;
+     default:
+          spm.fmttype = SpmCSR;
+     }
+
      spm.nnz = nnz;
      spm.n = ncols;
      spm.dof = 1;
