@@ -98,13 +98,14 @@ public:
      virtual size_t byte_size() const;
      virtual dim_vector dims() const;
      bool solve(DenseMatrixType& b, DenseMatrixType& x, pastix_trans_t sys) const;
+     int save(const std::string& filename) const;
      static bool get_options(const octave_value& ovOptions, PastixObject::Options& options);
      virtual bool is_constant(void) const{ return true; }
      virtual bool is_defined(void) const{ return true; }
      virtual bool isreal() const { return PastixTraits<T>::isreal; }
      virtual bool iscomplex() const { return PastixTraits<T>::iscomplex; }
      static octave_value_list eval(const octave_value_list& args, int nargout);
-
+     static octave_value_list save(const octave_value_list& args, int nargout);
 private:
      void cleanup();
 
@@ -168,9 +169,9 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
 {
      std::memset(&spm, 0, sizeof(spm));
 
-     const octave_idx_type* const cidx = A.cidx();
-     const octave_idx_type* const ridx = A.ridx();
-     const T* const data = A.data();
+     const octave_idx_type* cidx = A.cidx();
+     const octave_idx_type* ridx = A.ridx();
+     const T* data = A.data();
 
      enum MatrixPattern { MAT_SYM_UPPER,
                           MAT_SYM_LOWER,
@@ -183,10 +184,10 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
                for (octave_idx_type i = cidx[j]; i < cidx[j + 1]; ++i) {
                     switch (eMatPattern) {
                     case MAT_DIAG:
-                         if (ridx[i] > j) {
-                              eMatPattern = MAT_SYM_LOWER;
-                         } else if (ridx[i] < j) {
+                         if (ridx[i] < j) {
                               eMatPattern = MAT_SYM_UPPER;
+                         } else if (ridx[i] > j) {
+                              eMatPattern = MAT_SYM_LOWER;
                          }
                          break;
                     case MAT_SYM_UPPER:
@@ -298,7 +299,7 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
           colptr[ncols] = idx;
      } break;
      default:
-          // Copy the full matrix because it has been declared as unsymmetrical
+          // Copy the full matrix because it has been declared as unsymmetric
           for (octave_idx_type i = 0; i < nnz; ++i) {
                rows[i] = ridx[i];
           }
@@ -326,13 +327,14 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
      }
 
      spm.flttype = PastixTraits<T>::flttype;
+
      spm.fmttype = SpmCSC;
+     spm.rowptr = rows;
+     spm.colptr = colptr;
      spm.nnz = nnz;
      spm.n = ncols;
      spm.dof = 1;
      spm.values = avals;
-     spm.rowptr = rows;
-     spm.colptr = colptr;
 
      spmUpdateComputedFields(&spm);
 
@@ -343,6 +345,10 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
      if (0 != rc) {
           spmExit(&spm);
           spm = spm2;
+     }
+
+     if (options.verbose >= PastixVerboseYes) {
+          spmPrintInfo(&spm, stdout);
      }
 
      pastixInitParam(iparm, dparm);
@@ -515,6 +521,11 @@ bool PastixObject<T>::solve(DenseMatrixType& b, DenseMatrixType& x, pastix_trans
      }
 
      return true;
+}
+
+template <typename T>
+int PastixObject<T>::save(const std::string& filename) const {
+     return spmSave(&spm, filename.c_str());
 }
 
 template <typename T>
@@ -834,8 +845,33 @@ octave_value_list PastixObject<T>::eval(const octave_value_list& args, int nargo
      return retval;
 }
 
+template<typename T>
+octave_value_list PastixObject<T>::save(const octave_value_list& args, int nargout)
+{
+     octave_value_list retval;
+     octave_idx_type iarg = 0;
+     PastixObject<T>* pPastix = nullptr;
+
+     octave_base_value& oOctaveObj = const_cast<octave_base_value&>(args(iarg++).get_rep());
+
+     pPastix = dynamic_cast<PastixObject<T>*>(&oOctaveObj);
+
+     if (!pPastix) {
+          error_with_id("pastix:input", "pastix: class(pastix_obj) must be equal to \"pastix\"");
+          return retval;
+     }
+
+     const std::string filename = args(iarg++).string_value();
+
+     retval.append(pPastix->save(filename));
+
+     return retval;
+}
+
 // PKG_ADD: autoload ("pastix", "__mboct_numerical__.oct");
 // PKG_DEL: autoload ("pastix", "__mboct_numerical__.oct", "remove");
+// PKG_ADD: autoload ("pastix_save", "__mboct_numerical__.oct");
+// PKG_DEL: autoload ("pastix_save", "__mboct_numerical__.oct", "remove");
 
 // PKG_ADD: autoload ("PASTIX_API_SYM_YES", "__mboct_numerical__.oct");
 // PKG_ADD: autoload ("PASTIX_API_SYM_NO", "__mboct_numerical__.oct");
@@ -898,6 +934,29 @@ DEFUN_DLD (pastix, args, nargout,
           retval = PastixObject<std::complex<double> >::eval(args, nargout);
      } else {
           retval = PastixObject<double>::eval(args, nargout);
+     }
+
+     return retval;
+}
+
+DEFUN_DLD (pastix_save, args, nargout,
+           "-*- texinfo -*-\n"
+           "@deftypefn {} @var{status} = pastix_save(@var{A}, @var{filename})\n\n"
+           "@end deftypefn\n")
+{
+     octave_value_list retval;
+
+     if (args.length() != 2 || nargout > 1) {
+          print_usage();
+          return retval;
+     }
+
+     bool bcomplex = args(0).iscomplex();
+
+     if (bcomplex) {
+          retval = PastixObject<std::complex<double> >::save(args, nargout);
+     } else {
+          retval = PastixObject<double>::save(args, nargout);
      }
 
      return retval;

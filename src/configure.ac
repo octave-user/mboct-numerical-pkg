@@ -98,8 +98,8 @@ AC_CHECK_FUNCS([pastixInit \
                 pastix_task_refine \
                 pastixFinalize \
                 spmNorm \
-                spmScalMatrix \
-                spmScalVector \
+                spmScalMat \
+                spmScal \
                 spmExit \
                 spmCheckAxb],[have_pastix=yes],[have_pastix=no])
 
