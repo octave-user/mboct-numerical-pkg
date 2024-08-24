@@ -184,10 +184,10 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
                for (octave_idx_type i = cidx[j]; i < cidx[j + 1]; ++i) {
                     switch (eMatPattern) {
                     case MAT_DIAG:
-                         if (ridx[i] > j) {
-                              eMatPattern = MAT_SYM_LOWER;
-                         } else if (ridx[i] < j) {
+                         if (ridx[i] < j) {
                               eMatPattern = MAT_SYM_UPPER;
+                         } else if (ridx[i] > j) {
+                              eMatPattern = MAT_SYM_LOWER;
                          }
                          break;
                     case MAT_SYM_UPPER:
