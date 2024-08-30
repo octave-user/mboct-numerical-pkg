@@ -355,6 +355,10 @@ PastixObject<T>::PastixObject(const SparseMatrixType& A, const Options& options)
           spmPrintInfo(&spm, stdout);
      }
 
+     if (options.verbose >= PastixVerboseYes) {
+          spmPrintInfo(&spm, stdout);
+     }
+
      pastixInitParam(iparm, dparm);
 
      iparm[IPARM_VERBOSE] = options.verbose;
