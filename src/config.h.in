@@ -138,11 +138,11 @@
 /* Define to 1 if you have the `spmNorm' function. */
 #undef HAVE_SPMNORM
 
-/* Define to 1 if you have the `spmScalMatrix' function. */
-#undef HAVE_SPMSCALMATRIX
+/* Define to 1 if you have the `spmScal' function. */
+#undef HAVE_SPMSCAL
 
-/* Define to 1 if you have the `spmScalVector' function. */
-#undef HAVE_SPMSCALVECTOR
+/* Define to 1 if you have the `spmScalMat' function. */
+#undef HAVE_SPMSCALMAT
 
 /* Define to 1 if you have the <stdexcept> header file. */
 #undef HAVE_STDEXCEPT
