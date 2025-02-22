@@ -15,8 +15,8 @@
 
 #include "config.h"
 
-#include <octave/oct.h>
 #include <cassert>
+#include <octave/oct.h>
 
 // PKG_ADD: autoload ("sp_sym_mtimes", "__mboct_numerical__.oct");
 // PKG_DEL: autoload ("sp_sym_mtimes", "__mboct_numerical__.oct", "remove");

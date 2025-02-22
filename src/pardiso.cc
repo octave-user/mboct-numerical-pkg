@@ -19,10 +19,8 @@
 
 #include <stdexcept>
 #include <algorithm>
-#ifndef NDEBUG
 #include <cassert>
 #include <iostream>
-#endif
 #include <vector>
 #include <octave/oct.h>
 

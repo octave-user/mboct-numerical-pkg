@@ -16,6 +16,7 @@
 #include "config.h"
 
 #include <stdexcept>
+#include <cassert>
 #include <cstring>
 #include <complex>
 #include <octave/oct.h>
