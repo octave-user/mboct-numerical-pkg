@@ -71,19 +71,19 @@ DEFUN_DLD (dsbgvx, args, nargout,
 
         if (!args(2).is_real_scalar())
         {
-                error("L muss ein reeller Skalar sein!");
+                error("L must be a real scalar!");
                 return retval;
         }
 
         if ( !args(3).is_real_scalar() )
         {
-                error("U muss ein reeller Skalar sein!");
+                error("U must be a real scalar!");
                 return retval;
         }
 
         if ( !args(4).is_string() || args(4).length() != 1 )
         {
-                error("RANGE muss ein String sein!");
+                error("RANGE must be a string!");
                 return retval;
         }
 
@@ -190,18 +190,18 @@ DEFUN_DLD (dsbgvx, args, nargout,
         {
                 if (INFO < 0)
                 {
-                        error("INFO = %d\nif INFO = -i, the i-th argument had an illegal value!", INFO);
+                        error("INFO = %ld\nif INFO = -i, the i-th argument had an illegal value!", static_cast<long>(INFO));
                 }
                 else if (INFO <= N)
                 {
-                        error("INFO = %d\nif INFO = i, then i eigenvectors failed to converge!",INFO);
+                        error("INFO = %ld\nif INFO = i, then i eigenvectors failed to converge!", static_cast<long>(INFO));
                 }
                 else
                 {
-                        error("INFO = %d\ndsbgvx returned an error code;\n"
+                        error("INFO = %ld\ndsbgvx returned an error code;\n"
                               "i.e., if INFO = N + i, for 1 <= i <= N,\n"
                               "then the leading minor of order i of B is not positive definite.\n"
-                              "The  factoriza-tion of B could not be completed and no eigenvalues or eigenvectors were computed.",INFO);
+                              "The  factoriza-tion of B could not be completed and no eigenvalues or eigenvectors were computed.", static_cast<long>(INFO));
                 }
 
                 return retval;
