@@ -369,10 +369,10 @@ DEFUN_DLD (eig_sym, args, nargout,
     } while (1);
 
     if (info < 0) {
-        error("eig_sym: dsaupd failed with status %d", info);
+        error("eig_sym: dsaupd failed with status %ld", static_cast<long>(info));
         return retval;
     } else if (info != 0) {
-        warning("eig_sym: dsaupd returned with status %d", info);
+        warning("eig_sym: dsaupd returned with status %ld", static_cast<long>(info));
     }
 
     bool rvec = true;
@@ -410,14 +410,14 @@ DEFUN_DLD (eig_sym, args, nargout,
          F77_CHAR_ARG_LEN(2));
 
     if (info != 0) {
-        error("eig_sym: dseupd failed with status %d", info);
+        error("eig_sym: dseupd failed with status %ld", static_cast<long>(info));
         return retval;
     }
 
     const F77_INT iconv = iparam[4];
 
     if (iconv < nev) {
-        warning("eig_sym: number of eigenvalues requested: %d, number of eigenvalues converged: %d", nev, iconv);
+        warning("eig_sym: number of eigenvalues requested: %ld, number of eigenvalues converged: %ld", static_cast<long>(nev), static_cast<long>(iconv));
     }
 
     eig_val.resize(iconv);
