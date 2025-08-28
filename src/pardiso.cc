@@ -655,15 +655,15 @@ octave_value_list PardisoObject<T>::eval(const octave_value_list& args, int narg
 DEFUN_DLD (pardiso, args, nargout,
            "-*- texinfo -*-\n"
            "@deftypefn {} @var{pardiso_obj} = pardiso(@var{A}, @var{options})\n\n"
-           "@var{x} = pardiso(@var{pardiso_obj}, @var{b})\n\n"
-           "@var{x} = pardiso(@var{A}, @var{b}, @var{options})\n\n"
+           "@deftypefnx {} @var{x} = pardiso(@var{pardiso_obj}, @var{b})\n\n"
+           "@deftypefnx {} @var{x} = pardiso(@var{A}, @var{b}, @var{options})\n\n"
            "Solve a system of linear equations by means of Pardiso (https://software.intel.com)\n\n"
            "The first form creates an factor object @var{pardiso_obj} from matrix @var{A}\n\n"
            "After the factor object has been created, the second form uses the factor object @var{pardiso_obj} to solve a system of linear equations @var{A} * @var{x} = @var{b}\n\n"
            "The third form solves a system of linear equations @var{A} * @var{x} = @var{b} but no factor object is returned\n\n"
            "Several options are supported in struct @var{options}:\n\n"
-           "@var{options}.verbose = {true|false}\n\n"
-           "@var{options}.symmetric = {true|false}\n\n"
+           "@var{options}.verbose @dots{} enable verbose output\n\n"
+           "@var{options}.symmetric = @dots{} assume a symmetric matrix\n\n"
            "@var{options}.refine_max_iter @dots{} maximum number of iterations for refinement of the solution\n\n"
            "@end deftypefn\n")
 {

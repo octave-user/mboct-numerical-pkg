@@ -594,8 +594,8 @@ void MumpsObject<T>::print(std::ostream& os, bool pr_as_read_syntax) {
 DEFUN_DLD (mumps, args, nargout,
            "-*- texinfo -*-\n"
            "@deftypefn {} @var{mumps_obj} = mumps(@var{A}, @var{opt})\n\n"
-           "@var{x} = mumps(@var{mumps_obj}, @var{b})\n\n"
-           "@var{x} = mumps(@var{A}, @var{b}, @var{opt})\n\n"
+           "@deftypefnx {} @var{x} = mumps(@var{mumps_obj}, @var{b})\n\n"
+           "@deftypefnx {} @var{x} = mumps(@var{A}, @var{b}, @var{opt})\n\n"
            "Solve a system of linear equations by means of MUMPS (http://mumps.enseeiht.fr/)\n\n"
            "The first form creates an factor object @var{mumps_obj} from matrix @var{A}\n\n"
            "After the factor object has been created, the second form uses the factor object @var{mumps_obj} to solve a system of linear equations @var{A} * @var{x} = @var{b}\n\n"

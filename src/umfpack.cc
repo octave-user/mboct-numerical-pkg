@@ -452,8 +452,8 @@ octave_value_list UmfpackObject<T>::eval(const octave_value_list& args, int narg
 DEFUN_DLD (umfpack, args, nargout,
            "-*- texinfo -*-\n"
            "@deftypefn {} @var{umfpack_obj} = umfpack(@var{A}, @var{opt})\n\n"
-           "@var{x} = umfpack(@var{umfpack_obj}, @var{b})\n\n"
-           "@var{x} = umfpack(@var{A}, @var{b}, @var{opt})\n\n"
+           "@deftypefnx {} @var{x} = umfpack(@var{umfpack_obj}, @var{b})\n\n"
+           "@deftypefnx {} @var{x} = umfpack(@var{A}, @var{b}, @var{opt})\n\n"
            "Solve a system of linear equations by means of Umfpack (http://www.suitesparse.com)\n\n"
            "The first form creates an factor object @var{umfpack_obj} from matrix @var{A}\n\n"
            "After the factor object has been created, the second form uses the factor object @var{umfpack_obj} to solve a system of linear equations @var{A} * @var{x} = @var{b}\n\n"

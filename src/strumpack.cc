@@ -404,8 +404,8 @@ octave_value_list StrumpackObject<T>::eval(const octave_value_list& args, int na
 DEFUN_DLD (strumpack, args, nargout,
            "-*- texinfo -*-\n"
            "@deftypefn {} @var{strumpack_obj} = strumpack(@var{A}, @var{options})\n\n"
-           "@var{x} = strumpack(@var{strumpack_obj}, @var{b})\n\n"
-           "@var{x} = strumpack(@var{A}, @var{b}, @var{options})\n\n"
+           "@deftypefnx {} @var{x} = strumpack(@var{strumpack_obj}, @var{b})\n\n"
+           "@deftypefnx {} @var{x} = strumpack(@var{A}, @var{b}, @var{options})\n\n"
            "Solve a system of linear equations by means of Strumpack (https://github.com/pghysels/STRUMPACK)\n\n"
            "The first form creates an factor object @var{strumpack_obj} from matrix @var{A}\n\n"
            "After the factor object has been created, the second form uses the factor object @var{strumpack_obj} to solve a system of linear equations @var{A} * @var{x} = @var{b}\n\n"

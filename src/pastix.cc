@@ -948,8 +948,8 @@ octave_value_list PastixObject<T>::save(const octave_value_list& args, int nargo
 DEFUN_DLD (pastix, args, nargout,
            "-*- texinfo -*-\n"
            "@deftypefn {} @var{pastix_obj} = pastix(@var{A}, @var{options})\n\n"
-           "@var{x} = pastix(@var{pastix_obj}, @var{b})\n\n"
-           "@var{x} = pastix(@var{A}, @var{b}, @var{options})\n\n"
+           "@deftypefnx {} @var{x} = pastix(@var{pastix_obj}, @var{b})\n\n"
+           "@deftypefnx {} @var{x} = pastix(@var{A}, @var{b}, @var{options})\n\n"
            "Solve a system of linear equations by means of PaStiX (http://pastix.gforge.inria.fr/)\n\n"
            "The first form creates an factor object @var{pastix_obj} from matrix @var{A}\n\n"
            "After the factor object has been created, the second form uses the factor object @var{pastix_obj} to solve a system of linear equations @var{A} * @var{x} = @var{b}\n\n"

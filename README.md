@@ -9,35 +9,12 @@
   - Compute selected eigenvalues, and optionally, eigenvectors of a real generalized symmetric-definite banded eigenproblem using LAPACK (http://www.netlib.org/lapack/).
   - Computes all eigenvalues and, optionally, eigenvectors of a real symmetric matrix in packed storage using LAPACK.
   
-Copyright<sup>&copy;</sup> 2019-2021
+Copyright<sup>&copy;</sup> 2019-2025
 
 [Reinhard](mailto:octave-user@a1.net)
 
 # Installation
-  The following code is an example how mboct-numerical-pkg can be installed on an Ubuntu system:
-  
-  `sudo apt-get install octave liboctave-dev libsuitesparse-dev libarpack2-dev libmumps-seq-dev libmetis-dev libmkl-full-dev`
-
-  `git clone -b master https://github.com/octave-user/mboct-numerical-pkg.git`
-       
-  `make -C mboct-numerical-pkg install_local`
-
-## PaStiX installation
-  - Follow the instructions on (https://gitlab.inria.fr/solverstack/pastix) to install PaStiX (optional but recommended).
-
-## MUMPS installation
-  - Follow the instructions on (https://github.com/group-gu/mumps) to install MUMPS (optional).
-
-## GNU Octave installation
-  - Follow the instructions on (http://www.gnu.org/software/octave/) to install GNU Octave.  
-  - Make sure, that `mkoctfile` is installed.  
-    `mkoctfile --version` 
-
-## GNU Octave package installation:
-  - Install the following packages from github.  
-    `for pkg in numerical; do`    
-        `git clone https://github.com/octave-user/mboct-${pkg}-pkg.git && make -C mboct-${pkg}-pkg install_local`	  
-    `done`
+  - See [simple.yml](https://github.com/octave-user/mboct-numerical-pkg/blob/master/.github/workflows/simple.yml) as an example on how to install the package.
 
 ## Usage
   - Run Octave.  
@@ -45,5 +22,5 @@ Copyright<sup>&copy;</sup> 2019-2021
   - At the Octave prompt load the package.   
     `pkg load mboct-numerical-pkg`
   - At the Octave prompt execute the tests.  
-    `test numerical_tests`
+    `test numerical_tests_01.tst`
 	
