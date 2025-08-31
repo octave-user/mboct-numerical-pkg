@@ -8,19 +8,21 @@
   - Compute sparse matrix vector products for symmetric sparse matrices where only the upper or lower triangular part of the matrix is stored.
   - Compute selected eigenvalues, and optionally, eigenvectors of a real generalized symmetric-definite banded eigenproblem using LAPACK (http://www.netlib.org/lapack/).
   - Computes all eigenvalues and, optionally, eigenvectors of a real symmetric matrix in packed storage using LAPACK.
-  
+
 Copyright<sup>&copy;</sup> 2019-2025
 
 [Reinhard](mailto:octave-user@a1.net)
 
 # Installation
-  - See [simple.yml](https://github.com/octave-user/mboct-numerical-pkg/blob/master/.github/workflows/simple.yml) as an example on how to install the package.
+  - See [simple.yml](https://github.com/octave-user/mboct-numerical-pkg/blob/master/.github/workflows/simple.yml) as an example on how to install mboct-numerical-pkg.
+
+# Function reference
+  - The function reference is automatically generated from the source code by means of Octave's [generate_html](https://octave.sourceforge.io/generate_html/index.html) package. See [overview.html](https://octave-user.github.io/mboct-numerical-pkg/mboct-numerical-pkg/overview.html).
 
 ## Usage
-  - Run Octave.  
+  - Run Octave.
     `octave`
-  - At the Octave prompt load the package.   
+  - At the Octave prompt load the package.
     `pkg load mboct-numerical-pkg`
-  - At the Octave prompt execute the tests.  
+  - At the Octave prompt execute the tests.
     `test numerical_tests_01.tst`
-	
