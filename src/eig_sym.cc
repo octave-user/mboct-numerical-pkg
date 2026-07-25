@@ -21,7 +21,7 @@
 #include <octave/interpreter.h>
 
 #define HAVE_ARPACK 1
-#include <octave/lo-arpack-proto.h>
+#include ARPACK_PROTO_H
 
 // PKG_ADD: autoload ("eig_sym", "__mboct_numerical__.oct");
 // PKG_DEL: autoload ("eig_sym", "__mboct_numerical__.oct", "remove");

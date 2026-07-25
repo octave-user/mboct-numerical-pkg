@@ -13,8 +13,8 @@ dnl GNU General Public License for more details.
 dnl You should have received a copy of the GNU General Public License
 dnl along with this program; If not, see <http://www.gnu.org/licenses/>.
 
-AC_PREREQ([2.69])
-AC_INIT([mboct-numerical-pkg], [0.1.0])
+AC_PREREQ([2.71])
+AC_INIT([mboct-numerical-pkg],[0.1.0])
 AC_CONFIG_HEADERS([config.h])
 
 AC_CONFIG_MACRO_DIRS([m4])
@@ -58,8 +58,8 @@ ARPACK_LIBS="${ARPACK_LIBS:--larpack}"
 UMFPACK_INC="${UMFPACK_INC:--I/usr/include/suitesparse}"
 UMFPACK_LIBS="${UMFPACK_LIBS:--lumfpack}"
 METIS_LIBS="${METIS_LIBS:--lmetis}"
-LAPACK_LIBS="${LAPACK_LIBS:-`${MKOCTFILE} -p LAPACK_LIBS`}"
 LAPACK_LIBS="${LAPACK_LIBS:-`${PKG_CONFIG} --libs lapack`}"
+LAPACK_LIBS="${LAPACK_LIBS:-`${MKOCTFILE} -p LAPACK_LIBS`}"
 LAPACK_LIBS="${LAPACK_LIBS:--llapack}"
 STRUMPACK_LIBS="${STRUMPACK_LIBS:--lstrumpack -lscotch -lmetis -lscotcherr -lscotcherrexit -lopenblas -lgomp -lz}"
 PASTIX_INC="${PASTIX_INC:-`${PKG_CONFIG} --cflags pastix`}"
@@ -256,12 +256,12 @@ AC_LANG(C++)
 AC_CHECK_HEADERS(octave/oct.h octave/interpreter.h octave/parse.h, [], AC_MSG_ERROR([octave header files not found], 1))
 
 AC_MSG_CHECKING([for octave libraries])
-AC_TRY_LINK([
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
   #include <octave/oct.h>
-],[
+]], [[
   octave_value_list ovl;
   ovl.append(octave_value(1.5));
-],[use_octlibs=yes],[use_octlibs=no])
+]])],[use_octlibs=yes],[use_octlibs=no])
 
 AC_MSG_RESULT([${use_octlibs}])
 
@@ -270,16 +270,25 @@ if ! test "${use_octlibs}" = "yes"; then
   LIBS="${TLIBS}"
 fi
 
+TCPPFLAGS="${CPPFLAGS}"
 TLIBS="${LIBS}"
 LIBS="${ARPACK_LIBS} ${LIBS}"
 
-AC_CHECK_HEADERS(octave/lo-arpack-proto.h)
+AC_CHECK_HEADERS(octave/lo-arpack-proto.h octave/arpack-proto.h)
+
+if test "${ac_cv_header_octave_arpack_proto_h}" = "yes"; then
+   AC_DEFINE([ARPACK_PROTO_H],"octave/arpack-proto.h",[Define if octave/arpack-proto.h can be used])
+   CPPFLAGS="${CPPFLAGS} -DARPACK_PROTO_H=\"octave/arpack-proto.h\""
+else
+   AC_DEFINE([ARPACK_PROTO_H],"octave/lo-arpack-proto.h",[Define if octave/lo-arpack-proto.h can be used])
+   CPPFLAGS="${CPPFLAGS} -DARPACK_PROTO_H=\"octave/lo-arpack-proto.h\""
+fi
 
 AC_MSG_CHECKING([for dsaupd])
-AC_TRY_LINK([
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #define HAVE_ARPACK 1
-#include <octave/lo-arpack-proto.h>
-],[
+#include ARPACK_PROTO_H
+]], [[
         F77_INT ido, n, nev, ncv, *iparam, *ipntr, lwork, info;
         F77_DBLE tol, *presid, *v, *workdp, *worklp;
         const char bmat[] = "G", type[] = "LM";
@@ -303,16 +312,16 @@ AC_TRY_LINK([
              info
              F77_CHAR_ARG_LEN(1)
              F77_CHAR_ARG_LEN(2));
-             ],[have_dsaupd=yes],[have_dsaupd=no])
+             ]])],[have_dsaupd=yes],[have_dsaupd=no])
 
 AC_MSG_RESULT([$have_dsaupd])
 
 AC_MSG_CHECKING([for dseupd])
 
-AC_TRY_LINK([
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #define HAVE_ARPACK 1
-#include <octave/lo-arpack-proto.h>
-],[
+#include ARPACK_PROTO_H
+]], [[
     bool rvec;
     F77_DBLE tol, *presid, *d, *v, *workdp, *worklp, sigma;
     F77_INT n, nev, ncv, *sel, *iparam, *ipntr, lwork, info;
@@ -343,12 +352,13 @@ AC_TRY_LINK([
          F77_CHAR_ARG_LEN(1)
          F77_CHAR_ARG_LEN(1)
          F77_CHAR_ARG_LEN(2));
-],[have_dseupd=yes],[have_dseupd=no])
+]])],[have_dseupd=yes],[have_dseupd=no])
 
 AC_MSG_RESULT([$have_dseupd])
 
-AM_CONDITIONAL([USE_ARPACK],[test "${have_dsaupd}" = "yes" && test "${have_dseupd}" = "yes" && test "${ac_cv_header_octave_lo_arpack_proto_h}" = "yes"])
+AM_CONDITIONAL([USE_ARPACK],[test "${have_dsaupd}" = "yes" && test "${have_dseupd}" = "yes"])
 
+CPPFLAGS="${TCPPFLAGS}"
 LIBS="${TLIBS}"
 
 TCPPFLAGS="${CPPFLAGS}"

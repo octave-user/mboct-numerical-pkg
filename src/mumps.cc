@@ -273,11 +273,9 @@ MumpsObject<T>::MumpsObject(const SparseMatrixType& A, const Options& opt)
      a.resize(dim_vector(nz, 1));
 
 #ifdef USE_MUMPS_SEQ_MPI_H
-     {
-          int ierr = MPI_Init(nullptr, nullptr);
+     MPI_Init(nullptr, nullptr);
 
-          ierr = MPI_Comm_rank(MPI_COMM_WORLD, &idmpi);
-     }
+     MPI_Comm_rank(MPI_COMM_WORLD, &idmpi);
 #endif
 
      id.job = -1;

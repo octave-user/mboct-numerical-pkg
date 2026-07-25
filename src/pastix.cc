@@ -23,6 +23,10 @@
 
 #define MPI_COMM_WORLD 0
 
+#undef HAVE_UNISTD_H
+#undef HAVE_STRING_H
+#undef HAVE_MKL_SET_NUM_THREADS
+
 extern "C" {
 #include <pastix.h>
 }

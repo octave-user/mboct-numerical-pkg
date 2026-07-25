@@ -1,5 +1,8 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Define if octave/lo-arpack-proto.h can be used */
+#undef ARPACK_PROTO_H
+
 /* Define to 1 if you have the <algorithm> header file. */
 #undef HAVE_ALGORITHM
 
@@ -89,6 +92,9 @@
 
 /* Define to 1 if you have the <mumps_seq/mpi.h> header file. */
 #undef HAVE_MUMPS_SEQ_MPI_H
+
+/* Define to 1 if you have the <octave/arpack-proto.h> header file. */
+#undef HAVE_OCTAVE_ARPACK_PROTO_H
 
 /* Define to 1 if you have the <octave/interpreter.h> header file. */
 #undef HAVE_OCTAVE_INTERPRETER_H
